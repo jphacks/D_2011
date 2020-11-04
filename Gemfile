@@ -9,6 +9,7 @@ gem 'sinatra-activerecord'
 gem 'cloudinary'
 gem 'dotenv'
 gem 'bcrypt'
+gem 'mini_magick' #画像生成用
 gem 'rack-contrib' #json(post)用
 gem 'google-cloud-storage'
 

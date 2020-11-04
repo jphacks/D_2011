@@ -6,6 +6,8 @@ require 'json'
 require 'date'
 require 'rack/contrib'
 
+require './image_edit.rb'
+
 use Rack::PostBodyContentTypeParser
 
 get '/show' do
@@ -16,6 +18,7 @@ get '/show' do
   }
   print("get show")
   article.to_json
+  write("abc")
 end
 
 post '/hoge' do
