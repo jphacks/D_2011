@@ -12,6 +12,7 @@ gem 'bcrypt'
 gem 'selenium-webdriver'
 gem 'rack-contrib' #json(post)用
 gem 'google-cloud-storage'
+gem 'streamio-ffmpeg'
 
 group :development do
   gem 'sqlite3', '~>1.4.1'
