@@ -61,4 +61,10 @@ get '/topic/:time/:title' do |time,title|
 end
 
 get '/test' do
-  erb :index
+  '
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" value="Upload">
+  </form>
+  '
+end
