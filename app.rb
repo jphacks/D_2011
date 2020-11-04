@@ -17,6 +17,10 @@ def stringToDateTime(s)
   return time
 end
 
+get '/' do
+  'Hello world!'
+end
+
 get '/sheet/:title/:start/:content' do |t, s, c|
   @title = t
   # ----------
