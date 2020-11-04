@@ -2,7 +2,27 @@ require 'bundler/setup'
 Bundler.require
 require 'sinatra/reloader' if development?
 require './models.rb'
-require "date"
+require 'json'
+require 'date'
+require 'rack/contrib'
+
+use Rack::PostBodyContentTypeParser
+
+get '/show' do
+  article = {
+      id: 1,
+      title: "today's dialy",
+      content: "It's a sunny day."
+  }
+  print("get show")
+  article.to_json
+end
+
+post '/hoge' do
+  params[:title]
+end
+
+
 
 # ----------
 # 時間の演算

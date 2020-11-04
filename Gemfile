@@ -9,6 +9,7 @@ gem 'sinatra-activerecord'
 gem 'cloudinary'
 gem 'dotenv'
 gem 'bcrypt'
+gem 'rack-contrib' #json(post)用
 
 group :development do
   gem 'sqlite3', '~>1.4.1'
