@@ -2,12 +2,41 @@ require 'bundler/setup'
 Bundler.require
 require 'sinatra/reloader' if development?
 require './models.rb'
+<<<<<<< HEAD
 require "date"
 require "google/cloud/storage"
 
 Dotenv.load
 storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
 bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
+=======
+require 'json'
+require 'date'
+require 'rack/contrib'
+
+use Rack::PostBodyContentTypeParser
+
+get '/show' do
+  article = {
+      id: 1,
+      title: "today's dialy",
+      content: "It's a sunny day."
+  }
+  print("get show")
+  article.to_json
+end
+
+post '/hoge' do
+  title = params[:params]
+  start = Time.at(params[:start].to_i)
+  link = params[:link]
+  agenda = JSON.parse(params[:agenda].to_json)
+
+  p agenda[0]["title"]
+end
+
+
+>>>>>>> ef45774c8920e01ca4fe114987bcc9880554d5a3
 
 # ----------
 # 時間の演算
