@@ -42,6 +42,10 @@ def stringToDateTime(s)
   return time
 end
 
+get '/' do
+  'Hello world!'
+end
+
 get '/sheet/:title/:start/:content' do |t, s, c|
   @title = t
   # ----------
@@ -79,4 +83,13 @@ get '/topic/:time/:title' do |time,title|
   @time = time
   @title = title
   erb :topic
+end
+
+get '/test' do
+  '
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" value="Upload">
+  </form>
+  '
 end

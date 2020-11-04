@@ -10,6 +10,7 @@ gem 'cloudinary'
 gem 'dotenv'
 gem 'bcrypt'
 gem 'rack-contrib' #json(post)用
+gem 'google-cloud-storage'
 
 group :development do
   gem 'sqlite3', '~>1.4.1'
