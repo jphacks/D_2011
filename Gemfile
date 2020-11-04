@@ -1,4 +1,4 @@
-ruby '2.6.2'
+# ruby '2.6.2'
 source "https://rubygems.org"
 
 gem 'rake'
@@ -9,6 +9,7 @@ gem 'sinatra-activerecord'
 gem 'cloudinary'
 gem 'dotenv'
 gem 'bcrypt'
+gem 'selenium-webdriver'
 
 group :development do
   gem 'sqlite3', '~>1.4.1'

@@ -1,12 +1,13 @@
 # aika
 
 ## 動作環境について
-当リポジトリのプログラムはDockerコンテナ上での動作を想定して開発しています。   
+当リポジトリのプログラムはVagrant上での動作を想定して開発しています。   
 基本的にホットリロード（sinatra/reloader）に対応していますが、Gemfileを更新した時などはコンテナを作り直してください。
 
 ```bash
-docker build -t aika .
-docker run -v $PWD:/aika -p 3000:3000 -d aika
+vagrant up
+vagrant ssh
+ruby app.rb
 ```
 
 [![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2020/09/JPHACKS2020_ogp.jpg)](https://www.youtube.com/watch?v=G5rULR53uMk)
