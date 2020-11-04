@@ -2,7 +2,32 @@ require 'bundler/setup'
 Bundler.require
 require 'sinatra/reloader' if development?
 require './models.rb'
-require "date"
+require 'json'
+require 'date'
+require 'rack/contrib'
+
+use Rack::PostBodyContentTypeParser
+
+get '/show' do
+  article = {
+      id: 1,
+      title: "today's dialy",
+      content: "It's a sunny day."
+  }
+  print("get show")
+  article.to_json
+end
+
+post '/hoge' do
+  title = params[:params]
+  start = Time.at(params[:start].to_i)
+  link = params[:link]
+  agenda = JSON.parse(params[:agenda].to_json)
+
+  p agenda[0]["title"]
+end
+
+
 
 # ----------
 # 時間の演算
@@ -58,4 +83,13 @@ get '/topic/:time/:title' do |time,title|
   @time = time
   @title = title
   erb :topic
+end
+
+get '/test' do
+  '
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" value="Upload">
+  </form>
+  '
 end
