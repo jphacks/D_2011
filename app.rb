@@ -3,6 +3,11 @@ Bundler.require
 require 'sinatra/reloader' if development?
 require './models.rb'
 require "date"
+require "google/cloud/storage"
+
+Dotenv.load
+storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
+bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
 
 # ----------
 # 時間の演算
@@ -67,4 +72,14 @@ get '/test' do
     <input type="submit" value="Upload">
   </form>
   '
+end
+
+post '/upload' do
+  file_path = params[:file][:tempfile].path
+  file_name = params[:file][:filename]
+
+  # Upload file to Google Cloud Storage bucket
+  file = bucket.create_file file_path, file_name
+  # The public URL can be used to directly access the uploaded file via HTTP
+  file.public_url
 end
