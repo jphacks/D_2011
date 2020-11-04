@@ -1,4 +1,4 @@
-ruby '2.6.2'
+# ruby '2.6.2'
 source "https://rubygems.org"
 
 gem 'rake'
@@ -10,6 +10,7 @@ gem 'cloudinary'
 gem 'dotenv'
 gem 'bcrypt'
 gem 'mini_magick' #画像生成用
+gem 'selenium-webdriver'
 gem 'rack-contrib' #json(post)用
 gem 'google-cloud-storage'
 
