@@ -1,3 +1,6 @@
+.env
+google-cloud-apikey.json
+
 *.gem
 *.rbc
 /.config

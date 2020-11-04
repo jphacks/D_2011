@@ -5,8 +5,32 @@ require './models.rb'
 require 'json'
 require 'date'
 require 'rack/contrib'
+require "google/cloud/storage"
+
+Dotenv.load
+storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
+bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
 
 use Rack::PostBodyContentTypeParser
+
+get '/test' do
+  '
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" value="Upload">
+  </form>
+  '
+end
+
+post '/upload' do
+  file_path = params[:file][:tempfile].path
+  file_name = params[:file][:filename]
+
+  # Upload file to Google Cloud Storage bucket
+  file = bucket.create_file file_path, file_name
+  # The public URL can be used to directly access the uploaded file via HTTP
+  file.public_url
+end
 
 get '/show' do
   article = {
@@ -26,7 +50,6 @@ post '/hoge' do
 
   p agenda[0]["title"]
 end
-
 
 
 # ----------
@@ -83,13 +106,4 @@ get '/topic/:time/:title' do |time,title|
   @time = time
   @title = title
   erb :topic
-end
-
-get '/test' do
-  '
-  <form method="POST" action="/upload" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <input type="submit" value="Upload">
-  </form>
-  '
 end
