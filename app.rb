@@ -19,7 +19,12 @@ get '/show' do
 end
 
 post '/hoge' do
-  params[:title]
+  title = params[:params]
+  start = Time.at(params[:start].to_i)
+  link = params[:link]
+  agenda = JSON.parse(params[:agenda].to_json)
+
+  p agenda[0]["title"]
 end
 
 
