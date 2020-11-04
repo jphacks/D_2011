@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>aika</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">
+    <style>
+      html,body{
+        width: 1280px;
+        height: 720px;
+        margin: 0;
+        padding: 0;
+        font-family: 'Noto Sans JP', sans-serif;
+      }
+      body{
+        color: #ffffff;
+        background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      h1,h2{
+        text-align: center;
+        padding: 0px 80px 0px 80px;
+      }
+      h1{
+        font-size: 90px;
+        margin-top: 0px;
+      }
+      h2{
+        font-size: 70px;
+        margin-bottom: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>

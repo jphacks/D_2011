@@ -59,3 +59,7 @@ get '/topic/:time/:title' do |time,title|
   @title = title
   erb :topic
 end
+
+get '/test' do
+  erb :test
+end
