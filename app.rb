@@ -61,5 +61,4 @@ get '/topic/:time/:title' do |time,title|
 end
 
 get '/test' do
-  erb :test
-end
+  erb :index
