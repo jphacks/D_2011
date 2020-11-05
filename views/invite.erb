@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  </head>
+  <body>
+    <p><%= @meeting.title %></p>
+    <p><%= @date %></p>
+    <a href="<%=@meeting.link %>">リンク</a>
+    <% @meeting.agendas.each do |agenda| %>
+      <p><%= agenda.title%> <%= agenda.duration%>分<p>
+    <% end %>
+  </body>
+</html>

@@ -8,6 +8,7 @@ require 'rack/contrib'
 require 'base64'
 require 'pry'
 require 'timers'
+require 'open3'
 require './image_edit.rb'
 
 use Rack::PostBodyContentTypeParser
@@ -36,18 +37,21 @@ end
 post '/test' do
   Thread.new { timer(params["agenda"]) }
   meeting_id = SecureRandom.hex
+  time = Time.at(params[:start])
   meeting = Meeting.create(
     random_num: meeting_id,
-    start: Time.at(params[:start]),
+    start: time,
     link: params["link"],
+    title: params["title"]
   )
 
   params["agenda"].each do |agenda|
-    Agenda.create(
-      meeting_id: meeting_id,
+    agenda = Agenda.create(
+      meeting_id: meeting.id,
       title: agenda["title"],
       duration: agenda["duration"]
     )
+    puts agenda
   end
 
   return {
@@ -61,12 +65,20 @@ get '/' do
   SecureRandom.hex
 end
 
+get '/:id' do
+  hoge = Meeting.last
+  # @meeting = Meeting.find_by(random_num: params[:id])
+  @meeting = Meeting.find_by(random_num: hoge.random_num)
+  binding.pry
+  @date = Time.at(@meeting.start)
+  erb :invite
+end
+
 post '/hoge' do
   title = params[:params]
   start = Time.at(params[:start].to_i)
   link = params[:link]
   agenda = JSON.parse(params[:agenda].to_json)
-
   p agenda.to_s
 end
 
@@ -128,42 +140,20 @@ get '/invitation' do
   erb:invitation
 end
 
+get '/cmdtest' do
+  viewTopicPhoto("print_text","10")
+end
 
-# get '/sheet/:title/:start/:content' do |t, s, c|
-#   @title = t
-#   # ----------
-#   # 配列に入れていく
-#   # ----------
-#   time = ""
-#   @contents = []
-#   inputContent = c.split('=') # 1つ1つのアジェンダに分離
-#   inputContent.each do |t|
-#     content = t.split('-') # アジェンダを所要時間と内容に分離 -> [所要時間,内容]
-#     content[0] = content[0].to_i #所要時間をintに変換
-
-#     if time.empty?
-#       time = [stringToDateTime(s).strftime("%H:%M")] # 何も値がないときは最初の初期時間を表示
-#     else
-#       time = stringToDateTime(@contents.last[0])
-#       time = time + Rational(@contents.last[1], 24 * 60)
-#       time = [time.strftime("%H:%M")]
-#     end
-#     content = time.push(content)
-#     content.flatten!
-#     @contents.push(content)
-#   end
-
-#   # ----------
-#   # 出力する文字列の個数を5個以内
-#   # ----------
-#   if @contents.length >= 5
-#     @contents.slice!(5,@contents.length-5)
-#   end
-#   erb :sheet
-# end
-
-# get '/topic/:time/:title' do |time,title|
-#   @time = time
-#   @title = title
-#   erb :topic
-# end
+# ----------
+# ffmpegの実行
+# ----------
+def viewTopicPhoto(content,duration)
+  topicBuild(content+"\n("+duration+"分)")
+  image_name = uniq_file_name
+  @image.write image_name
+  cmd = "sudo ffmpeg -re -i "+ image_name +" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0"
+  stdout, stderr, status = Open3.capture3(cmd)
+  p stdout
+  p stderr
+  p status
+end
