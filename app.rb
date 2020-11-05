@@ -13,18 +13,17 @@ require './image_edit.rb'
 
 use Rack::PostBodyContentTypeParser
 
-get '/' do
-  'Hello World!'
-end
-
-post '/test' do
+def timer(array)
   timers = Timers::Group.new
-  hash = JSON.parse(params)
-  hash["agenda"].each do |agenda|
+  array.each do |agenda|
+    p agenda["title"]
+    p agenda["duration"]
+    topic_image = topicWrite(agenda["title"]+"\n("+"#{agenda["duration"]}"+"分)")
     # Zoom Clientのメソッドを起動する
 
     #
     timer = timers.after(agenda["duration"]) {
+
     }
     # timer = timers.after(agenda["duration"] * 60) {
       # Zoom Clientでカメラを落とすなどする(?)
@@ -33,6 +32,34 @@ post '/test' do
     # }
     timers.wait
   end
+end
+
+post '/test' do
+  Thread.new { timer(params["agenda"]) }
+  meeting_id = SecureRandom.hex
+  meeting = Meeting.create(
+    random_num: meeting_id,
+    start: Time.at(params[:start]),
+    link: params["link"],
+  )
+
+  params["agenda"].each do |agenda|
+    Agenda.create(
+      meeting_id: meeting_id,
+      title: agenda["title"],
+      duration: agenda["duration"]
+    )
+  end
+
+  return {
+    "agenda"=> agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json)),
+    "url" => "https://aika.lit-kansai-mentors.com/#{meeting.random_num}"
+  }.to_json
+end
+
+get '/' do
+  'Hello World!'
+  SecureRandom.hex
 end
 
 post '/hoge' do
