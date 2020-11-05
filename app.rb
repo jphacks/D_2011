@@ -126,58 +126,19 @@ def agendaSheetPhoto(title,agendas,num,length)
 end
 
 get '/cmdtest' do
-  viewTopicPhoto()
+  viewTopicPhoto("print_text")
 end
 
 # ----------
 # ffmpegの実行
 # ----------
-def viewTopicPhoto()
-  # topicBuild(print_text)
-  # image_name = uniq_file_name
-  # @image.write image_name
-  cmd = "sudo ffmpeg -re -i hoge.png -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0"
+def viewTopicPhoto(print_text)
+  topicBuild(print_text)
+  image_name = uniq_file_name
+  @image.write image_name
+  cmd = "sudo ffmpeg -re -i "+ image_name +" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0"
   stdout, stderr, status = Open3.capture3(cmd)
   p stdout
   p stderr
   p status
 end
-
-# get '/sheet/:title/:start/:content' do |t, s, c|
-#   @title = t
-#   # ----------
-#   # 配列に入れていく
-#   # ----------
-#   time = ""
-#   @contents = []
-#   inputContent = c.split('=') # 1つ1つのアジェンダに分離
-#   inputContent.each do |t|
-#     content = t.split('-') # アジェンダを所要時間と内容に分離 -> [所要時間,内容]
-#     content[0] = content[0].to_i #所要時間をintに変換
-
-#     if time.empty?
-#       time = [stringToDateTime(s).strftime("%H:%M")] # 何も値がないときは最初の初期時間を表示
-#     else
-#       time = stringToDateTime(@contents.last[0])
-#       time = time + Rational(@contents.last[1], 24 * 60)
-#       time = [time.strftime("%H:%M")]
-#     end
-#     content = time.push(content)
-#     content.flatten!
-#     @contents.push(content)
-#   end
-
-#   # ----------
-#   # 出力する文字列の個数を5個以内
-#   # ----------
-#   if @contents.length >= 5
-#     @contents.slice!(5,@contents.length-5)
-#   end
-#   erb :sheet
-# end
-
-# get '/topic/:time/:title' do |time,title|
-#   @time = time
-#   @title = title
-#   erb :topic
-# end
