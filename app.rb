@@ -18,11 +18,13 @@ use Rack::PostBodyContentTypeParser
 post '/test' do
   timers = Timers::Group.new
   hash = JSON.parse(params)
+  
   hash["agenda"].each do |agenda|
+    topic_image = topicWrite(agenda["title"]+"\n("+duration+"分)")
     # Zoom Clientのメソッドを起動する
-    
     #
     timer = timers.after(agenda["duration"]) {
+      
     }
     # timer = timers.after(agenda["duration"] * 60) {
       # Zoom Clientでカメラを落とすなどする(?)
