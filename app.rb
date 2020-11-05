@@ -8,6 +8,7 @@ require 'rack/contrib'
 require 'base64'
 require 'pry'
 require 'timers'
+require 'open3'
 require './image_edit.rb'
 
 use Rack::PostBodyContentTypeParser
@@ -22,7 +23,7 @@ def timer(array)
 
     #
     timer = timers.after(agenda["duration"]) {
-      
+
     }
     # timer = timers.after(agenda["duration"] * 60) {
       # Zoom Clientでカメラを落とすなどする(?)
@@ -39,7 +40,11 @@ post '/test' do
   time = Time.at(params[:start])
   meeting = Meeting.create(
     random_num: meeting_id,
+<<<<<<< HEAD
     start: time,
+=======
+    start: Time.at(params[:start]),
+>>>>>>> 9e3b359fa5581eb7cdf50f034b7dc3de6de61aed
     link: params["link"],
     title: params["title"]
   )
@@ -54,7 +59,7 @@ post '/test' do
   end
 
   return {
-    "agenda"=> agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json)), 
+    "agenda"=> agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json)),
     "url" => "https://aika.lit-kansai-mentors.com/#{meeting.random_num}"
   }.to_json
 end
@@ -135,6 +140,23 @@ def agendaSheetPhoto(title,agendas,num,length)
   return agendaWrite(title,text)
 end
 
+get '/cmdtest' do
+  viewTopicPhoto()
+end
+
+# ----------
+# ffmpegの実行
+# ----------
+def viewTopicPhoto()
+  # topicBuild(print_text)
+  # image_name = uniq_file_name
+  # @image.write image_name
+  cmd = "sudo ffmpeg -re -i hoge.png -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0"
+  stdout, stderr, status = Open3.capture3(cmd)
+  p stdout
+  p stderr
+  p status
+end
 
 # get '/sheet/:title/:start/:content' do |t, s, c|
 #   @title = t
