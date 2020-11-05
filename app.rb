@@ -37,18 +37,21 @@ end
 post '/test' do
   Thread.new { timer(params["agenda"]) }
   meeting_id = SecureRandom.hex
+  time = Time.at(params[:start])
   meeting = Meeting.create(
     random_num: meeting_id,
-    start: Time.at(params[:start]),
+    start: time,
     link: params["link"],
+    title: params["title"]
   )
 
   params["agenda"].each do |agenda|
-    Agenda.create(
-      meeting_id: meeting_id,
+    agenda = Agenda.create(
+      meeting_id: meeting.id,
       title: agenda["title"],
       duration: agenda["duration"]
     )
+    puts agenda
   end
 
   return {
@@ -62,12 +65,20 @@ get '/' do
   SecureRandom.hex
 end
 
+get '/:id' do
+  hoge = Meeting.last
+  # @meeting = Meeting.find_by(random_num: params[:id])
+  @meeting = Meeting.find_by(random_num: hoge.random_num)
+  binding.pry
+  @date = Time.at(@meeting.start)
+  erb :invite
+end
+
 post '/hoge' do
   title = params[:params]
   start = Time.at(params[:start].to_i)
   link = params[:link]
   agenda = JSON.parse(params[:agenda].to_json)
-
   p agenda.to_s
 end
 
