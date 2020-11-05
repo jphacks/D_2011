@@ -5,35 +5,32 @@ require './models.rb'
 require 'json'
 require 'date'
 require 'rack/contrib'
-require "google/cloud/storage"
 require 'base64'
-
+require 'pry'
+require 'timers'
 require './image_edit.rb'
+  
 
-# Dotenv.load
-# storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
-# bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
 
 
 use Rack::PostBodyContentTypeParser
 
-get '/test' do
-  '
-  <form method="POST" action="/upload" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <input type="submit" value="Upload">
-  </form>
-  '
-end
+post '/test' do
+  timers = Timers::Group.new
+  hash = JSON.parse(params)
+  hash["agenda"].each do |agenda|
+    # Zoom Clientのメソッドを起動する
+    
+    #
+    timer = timers.after(agenda["duration"]) {
+    }
+    # timer = timers.after(agenda["duration"] * 60) {
+      # Zoom Clientでカメラを落とすなどする(?)
 
-post '/upload' do
-  file_path = params[:file][:tempfile].path
-  file_name = params[:file][:filename]
-
-  # Upload file to Google Cloud Storage bucket
-  file = bucket.create_file file_path, file_name
-  # The public URL can be used to directly access the uploaded file via HTTP
-  file.public_url
+      #
+    # }
+    timers.wait
+  end
 end
 
 get '/' do

@@ -1,0 +1,12 @@
+{ 
+  "link":"zoommtg://zoom.us/join?confno=83148364236&pwd=En2QDz", 
+  "title":"JPHACKSキックオフ",
+  "agenda":[
+    {"title":"軽く自己紹介","duration":5},
+    {"title":"テーマの確認","duration":5},
+    {"title":"アイデアソン","duration":5},
+    {"title":"技術洗い出し","duration":5},
+    {"title":"タスク分解","duration":5},
+    {"title":"締め","duration":5}],
+    "start":1604556000
+  }

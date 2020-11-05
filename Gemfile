@@ -12,8 +12,7 @@ gem 'bcrypt'
 gem 'mini_magick' #画像生成用
 gem 'selenium-webdriver'
 gem 'rack-contrib' #json(post)用
-gem 'google-cloud-storage'
-gem 'streamio-ffmpeg'
+gem 'timers'
 
 group :development do
   gem 'sqlite3', '~>1.4.1'

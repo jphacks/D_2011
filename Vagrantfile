@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   config.vm.network "private_network", ip: "192.168.33.10"
-  config.vm.network "forwarded_port", guest: 3000, host: 3080
+  config.vm.network "forwarded_port", guest: 3000, host: 3000
 
 
   # Create a public network, which generally matched to bridged network.
@@ -67,12 +67,15 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     apt update
-    apt install -y aptitude ruby ruby-dev libsqlite3-dev imagemagick
+    apt install -y aptitude ruby ruby-dev libsqlite3-dev imagemagick chromium-browser chromium-chromedriver
     aptitude install -y v4l2loopback-dkms ffmpeg
     modprobe v4l2loopback devices=100
     echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
     gem install bundler
+    cd /vagrant
+    bundle config set system 'true'
     bundle install --without production
     echo 'cd /vagrant' >> /home/vagrant/.bashrc
+    echo 'export PORT=3000' >> /home/vagrant/.bashrc
   SHELL
 end
