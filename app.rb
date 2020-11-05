@@ -9,9 +9,6 @@ require 'base64'
 require 'pry'
 require 'timers'
 require './image_edit.rb'
-  
-
-
 
 use Rack::PostBodyContentTypeParser
 
