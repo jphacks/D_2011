@@ -5,17 +5,39 @@ require './models.rb'
 require 'json'
 require 'date'
 require 'rack/contrib'
+require "google/cloud/storage"
+require 'base64'
+
+require './image_edit.rb'
+
+Dotenv.load
+storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
+bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
+
 
 use Rack::PostBodyContentTypeParser
 
-get '/show' do
-  article = {
-      id: 1,
-      title: "today's dialy",
-      content: "It's a sunny day."
-  }
-  print("get show")
-  article.to_json
+get '/test' do
+  '
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" value="Upload">
+  </form>
+  '
+end
+
+post '/upload' do
+  file_path = params[:file][:tempfile].path
+  file_name = params[:file][:filename]
+
+  # Upload file to Google Cloud Storage bucket
+  file = bucket.create_file file_path, file_name
+  # The public URL can be used to directly access the uploaded file via HTTP
+  file.public_url
+end
+
+get '/' do
+  'Hello World!'
 end
 
 post '/hoge' do
@@ -27,7 +49,18 @@ post '/hoge' do
   p agenda[0]["title"]
 end
 
+# ----------
+# 仮想カメラ用の画像生成
+# ----------
+post '/topicphoto' do
+  content = params[:content]
+  duration = params[:duration]
+  return {"photo"=>write(content+"\n("+duration+"分)")}.to_json
+end
 
+get '/phototest' do
+  write("今話すべきトピックはこれだ\n(10m)")
+end
 
 # ----------
 # 時間の演算
@@ -40,10 +73,6 @@ def stringToDateTime(s)
     time = DateTime.new(2020,4,5,inputTime[0].to_i,inputTime[1].to_i) #DateTimeオブジェクトに変換
   end
   return time
-end
-
-get '/' do
-  'Hello world!'
 end
 
 get '/sheet/:title/:start/:content' do |t, s, c|
@@ -83,13 +112,4 @@ get '/topic/:time/:title' do |time,title|
   @time = time
   @title = title
   erb :topic
-end
-
-get '/test' do
-  '
-  <form method="POST" action="/upload" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <input type="submit" value="Upload">
-  </form>
-  '
 end
