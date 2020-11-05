@@ -55,7 +55,6 @@ post '/test' do
       title: agenda["title"],
       duration: agenda["duration"]
     )
-    puts agenda
   end
 
   return {
