@@ -126,14 +126,14 @@ def agendaSheetPhoto(title,agendas,num,length)
 end
 
 get '/cmdtest' do
-  viewTopicPhoto("print_text")
+  viewTopicPhoto("print_text","10")
 end
 
 # ----------
 # ffmpegの実行
 # ----------
-def viewTopicPhoto(print_text)
-  topicBuild(print_text)
+def viewTopicPhoto(content,duration)
+  topicBuild(content+"\n("+duration+"分)")
   image_name = uniq_file_name
   @image.write image_name
   cmd = "sudo ffmpeg -re -i "+ image_name +" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0"
