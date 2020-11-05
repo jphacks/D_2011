@@ -10,9 +10,9 @@ require 'base64'
 
 require './image_edit.rb'
 
-Dotenv.load
-storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
-bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
+# Dotenv.load
+# storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
+# bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
 
 
 use Rack::PostBodyContentTypeParser
@@ -46,7 +46,7 @@ post '/hoge' do
   link = params[:link]
   agenda = JSON.parse(params[:agenda].to_json)
 
-  p agenda[0]["title"]
+  p agenda.to_s
 end
 
 # ----------
@@ -55,24 +55,42 @@ end
 post '/topicphoto' do
   content = params[:content]
   duration = params[:duration]
-  return {"photo"=>write(content+"\n("+duration+"分)")}.to_json
+  return {"photo"=>topicWrite(content+"\n("+duration+"分)")}.to_json
 end
 
-get '/phototest' do
-  write("今話すべきトピックはこれだ\n(10m)")
-end
-
-# ----------
-# 時間の演算
-# ----------
-def stringToDateTime(s)
-  inputTime = s.split(':') #入力された数字をHourとminitusに分離 -> ["12","00"]
-  if inputTime[0].is_a?(Integer)
-    time = DateTime.new(2020,4,5,inputTime[0],inputTime[1]) #DateTimeオブジェクトに変換
-  else
-    time = DateTime.new(2020,4,5,inputTime[0].to_i,inputTime[1].to_i) #DateTimeオブジェクトに変換
+post '/agendaphoto' do
+  title = params[:title]
+  @startTime = params[:start].to_i
+  agendas = JSON.parse(params[:agenda].to_json)
+  agendaList = agendas.each_slice(7).to_a
+  p agendaList
+  returnText = []
+  agendaList.each_with_index do | a , i |
+    text = {"photo"=>agendaSheetPhoto(title,a,i+1,agendaList.length)}
+    returnText = returnText.push(text)
   end
-  return time
+  return returnText.to_json
+end
+
+# 7個まで
+def agendaSheetPhoto(title,agendas,num,length)
+  if title.length >= 14
+    title = title.delete("\n").slice(0 ,14) + "…"
+  end
+  title = title + "(" + num.to_s + "/" + length.to_s + ")"
+  text = ""
+  agendas.each do |a|
+    start = Time.at(@startTime).strftime("%H:%M") # このアジェンダシートの開始時刻
+    duration = (a["duration"]/60).ceil
+    if a["title"].length >= 12
+      titleA = a["title"].delete("\n").slice(0 ,12) + "…"
+    else
+      titleA = a["title"].delete("\n")
+    end
+    text = text + start + " " + duration.to_s + "m " + titleA + "\n"
+    @startTime = @startTime + a["duration"]
+  end
+  return agendaWrite(title,text)
 end
 
 get '/sheet/:title/:start/:content' do |t, s, c|
