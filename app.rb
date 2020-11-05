@@ -13,11 +13,15 @@ require './image_edit.rb'
 
 use Rack::PostBodyContentTypeParser
 
-def timer(array)
+def timer(array, start)
   timers = Timers::Group.new
+  # UNIX時間を生成
+  current_time = Time.new.to_i
+  loop do
+    break if start <= current_time
+    sleep 1
+  end
   array.each do |agenda|
-    p agenda["title"]
-    p agenda["duration"]
     topic_image = topicWrite(agenda["title"]+"\n("+"#{agenda["duration"]}"+"分)")
     # Zoom Clientのメソッドを起動する
 
@@ -35,7 +39,7 @@ def timer(array)
 end
 
 post '/test' do
-  Thread.new { timer(params["agenda"]) }
+  Thread.new { timer(params["agenda"], params["start"]) }
   meeting_id = SecureRandom.hex
   time = Time.at(params[:start])
   meeting = Meeting.create(
@@ -67,9 +71,17 @@ end
 
 get '/:id' do
   hoge = Meeting.last
+  # 本番はこれを使う
   # @meeting = Meeting.find_by(random_num: params[:id])
   @meeting = Meeting.find_by(random_num: hoge.random_num)
-  @date = Time.at(@meeting.start)
+  @agenda_times = []
+  agenda_starting_time = @meeting.start
+  @meeting.agendas.each do |agenda| 
+    agenda_starting_time += agenda.duration * 60
+    @agenda_times.append(Time.at(agenda_starting_time).strftime("%H:%M"))
+  end
+  p @agenda_times
+  @start_time =  Time.at(@meeting.start).strftime("%Y.%m.%d %H:%M~")
   erb :invite
 end
 
