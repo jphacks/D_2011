@@ -69,7 +69,6 @@ get '/:id' do
   hoge = Meeting.last
   # @meeting = Meeting.find_by(random_num: params[:id])
   @meeting = Meeting.find_by(random_num: hoge.random_num)
-  binding.pry
   @date = Time.at(@meeting.start)
   erb :invite
 end
