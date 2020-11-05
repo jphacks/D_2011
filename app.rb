@@ -147,6 +147,10 @@ def agendaSheetPhoto(title,agendas,num,length)
   return agendaWrite(title,text)
 end
 
+get '/invitation' do
+  erb:invitation
+end
+
 get '/cmdtest' do
   viewTopicPhoto("print_text","10")
 end
