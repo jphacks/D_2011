@@ -17,22 +17,20 @@ use Rack::PostBodyContentTypeParser
 
 post '/test' do
   timers = Timers::Group.new
-  hash = ""
-    hash = JSON.parse(params)
-    hash["agenda"].each do |agenda|
-      # Zoom Clientのメソッドを起動する
-      
-      #
-      p agenda["title"]
-      timer = timers.after(agenda["duration"]) {
-      }
-      # timer = timers.after(agenda["duration"] * 60) {
-        # Zoom Clientでカメラを落とすなどする(?)
+  hash = JSON.parse(params)
+  hash["agenda"].each do |agenda|
+    # Zoom Clientのメソッドを起動する
+    
+    #
+    timer = timers.after(agenda["duration"]) {
+    }
+    # timer = timers.after(agenda["duration"] * 60) {
+      # Zoom Clientでカメラを落とすなどする(?)
 
-        #
-      # }
-      timers.wait
-    end
+      #
+    # }
+    timers.wait
+  end
 end
 
 get '/' do
