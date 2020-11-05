@@ -69,7 +69,8 @@ Vagrant.configure("2") do |config|
     apt update
     apt install -y aptitude ruby ruby-dev libsqlite3-dev imagemagick
     aptitude install -y v4l2loopback-dkms ffmpeg
-    cd /vagrant
+    modprobe v4l2loopback devices=100
+    echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
     gem install bundler
     bundle install --without production
     echo 'cd /vagrant' >> /home/vagrant/.bashrc
