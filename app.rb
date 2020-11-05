@@ -58,12 +58,20 @@ post '/topicphoto' do
   return {"photo"=>topicWrite(content+"\n("+duration+"分)")}.to_json
 end
 
+# ----------
+# アジェンダ用の画像生成
+# ----------
 post '/agendaphoto' do
-  title = params[:title]
-  @startTime = params[:start].to_i
-  agendas = JSON.parse(params[:agenda].to_json)
+  return agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
+end
+
+# ----------
+# アジェンダ画像生成（タイトル(String),開始時間(UNIX時間),アジェンダのリスト(連想配列)）
+# ----------
+def agendaphoto(title,startTime,agendas)
+  @startTime = startTime
   agendaList = agendas.each_slice(7).to_a
-  p agendaList
+  # p agendaList
   returnText = []
   agendaList.each_with_index do | a , i |
     text = {"photo"=>agendaSheetPhoto(title,a,i+1,agendaList.length)}
@@ -72,7 +80,9 @@ post '/agendaphoto' do
   return returnText.to_json
 end
 
-# 7個まで
+# ----------
+# アジェンダ画像生成（タイトル(String),アジェンダのリスト(連想配列),何個目の画像か(Int),全体の数(int)）
+# ----------
 def agendaSheetPhoto(title,agendas,num,length)
   if title.length >= 14
     title = title.delete("\n").slice(0 ,14) + "…"
@@ -93,41 +103,42 @@ def agendaSheetPhoto(title,agendas,num,length)
   return agendaWrite(title,text)
 end
 
-get '/sheet/:title/:start/:content' do |t, s, c|
-  @title = t
-  # ----------
-  # 配列に入れていく
-  # ----------
-  time = ""
-  @contents = []
-  inputContent = c.split('=') # 1つ1つのアジェンダに分離
-  inputContent.each do |t|
-    content = t.split('-') # アジェンダを所要時間と内容に分離 -> [所要時間,内容]
-    content[0] = content[0].to_i #所要時間をintに変換
 
-    if time.empty?
-      time = [stringToDateTime(s).strftime("%H:%M")] # 何も値がないときは最初の初期時間を表示
-    else
-      time = stringToDateTime(@contents.last[0])
-      time = time + Rational(@contents.last[1], 24 * 60)
-      time = [time.strftime("%H:%M")]
-    end
-    content = time.push(content)
-    content.flatten!
-    @contents.push(content)
-  end
+# get '/sheet/:title/:start/:content' do |t, s, c|
+#   @title = t
+#   # ----------
+#   # 配列に入れていく
+#   # ----------
+#   time = ""
+#   @contents = []
+#   inputContent = c.split('=') # 1つ1つのアジェンダに分離
+#   inputContent.each do |t|
+#     content = t.split('-') # アジェンダを所要時間と内容に分離 -> [所要時間,内容]
+#     content[0] = content[0].to_i #所要時間をintに変換
 
-  # ----------
-  # 出力する文字列の個数を5個以内
-  # ----------
-  if @contents.length >= 5
-    @contents.slice!(5,@contents.length-5)
-  end
-  erb :sheet
-end
+#     if time.empty?
+#       time = [stringToDateTime(s).strftime("%H:%M")] # 何も値がないときは最初の初期時間を表示
+#     else
+#       time = stringToDateTime(@contents.last[0])
+#       time = time + Rational(@contents.last[1], 24 * 60)
+#       time = [time.strftime("%H:%M")]
+#     end
+#     content = time.push(content)
+#     content.flatten!
+#     @contents.push(content)
+#   end
 
-get '/topic/:time/:title' do |time,title|
-  @time = time
-  @title = title
-  erb :topic
-end
+#   # ----------
+#   # 出力する文字列の個数を5個以内
+#   # ----------
+#   if @contents.length >= 5
+#     @contents.slice!(5,@contents.length-5)
+#   end
+#   erb :sheet
+# end
+
+# get '/topic/:time/:title' do |time,title|
+#   @time = time
+#   @title = title
+#   erb :topic
+# end
