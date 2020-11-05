@@ -40,11 +40,7 @@ post '/test' do
   time = Time.at(params[:start])
   meeting = Meeting.create(
     random_num: meeting_id,
-<<<<<<< HEAD
     start: time,
-=======
-    start: Time.at(params[:start]),
->>>>>>> 9e3b359fa5581eb7cdf50f034b7dc3de6de61aed
     link: params["link"],
     title: params["title"]
   )
