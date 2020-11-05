@@ -9,18 +9,19 @@ require 'base64'
 require 'pry'
 require 'timers'
 require './image_edit.rb'
-  
-
-
 
 use Rack::PostBodyContentTypeParser
+
+get '/' do
+  'Hello World!'
+end
 
 post '/test' do
   timers = Timers::Group.new
   hash = JSON.parse(params)
   hash["agenda"].each do |agenda|
     # Zoom Clientのメソッドを起動する
-    
+
     #
     timer = timers.after(agenda["duration"]) {
     }
@@ -31,10 +32,6 @@ post '/test' do
     # }
     timers.wait
   end
-end
-
-get '/' do
-  'Hello World!'
 end
 
 post '/hoge' do
