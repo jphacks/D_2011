@@ -9,7 +9,7 @@ require 'base64'
 require 'pry'
 require 'timers'
 require './image_edit.rb'
-  
+
 
 
 
@@ -20,7 +20,7 @@ post '/test' do
   hash = JSON.parse(params)
   hash["agenda"].each do |agenda|
     # Zoom Clientのメソッドを起動する
-    
+
     #
     timer = timers.after(agenda["duration"]) {
     }
@@ -127,4 +127,10 @@ get '/topic/:time/:title' do |time,title|
   @time = time
   @title = title
   erb :topic
+end
+
+get '/invitation' do
+
+
+  erb :invitation
 end
