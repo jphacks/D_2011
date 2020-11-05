@@ -32,7 +32,7 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "192.168.33.10"
   config.vm.network "forwarded_port", guest: 3000, host: 3080
 
 
@@ -67,8 +67,8 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     apt update
-    apt install -y aptitude ruby ruby-dev libsqlite3-dev
-    aptitude install -y v4l2loopback-dkms
+    apt install -y aptitude ruby ruby-dev libsqlite3-dev imagemagick
+    aptitude install -y v4l2loopback-dkms ffmpeg
     cd /vagrant
     gem install bundler
     bundle install --without production

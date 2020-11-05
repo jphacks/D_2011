@@ -11,10 +11,11 @@ before do
   @base_image_path = "public/assets/img/bg.jpg".freeze
   @gravity = 'center'.freeze
   @text_position = '0,0'.freeze
-  @font = "./fonts/NotoSansJP-Bold.ttf".freeze
+  @font = "public/assets/fonts/unifont-11.0.01.ttf".freeze
   @font_size = 100
-  @indention_count = 30
+  @indention_count = 10
   @row_limit = 8
+  @color = "white"
 end
 
 # 合成後のFileClassを生成
@@ -26,15 +27,17 @@ end
 
   # 合成後のFileの書き出し
 def write(print_text)
+  print("do write")
   build(print_text)
-  @image.write uniq_file_name
-
-  File.rename(image_name,"public/images/" + image_name)
-  @image_url = request.url + image_name
+  image_name = uniq_file_name
+  @image.write image_name
+  binary_data = File.read(image_name)
+  json_data = Base64.strict_encode64(binary_data)
+  File.delete(image_name)
+  return json_data
 end
 
 private
-
 # uniqなファイル名を返却
 def uniq_file_name
   "#{SecureRandom.hex}.png"
@@ -44,6 +47,7 @@ end
 def configuration(text)
   # 固定ベース画像（水色フレーム）に文字を合成
   @image.combine_options do |config|
+    config.fill @color
     config.font @font
     config.gravity @gravity
     config.pointsize @font_size

@@ -6,12 +6,14 @@ require 'json'
 require 'date'
 require 'rack/contrib'
 require "google/cloud/storage"
+require 'base64'
+
+require './image_edit.rb'
 
 Dotenv.load
 storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
 bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
 
-require './image_edit.rb'
 
 use Rack::PostBodyContentTypeParser
 
@@ -34,15 +36,8 @@ post '/upload' do
   file.public_url
 end
 
-get '/show' do
-  article = {
-      id: 1,
-      title: "today's dialy",
-      content: "It's a sunny day."
-  }
-  print("get show")
-  article.to_json
-  write("abc")
+get '/' do
+  'Hello World!'
 end
 
 post '/hoge' do
@@ -54,6 +49,18 @@ post '/hoge' do
   p agenda[0]["title"]
 end
 
+# ----------
+# 仮想カメラ用の画像生成
+# ----------
+post '/topicphoto' do
+  content = params[:content]
+  duration = params[:duration]
+  return {"photo"=>write(content+"\n("+duration+"分)")}.to_json
+end
+
+get '/phototest' do
+  write("今話すべきトピックはこれだ\n(10m)")
+end
 
 # ----------
 # 時間の演算
@@ -66,10 +73,6 @@ def stringToDateTime(s)
     time = DateTime.new(2020,4,5,inputTime[0].to_i,inputTime[1].to_i) #DateTimeオブジェクトに変換
   end
   return time
-end
-
-get '/' do
-  'Hello world!'
 end
 
 get '/sheet/:title/:start/:content' do |t, s, c|
