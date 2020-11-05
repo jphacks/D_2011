@@ -11,12 +11,6 @@ require 'timers'
 require './image_edit.rb'
   
 
-<<<<<<< HEAD
-=======
-# Dotenv.load
-# storage = Google::Cloud::Storage.new project: ENV["GOOGLE_PROJECT_ID"], keyfile: ENV["GOOGLE_CLOUD_API_KEY_PATH"]
-# bucket  = storage.bucket ENV["GOOGLE_CLOUD_STORAGE_BUCKET"]
->>>>>>> 52434e78a2d13b815fdd403dbe07d4938fec5982
 
 
 use Rack::PostBodyContentTypeParser
@@ -41,6 +35,7 @@ get '/test' do
       timers.wait
     end
   end
+  '...'
 end
 
 get '/' do
