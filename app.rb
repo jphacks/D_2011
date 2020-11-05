@@ -8,6 +8,7 @@ require 'rack/contrib'
 require 'base64'
 require 'pry'
 require 'timers'
+require 'open3'
 require './image_edit.rb'
 
 use Rack::PostBodyContentTypeParser
@@ -97,6 +98,23 @@ def agendaSheetPhoto(title,agendas,num,length)
   return agendaWrite(title,text)
 end
 
+get '/cmdtest' do
+  viewTopicPhoto()
+end
+
+# ----------
+# ffmpegの実行
+# ----------
+def viewTopicPhoto()
+  # topicBuild(print_text)
+  # image_name = uniq_file_name
+  # @image.write image_name
+  cmd = "sudo ffmpeg -re -i hoge.png -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0"
+  stdout, stderr, status = Open3.capture3(cmd)
+  p stdout
+  p stderr
+  p status
+end
 
 # get '/sheet/:title/:start/:content' do |t, s, c|
 #   @title = t
