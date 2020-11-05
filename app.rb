@@ -15,27 +15,24 @@ require './image_edit.rb'
 
 use Rack::PostBodyContentTypeParser
 
-get '/test' do
+post '/test' do
   timers = Timers::Group.new
   hash = ""
-  File.open("./sample.json") do |file| 
-
-    hash = JSON.load(file)
+    hash = JSON.parse(params)
     hash["agenda"].each do |agenda|
       # Zoom Clientのメソッドを起動する
       
       #
       p agenda["title"]
       timer = timers.after(agenda["duration"]) {
-        # Zoom Clientでカメラを落とすなどする(?)
       }
       # timer = timers.after(agenda["duration"] * 60) {
-      #   p 'end'
+        # Zoom Clientでカメラを落とすなどする(?)
+
+        #
       # }
       timers.wait
     end
-  end
-  '...'
 end
 
 get '/' do
