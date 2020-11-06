@@ -161,7 +161,7 @@ end
 # ミーティングの作成
 # ----------
 def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
-  meeting_id = SecureRandom.random_number(1 << 64)
+  meeting_id = SecureRandom.hex
   time = Time.at(startTimeAPI)
   meeting = Meeting.create(
     random_num: meeting_id,
@@ -297,7 +297,8 @@ end
 # 検証コード
 # ----------
 post '/test' do
-  data = { foo: params[:test] }
+  a = SecureRandom.hex
+  data = { foo: a }
   json data
 end
 
