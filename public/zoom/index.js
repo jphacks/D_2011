@@ -4,6 +4,7 @@ const userName = "aika";
 let isJoined = false
 let attendeesList = null
 let currentUser = null
+let status = false;
 
 async function initialize(mn, pwd) {
   ZoomMtg.preLoadWasm();
@@ -11,9 +12,24 @@ async function initialize(mn, pwd) {
 
   const signature = await generateSignature(mn);
   await initMeeting();
+  ZoomMtg.inMeetingServiceListener('onMeetingStatus', function (data) {
+    status = data.meetingStatus == 2 || status
+  });
   await joinMeeting(mn, signature, pwd);
 
   isJoined = true;
+}
+
+function isCoHost() {
+  let flag = false
+  for(e of document.querySelectorAll('.footer-button__button-label')) {
+    if(e.innerText.match(/Manage Participants/)) flag = true
+  }
+  return flag
+}
+
+function getStatus() {
+  return status
 }
 
 function updateAttendeesList() {

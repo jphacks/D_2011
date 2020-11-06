@@ -262,7 +262,9 @@ end
 # Zoomに接続
 get '/api/zoom/connect' do
   zoom = ZoomClient.new("83465557585", "Z5jTwT")
-  zoom.requestCoHost
+  Thread.new do
+    zoom.requestCoHost
+  end
   'ok'
 end
 # 画像変更
@@ -286,16 +288,16 @@ end
 # ----------
 # ffmpegの実行
 # ----------
-def viewTopicPhoto(content,duration)
-  topicBuild(content+"\n("+duration+"分)")
-  image_name = uniq_file_name
-  @image.write image_name
-  cmd = "sudo ffmpeg -re -i "+ image_name +" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0"
-  stdout, stderr, status = Open3.capture3(cmd)
-  p stdout
-  p stderr
-  p status
-end
+# def viewTopicPhoto(content,duration)
+#   topicBuild(content+"\n("+duration+"分)")
+#   image_name = uniq_file_name
+#   @image.write image_name
+#   cmd = "sudo ffmpeg -re -i "+ image_name +" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0"
+#   stdout, stderr, status = Open3.capture3(cmd)
+#   p stdout
+#   p stderr
+#   p status
+# end
 
 # ----------
 # 検証コード

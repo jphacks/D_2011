@@ -1,18 +1,8 @@
 require 'selenium-webdriver'
-require 'open3'
 require 'json'
 
-# 提供するもの
-# ログイン by mtgID DONE
-# カメラの接続 DONE
-# カメラの切り替え DONE
-# ユーザー一覧取得 DONE
-# mute切り替え DONE
-# 共同ホストチェック 
-# initializeとか非同期的に
 class ZoomClient
   def initialize(meetingId, meetingPwd)
-
     options = Selenium::WebDriver::Firefox::Options.new
     options.add_argument('--headless')
     options.add_preference("permissions.default.microphone", 1);
@@ -23,7 +13,10 @@ class ZoomClient
     @driver.get "http://localhost:#{ENV['PORT']}/zoom/index.html"
     @driver.execute_script "initialize('#{meetingId}', '#{meetingPwd}')"
 
-    @pid = startFfmpeg('public/assets/img/aika_bg.jpg')
+    @pid = startFfmpeg('public/assets/img/aika.jpg')
+
+    wait = Selenium::WebDriver::Wait.new(:timeout => 60)
+    wait.until{@driver.execute_script 'return getStatus()'}
     begin
       clickVideoBtn()
     rescue
@@ -33,19 +26,23 @@ class ZoomClient
 
   def changeImage(name)
     if @pid != 0
+      puts "kill: " + @pid
       Process.kill 9, @pid.to_i
       @pid = 0
     end
     @pid = startFfmpeg(name)
+    puts "start: " + @pid
 
     clickVideoBtn()
-    sleep 1
     clickVideoBtn()
   end
 
   def requestCoHost
     changeImage('public/assets/img/request_co_host.jpg')
-    puts getCurrentUser()
+    until @driver.execute_script 'return isCoHost()' do
+      sleep 1
+    end
+    changeImage('public/assets/img/aika.jpg')
   end
 
   def getAttendeesList
