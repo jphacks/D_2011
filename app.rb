@@ -145,14 +145,16 @@ end
 def finishMeeting(id)
   begin
     File.delete("public/assets/img/tmp/"+id+".png")
-    data = { status: "success" }
-    json data
+    # data = { status: "success" }
+    # json data
   # メモ：Zoomビデオを切れたらここに！
   rescue => e
     print(e)
-    data = { status: "error" }
-    json data
+    # data = { status: "error" }
+    # json data
   end
+  data = { status: "success" }
+  json data
 end
 
 # ----------
