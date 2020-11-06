@@ -185,7 +185,7 @@ def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
   #   "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}",
   #   "id" => meeting.random_num
   # }.to_json
-  data = { agenda: "success" , url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}" , id: meeting.random_num }
+  data = { agenda: agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)) , url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}" , id: meeting.random_num }
   json data
 end
 
@@ -229,7 +229,7 @@ def agendaphoto(title,startTime,agendas)
   # p agendaList
   returnText = []
   agendaList.each_with_index do | a , i |
-    text = {"photo"=>agendaSheetPhoto(title,a,i+1,agendaList.length)}
+    text = {photo : agendaSheetPhoto(title,a,i+1,agendaList.length)}
     returnText = returnText.push(text)
   end
   return returnText.to_json
@@ -299,7 +299,7 @@ end
 # 検証コード
 # ----------
 post '/test' do
-  data = { foo: "bar" }
+  data = { foo: params[:test] }
   json data
 end
 
