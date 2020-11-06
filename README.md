@@ -29,8 +29,7 @@ ffmpegが標準出力を奪ってしまう仕様上、一度プログラムを�
 
 ### Vagrant採用理由について
 仮想カメラの実装に[v4l2loopback](https://github.com/umlaeute/v4l2loopback)を使用しています。v4l2loopbackはカーネルモジュールであり、全ての開発者のPCで環境を整えるのは難しいと判断したためVagrantを採用しています。
-
-[![IMAGE ALT TEXT HERE](https://jphacks-workspace.slack.com/files/U01D2SY7YSU/F01E401G3J9/aika_virtualbackground.png)]
+[![IMAGE ALT TEXT HERE](aika.png)
 
 ## 製品概要
 ### 背景(製品開発のきっかけ、課題等）
