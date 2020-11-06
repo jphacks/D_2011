@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_05_164336) do
+ActiveRecord::Schema.define(version: 2020_11_06_181348) do
 
   create_table "agendas", force: :cascade do |t|
     t.integer "meeting_id"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2020_11_05_164336) do
   end
 
   create_table "meetings", force: :cascade do |t|
-    t.integer "random_num"
+    t.string "random_num"
     t.integer "start"
     t.string "link"
     t.string "image"
