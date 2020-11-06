@@ -161,7 +161,7 @@ end
 # ミーティングの作成
 # ----------
 def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
-  meeting_id = SecureRandom.hex
+  meeting_id = SecureRandom.random_number(1 << 64)
   time = Time.at(startTimeAPI)
   meeting = Meeting.create(
     random_num: meeting_id,
