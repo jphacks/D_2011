@@ -112,32 +112,37 @@ end
 # ミーティングの開始
 # ----------
 def startMeeting(id,duration,title)
-  # 1. Zoomカメラの起動
-  # 2. アジェンダ画像生成
-  # 3. アジェンダ画像をZoomカメラに表示
+  begin
+    zoom = ZoomClient.new
+    zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
+    return "success"
+  rescue => e
+    return e
+  end
 end
 
 # ----------
 # 議題の変更（アプリからの通信）
 # ----------
 def changePhoto(id,title,duration)
-  # 1. ファイル削除（エラー発生(ファイルが存在しない→無視）)
   begin
-    File.delete(id+".jpg")
+    File.delete("public/assets/img/tmp/"+id+".png")
   rescue => e
     print(e)
   end
-  # 2. titleとdurationで、写真を生成（ここでは消さない）
-  topicWrite(content+"\n("+duration+"分)")
-  # 3. Zoomに表示する画像を変える
+  zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
 end
 
 # ----------
 # ミーティングの終了
 # ----------
 def finishMeeting(id)
-  # 1. ファイル削除（エラー発生(ファイルが存在しない→無視）
-  # 2. Zoomカメラを消す
+  begin
+    File.delete("public/assets/img/tmp/"+id+".png")
+  rescue => e
+    print(e)
+  end
+  # メモ：Zoomビデオを切れたらここに！
 end
 
 # ----------
