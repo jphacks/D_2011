@@ -29,8 +29,7 @@ ffmpegが標準出力を奪ってしまう仕様上、一度プログラムを�
 
 ### Vagrant採用理由について
 仮想カメラの実装に[v4l2loopback](https://github.com/umlaeute/v4l2loopback)を使用しています。v4l2loopbackはカーネルモジュールであり、全ての開発者のPCで環境を整えるのは難しいと判断したためVagrantを採用しています。
-
-[![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2020/09/JPHACKS2020_ogp.jpg)](https://www.youtube.com/watch?v=G5rULR53uMk)
+[![IMAGE ALT TEXT HERE](aika.png)
 
 ## 製品概要
 ### 背景(製品開発のきっかけ、課題等）
@@ -41,10 +40,11 @@ Zoomでの会議は何故か雑談で長くなってしまう。この課題に�
 ### 特長
 #### 1. 仮想カメラ
 #### 2. アジェンダの延長機能
-#### 3. 
 
 ### 解決出来ること
+オンライン会議における雑談
 ### 今後の展望
+議事録の自動生成
 ### 注力したこと（こだわり等）
 * アジェンダの自動生成
 * 仮想カメラの実装
