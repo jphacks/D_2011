@@ -297,7 +297,8 @@ end
 # 検証コード
 # ----------
 post '/test' do
-  data = { foo: params[:test] }
+  a = SecureRandom.hex
+  data = { foo: a }
   json data
 end
 
