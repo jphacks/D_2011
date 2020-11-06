@@ -6,36 +6,51 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">
   <style>
   html,body{
-    width: 1280px;
-    height: 720px;
+    width: 100vw;
     margin: 0;
     padding: 0;
     font-family: 'Noto Sans JP', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  h1,h2,h3,p{
+    text-align: center;
+    margin: 0 auto;
   }
   h1{
     font-size: 60px;
-    text-align: center;
     margin-top: 60px;
     margin-bottom: 10px;
-    overflow: hidden;
-    height: 1.4em;
-    padding: 0px 80px 0px 80px;
   }
   h2{
-    text-align: center;
     margin-top: 10px;
   }
-  p,div{
-    text-align: center;
-    margin:0 auto;
-    width: 80%;
-    font-size: 30px;
+  table{
+    width: 50vw;
+    min-width: 500px;
+    max-width: 800px;
+    margin: 0 auto;
   }
-  td{
-    width:300px;
+  table, th, td {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    line-height: 1.5;
+    text-align: left;
   }
-  .agenda_title{
-    width: 2500px;
+
+  table th {
+    width: 150px;
+    padding: 10px;
+    font-weight: bold;
+    vertical-align: top;
+    background: #3f3f3f;
+    color: #ffffff;
+  }
+  table td {
+    width: 350px;
+    padding: 10px;
+    vertical-align: top;
   }
   </style>
   </head>
@@ -47,12 +62,17 @@
     <h3>アジェンダ</h3>
       <table>
         <tbody>
+        <tr class="head">
+          <th style="width:15%">開始時間</th>
+          <th style="width:15%">所用時間</th>
+          <th style="width:70%">内容</th>
+        </tr>
           <% @meeting.agendas.each_with_index do |agenda, i| %>
-          <tr>
-            <td><%= @agenda_times[i] %></td>
-            <td><%= agenda.duration %>m</td>
-            <td class="agenda_title"><%= agenda.title%></td>
-          </tr>
+            <tr>
+              <td><%= @agenda_times[i] %></td>
+              <td><%= agenda.duration %>m</td>
+              <td class="agenda_title"><%= agenda.title%></td>
+            </tr>
           <% end %>
         </tbody>
       </table>
