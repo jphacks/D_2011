@@ -77,16 +77,14 @@ end
 # アジェンダページの表示
 # ----------
 get '/agenda/:id' do
-  hoge = Meeting.last
   # 本番はこれを使う
   @meeting = Meeting.find_by(random_num: params[:id])
   @agenda_times = []
   agenda_starting_time = @meeting.start
   @meeting.agendas.each do |agenda|
-    agenda_starting_time += agenda.duration / 60
+    agenda_starting_time += agenda.duration
     @agenda_times.append(Time.at(agenda_starting_time).strftime("%H:%M"))
   end
-  p @agenda_times
   @start_time =  Time.at(@meeting.start).strftime("%Y.%m.%d %H:%M~")
   erb :invite
 end
