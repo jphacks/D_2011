@@ -121,9 +121,14 @@ end
 # 議題の変更（アプリからの通信）
 # ----------
 def changePhoto(id,title,duration)
-  # 1. ファイル削除（エラー発生(ファイルが存在しない→無視）
-  # File.delete(id+".jpg")
+  # 1. ファイル削除（エラー発生(ファイルが存在しない→無視）)
+  begin
+    File.delete(id+".jpg")
+  rescue => e
+    print(e)
+  end
   # 2. titleとdurationで、写真を生成（ここでは消さない）
+  topicWrite(content+"\n("+duration+"分)")
   # 3. Zoomに表示する画像を変える
 end
 
@@ -270,4 +275,8 @@ get '/topic/:time/:title' do |time,title|
   @time = time
   @title = title
   erb :topic
+end
+
+post '/aaaa' do
+  return topicWrite("print_text","image_name")
 end

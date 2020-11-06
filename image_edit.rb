@@ -52,13 +52,16 @@ def topicBuild(print_text)
   topicConfiguration(text)
 end
 
-  # 合成後のFileの書き出し
+# 合成後のFileの書き出し
 def topicWrite(print_text,image_name)
   topicBuild(print_text)
+  image_name = image_name + ".png"
   @image.write image_name
   binary_data = File.read(image_name)
-  json_data = Base64.strict_encode64(binary_data)
-  return json_data
+  FileUtils.mv(image_name,"public/assets/img/tmp/"+image_name)
+  return "public/assets/img/tmp/"+image_name
+  # json_data = Base64.strict_encode64(binary_data)
+  # return json_data
 end
 
 def topicWriteWithDelete(print_text)
