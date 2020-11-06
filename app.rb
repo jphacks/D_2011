@@ -105,6 +105,8 @@ post '/meetingaction' do
 
   elsif request == "create" #ミーティングの作成(Base64の写真データと招待ページのURLをJSONで欲しい)
     return createMeeting(params[:title],params[:start],params[:link],params[:agenda])
+  elsif request == "mute"
+    muteAllPeople()
   end
 end
 
@@ -117,7 +119,8 @@ def startMeeting(id,duration,title)
     zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
     return "success"
   rescue => e
-    return e
+    print e
+    return "error"
   end
 end
 
@@ -171,6 +174,13 @@ def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
     "agenda"=> agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)),
     "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}"
   }.to_json
+end
+
+# ----------
+# ミュートにする
+# ----------
+def muteAllPeople()
+
 end
 
 # -----------
