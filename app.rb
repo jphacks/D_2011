@@ -9,10 +9,11 @@ require 'base64'
 require 'pry'
 require 'timers'
 require './image_edit.rb'
-  
+require './zoom_client.rb'
 
+require 'open3'
 
-
+zoom = nil
 use Rack::PostBodyContentTypeParser
 
 post '/test' do
@@ -127,4 +128,14 @@ get '/topic/:time/:title' do |time,title|
   @time = time
   @title = title
   erb :topic
+end
+
+get '/api/zoom/connect' do
+  zoom = ZoomClient.new
+  'ok'
+end
+
+get '/api/zoom/change' do
+  zoom.changeImage('test2.jpeg')
+  'ok'
 end

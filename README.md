@@ -10,15 +10,18 @@ vagrant ssh
 ruby app.rb
 ```
 
+### Vagrant採用理由について
+仮想カメラの実装に[v4l2loopback](https://github.com/umlaeute/v4l2loopback)を使用しています。v4l2loopbackはカーネルモジュールであり、全ての開発者のPCで環境を整えるのは難しいと判断したためVagrantを採用しています。
+
 [![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2020/09/JPHACKS2020_ogp.jpg)](https://www.youtube.com/watch?v=G5rULR53uMk)
 
 ## 製品概要
 ### 背景(製品開発のきっかけ、課題等）
 ### 製品説明（具体的な製品の説明）
 ### 特長
-####1. 特長1
-####2. 特長2
-####3. 特長3
+#### 1. 特長1
+#### 2. 特長2
+#### 3. 特長3
 
 ### 解決出来ること
 ### 今後の展望

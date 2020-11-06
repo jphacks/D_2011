@@ -59,3 +59,4 @@ build-iPhoneSimulator/
 # .rubocop-https?--*
 /.vagrant/
 .DS_Store
+token.js
