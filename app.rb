@@ -82,8 +82,8 @@ get '/agenda/:id' do
   @agenda_times = []
   agenda_starting_time = @meeting.start
   @meeting.agendas.each do |agenda|
-    agenda_starting_time += agenda.duration
     @agenda_times.append(Time.at(agenda_starting_time).strftime("%H:%M"))
+    agenda_starting_time += agenda.duration
   end
   @start_time =  Time.at(@meeting.start).strftime("%Y.%m.%d %H:%M~")
   erb :invite
@@ -145,14 +145,16 @@ end
 def finishMeeting(id)
   begin
     File.delete("public/assets/img/tmp/"+id+".png")
-    data = { status: "success" }
-    json data
+    # data = { status: "success" }
+    # json data
   # メモ：Zoomビデオを切れたらここに！
   rescue => e
     print(e)
-    data = { status: "error" }
-    json data
+    # data = { status: "error" }
+    # json data
   end
+  data = { status: "success" }
+  json data
 end
 
 # ----------
@@ -272,9 +274,13 @@ end
 get '/api/zoom/attendees' do
   zoom.getAttendeesList.to_s
 end
-# 参加者一覧取得
+# ミュート
 get '/api/zoom/mute' do
-  zoom.mute(params[:userid], params[:mute])
+  zoom.mute(params[:userid])
+end
+# アンミュート（リクエスト）
+get '/api/zoom/unmute' do
+  zoom.unmuteRequest(params[:userid])
 end
 
 # ----------
