@@ -265,9 +265,13 @@ end
 get '/api/zoom/attendees' do
   zoom.getAttendeesList.to_s
 end
-# 参加者一覧取得
+# ミュート
 get '/api/zoom/mute' do
-  zoom.mute(params[:userid], params[:mute])
+  zoom.mute(params[:userid])
+end
+# アンミュート（リクエスト）
+get '/api/zoom/unmute' do
+  zoom.unmuteRequest(params[:userid])
 end
 
 # ----------

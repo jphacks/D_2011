@@ -5,7 +5,7 @@ require 'json'
 # 提供するもの
 # ログイン by mtgID DONE
 # カメラの接続 DONE
-# カメラの切り替え
+# カメラの切り替え DONE
 # ユーザー一覧取得 DONE
 # mute切り替え DONE
 # 共同ホストチェック 
@@ -23,26 +23,24 @@ class ZoomClient
     @driver.get "http://localhost:#{ENV['PORT']}/zoom/index.html"
     @driver.execute_script "initialize('#{meetingId}', '#{meetingPwd}')"
 
-    pid = startFfmpeg('test1.png')
+    @pid = startFfmpeg('public/assets/img/aika_bg.jpg')
     begin
-      @driver.find_element(:class,'send-video-container__btn').click
+      clickVideoBtn()
     rescue
       retry
     end
-    sleep 10
-
-    Process.kill 9, pid.to_i
-    puts "killed #{pid.to_i}"
   end
 
   def changeImage(name)
-    pid = startFfmpeg(name)
+    if @pid != 0
+      Process.kill 9, @pid.to_i
+      @pid = 0
+    end
+    @pid = startFfmpeg(name)
 
     clickVideoBtn()
     sleep 1
     clickVideoBtn()
-    sleep 10
-    Process.kill 9, pid.to_i  
   end
 
   def requestCoHost
@@ -61,8 +59,9 @@ class ZoomClient
   end
 
   def startFfmpeg(filename)
-    cmd = "ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0 > /dev/null 2>&1"
-    return Process.spawn(cmd)
+    cmd = "nohup ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0 > /dev/null 2>&1"
+    Process.spawn(cmd)
+    return `ps aux | grep #{filename} | awk '{ print $2 " " $11 }' | grep ffmpeg | awk '{ print $1 }'`
   end
 
   def clickVideoBtn
