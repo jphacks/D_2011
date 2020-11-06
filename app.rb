@@ -13,7 +13,6 @@ require './image_edit.rb'
 require './zoom_client.rb'
 require 'grape'
 require "sinatra/json"
-require './api.rb'
 
 zoom = nil
 use Rack::PostBodyContentTypeParser
@@ -99,16 +98,16 @@ end
 post '/meetingaction' do
   request = params[:request]
   if request == "start" # ミーティングの開始(成功通知など何かしらのリスポンス)
-    return startMeeting(params[:id],params[:duration],params[:title])
+    json startMeeting(params[:id],params[:duration],params[:title])
 
   elsif request == "next" #議題の変更(リターンは特になくてもOK)
     changePhoto(params[:id],params[:title],params[:duration].to_i)
 
   elsif request == "finish" #ミーティングの終了(成功通知など何かしらのリスポンスが欲しい)
-    return finishMeeting(params[:id])
+    json finishMeeting(params[:id])
 
   elsif request == "create" #ミーティングの作成(Base64の写真データと招待ページのURLをJSONで欲しい)
-    return createMeeting(params[:title],params[:start],params[:link],params[:agenda])
+    json createMeeting(params[:title],params[:start],params[:link],params[:agenda])
 
   elsif request == "mute"
     muteAllPeople()
@@ -122,10 +121,10 @@ def startMeeting(id,duration,title)
   begin
     zoom = ZoomClient.new
     zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
-    return { "status" => "success"}.to_json
+    json { "status" => "success"}.to_json
   rescue => e
     print (e)
-    return { "status" => "error"}.to_json
+    json { "status" => "error"}.to_json
   end
 end
 
@@ -147,11 +146,11 @@ end
 def finishMeeting(id)
   begin
     File.delete("public/assets/img/tmp/"+id+".png")
-    return { "status" => "success"}.to_json
+    json { "status" => "success"}.to_json
   # メモ：Zoomビデオを切れたらここに！
   rescue => e
     print(e)
-    return { "status" => "error"}.to_json
+    json { "status" => "error"}.to_json
   end
 end
 
@@ -190,9 +189,9 @@ end
 def muteAllPeople()
   begin
     # ミュート処理をする
-    return { "status" => "success"}.to_json
+    json { "status" => "success"}.to_json
   rescue => e
-    return { "status" => "error"}.to_json
+    json { "status" => "error"}.to_json
   end
 end
 
@@ -202,14 +201,14 @@ end
 post '/topicphoto' do
   content = params[:content]
   duration = params[:duration]
-  return {"photo"=>topicWrite(content+"\n("+duration+"分)")}.to_json
+  json {"photo"=>topicWrite(content+"\n("+duration+"分)")}.to_json
 end
 
 # ----------
 # アジェンダ用の画像生成
 # ----------
 post '/agendaphoto' do
-  return agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
+  json agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
 end
 
 # ----------
@@ -224,7 +223,7 @@ def agendaphoto(title,startTime,agendas)
     text = {"photo"=>agendaSheetPhoto(title,a,i+1,agendaList.length)}
     returnText = returnText.push(text)
   end
-  return returnText.to_json
+  json returnText.to_json
 end
 
 # ----------
@@ -247,7 +246,7 @@ def agendaSheetPhoto(title,agendas,num,length)
     text = text + start + " " + duration.to_s + "m " + titleA + "\n"
     @startTime = @startTime + a["duration"]
   end
-  return agendaWrite(title,text)
+  json agendaWrite(title,text)
 end
 
 # ----------
