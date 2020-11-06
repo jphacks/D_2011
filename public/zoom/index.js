@@ -1,7 +1,7 @@
-var mn = "83681345241";
-var pwd = "k3mXNz";
-var email = "i@mizu.coffee";
-const userName = "aika";
+var mn = '99020754787';
+var pwd = '035030';
+var email = 'i@mizu.coffee';
+const userName = 'aika';
 
 (async function () {
   ZoomMtg.preLoadWasm();
@@ -13,12 +13,12 @@ const userName = "aika";
 
   ZoomMtg.getAttendeeslist({
     success: function (res) {
-      console.log("success getAttendeeslist", res);
+      console.log('success getAttendeeslist', res);
     },
   });
   ZoomMtg.getCurrentUser({
     success: function (res) {
-      console.log("success getCurrentUser", res.result.currentUser);
+      console.log('success getCurrentUser', res.result.currentUser);
     },
   });
 })();
@@ -39,7 +39,7 @@ function generateSignature(meetingNumber) {
 function initMeeting() {
   return new Promise((resolve, reject) => {
     ZoomMtg.init({
-      leaveUrl: "/zoom/index.html",
+      leaveUrl: '/zoom/index.html',
       success: (res) => resolve(res),
       error: (res) => reject(res),
     });

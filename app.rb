@@ -94,22 +94,21 @@ end
 # ----------
 post '/meetingaction' do
   request = params[:request]
-  if(request == "next"){
+  if request == "next"
     changePhoto(params[:id],params[:title],params[:duration].to_i)
   end
-  }
 end
 
 # ----------
 # 写真を次に変更する（アプリからの通信）
 # ----------
-def changePhoto(id,title,duration){
+def changePhoto(id,title,duration)
   # 1. ファイル削除（エラー発生(ファイルが存在しない→無視）
   # File.delete(id+".jpg")
   # 2. titleとdurationで、写真を生成（ここでは消さない）
   # 3. Zoomに表示する画像を変える
 end
-}
+
 
 post '/hoge' do
   title = params[:params]
