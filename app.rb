@@ -77,7 +77,7 @@ get '/:id' do
   @meeting = Meeting.find_by(random_num: hoge.random_num)
   @agenda_times = []
   agenda_starting_time = @meeting.start
-  @meeting.agendas.each do |agenda| 
+  @meeting.agendas.each do |agenda|
     agenda_starting_time += agenda.duration * 60
     @agenda_times.append(Time.at(agenda_starting_time).strftime("%H:%M"))
   end
@@ -170,6 +170,7 @@ end
 get '/api/zoom/change' do
   zoom.changeImage('test2.jpeg')
   'ok'
+end
 # ----------
 # ffmpegの実行
 # ----------
