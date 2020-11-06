@@ -61,7 +61,7 @@ post '/test' do
 
   return {
     "agenda"=> agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json)),
-    "url" => "https://aika.lit-kansai-mentors.com/#{meeting.random_num}"
+    "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}"
   }.to_json
 end
 
