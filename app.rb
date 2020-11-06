@@ -227,7 +227,7 @@ def agendaphoto(title,startTime,agendas)
   # p agendaList
   returnText = []
   agendaList.each_with_index do | a , i |
-    text = {photo : agendaSheetPhoto(title,a,i+1,agendaList.length)}
+    text = { photo: agendaSheetPhoto(title,a,i+1,agendaList.length)}
     returnText = returnText.push(text)
   end
   return returnText.to_json
