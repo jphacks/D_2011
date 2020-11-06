@@ -148,20 +148,6 @@ def agendaSheetPhoto(title,agendas,num,length)
   return agendaWrite(title,text)
 end
 
-get '/aaa' do
-  erb:invitation
-end
-
-get '/cmdtest' do
-  viewTopicPhoto("print_text","10")
-end
-
-get '/topic/:time/:title' do |time,title|
-  @time = time
-  @title = title
-  erb :topic
-end
-
 get '/api/zoom/connect' do
   zoom = ZoomClient.new
   'ok'
@@ -171,6 +157,7 @@ get '/api/zoom/change' do
   zoom.changeImage('test2.jpeg')
   'ok'
 end
+
 # ----------
 # ffmpegの実行
 # ----------
@@ -183,4 +170,21 @@ def viewTopicPhoto(content,duration)
   p stdout
   p stderr
   p status
+end
+
+# ----------
+# 検証コード
+# ----------
+get '/aaa' do
+  erb:invitation
+end
+
+get '/cmdtest' do
+  viewTopicPhoto("print_text","10")
+end
+
+get '/topic/:time/:title' do |time,title|
+  @time = time
+  @title = title
+  erb :topic
 end
