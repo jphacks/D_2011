@@ -25,18 +25,37 @@
     text-align: center;
     margin-top: 10px;
   }
-  p{
+  p,div{
     text-align: center;
+    margin:0 auto;
+    width: 80%;
+    font-size: 30px;
+  }
+  td{
+    width:300px;
+  }
+  .agenda_title{
+    width: 2500px;
   }
   </style>
   </head>
   <body>
     <h1><%= @meeting.title %></h1>
     <h2><%= @start_time %></h2>
-    <p><a href="<%=@meeting.link %>">会議に参加する</a></p>
-    <% @meeting.agendas.each_with_index do |agenda, i| %>
-      <p><%= @agenda_times[i] %> <%= agenda.duration %>m <%= agenda.title%> <p>
-
-    <% end %>
+    <p><a href="<%=@meeting.link %>" class="button"><button>会議に参加する</button></a></p>
+    <div>
+    <h3>アジェンダ</h3>
+      <table>
+        <tbody>
+          <% @meeting.agendas.each_with_index do |agenda, i| %>
+          <tr>
+            <td><%= @agenda_times[i] %></td>
+            <td><%= agenda.duration %>m</td>
+            <td class="agenda_title"><%= agenda.title%></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>
