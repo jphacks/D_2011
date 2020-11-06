@@ -148,11 +148,15 @@ def agendaSheetPhoto(title,agendas,num,length)
   return agendaWrite(title,text)
 end
 
+# ----------
+# 仮想カメラの制御
+# ----------
+# Zoomに接続
 get '/api/zoom/connect' do
   zoom = ZoomClient.new
   'ok'
 end
-
+# 画像変更
 get '/api/zoom/change' do
   zoom.changeImage('test2.jpeg')
   'ok'
