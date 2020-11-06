@@ -53,7 +53,15 @@ def topicBuild(print_text)
 end
 
   # 合成後のFileの書き出し
-def topicWrite(print_text)
+def topicWrite(print_text,image_name)
+  topicBuild(print_text)
+  @image.write image_name
+  binary_data = File.read(image_name)
+  json_data = Base64.strict_encode64(binary_data)
+  return json_data
+end
+
+def topicWriteWithDelete(print_text)
   topicBuild(print_text)
   image_name = uniq_file_name
   @image.write image_name
