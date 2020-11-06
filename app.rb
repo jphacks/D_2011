@@ -82,8 +82,8 @@ get '/agenda/:id' do
   @agenda_times = []
   agenda_starting_time = @meeting.start
   @meeting.agendas.each do |agenda|
-    agenda_starting_time += agenda.duration
     @agenda_times.append(Time.at(agenda_starting_time).strftime("%H:%M"))
+    agenda_starting_time += agenda.duration
   end
   @start_time =  Time.at(@meeting.start).strftime("%Y.%m.%d %H:%M~")
   erb :invite
