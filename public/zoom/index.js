@@ -1,27 +1,50 @@
-var mn = '99020754787';
-var pwd = '035030';
-var email = 'i@mizu.coffee';
-const userName = 'aika';
+const email = "aika.tgch@gmail.com";
+const userName = "aika";
 
-(async function () {
+let isJoined = false
+let attendeesList = null
+let currentUser = null
+
+async function initialize(mn, pwd) {
   ZoomMtg.preLoadWasm();
   ZoomMtg.prepareJssdk();
 
   const signature = await generateSignature(mn);
   await initMeeting();
-  await joinMeeting(mn, signature);
+  await joinMeeting(mn, signature, pwd);
 
+  isJoined = true;
+}
+
+function updateAttendeesList() {
+  attendeesList = null
   ZoomMtg.getAttendeeslist({
     success: function (res) {
-      console.log('success getAttendeeslist', res);
+      attendeesList = res.result.attendeesList
     },
   });
+}
+
+function getAttendeesList() {
+  return attendeesList
+}
+
+function updateCurrentUser() {
+  currentUser = null
   ZoomMtg.getCurrentUser({
     success: function (res) {
-      console.log('success getCurrentUser', res.result.currentUser);
+      currentUser = res.result
     },
   });
-})();
+}
+
+function getCurrentUser() {
+  return currentUser
+}
+
+function mute(userId, mute) {
+  ZoomMtg.mute({userId, mute});
+}
 
 function generateSignature(meetingNumber) {
   return new Promise((resolve, reject) => {
@@ -39,14 +62,14 @@ function generateSignature(meetingNumber) {
 function initMeeting() {
   return new Promise((resolve, reject) => {
     ZoomMtg.init({
-      leaveUrl: '/zoom/index.html',
+      leaveUrl: "/zoom/index.html",
       success: (res) => resolve(res),
       error: (res) => reject(res),
     });
   });
 }
 
-async function joinMeeting(meetingNumber, signature) {
+async function joinMeeting(meetingNumber, signature, pwd) {
   return new Promise((resolve, reject) => {
     ZoomMtg.join({
       meetingNumber,

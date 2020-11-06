@@ -252,13 +252,22 @@ end
 # ----------
 # Zoomに接続
 get '/api/zoom/connect' do
-  zoom = ZoomClient.new
+  zoom = ZoomClient.new("83465557585", "Z5jTwT")
+  zoom.requestCoHost
   'ok'
 end
 # 画像変更
 get '/api/zoom/change' do
   zoom.changeImage('test2.jpeg')
   'ok'
+end
+# 参加者一覧取得
+get '/api/zoom/attendees' do
+  zoom.getAttendeesList.to_s
+end
+# 参加者一覧取得
+get '/api/zoom/mute' do
+  zoom.mute(params[:userid], params[:mute])
 end
 
 # ----------
