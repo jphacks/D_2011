@@ -83,7 +83,7 @@
           <% @meeting.agendas.each_with_index do |agenda, i| %>
             <tr>
               <td><%= @agenda_times[i] %></td>
-              <td><%= agenda.duration %>分</td>
+              <td><%= agenda.duration / 60 %>分</td>
               <td class="agenda_title"><%= agenda.title %></td>
             </tr>
           <% end %>
