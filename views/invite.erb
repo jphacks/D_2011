@@ -4,10 +4,11 @@
   </head>
   <body>
     <p><%= @meeting.title %></p>
-    <p><%= @date %></p>
-    <a href="<%=@meeting.link %>">リンク</a>
-    <% @meeting.agendas.each do |agenda| %>
-      <p><%= agenda.title%> <%= agenda.duration%>分<p>
+    <p><%= @start_time %></p>
+    <a href="<%=@meeting.link %>">会議に参加する</a>
+    <% @meeting.agendas.each_with_index do |agenda, i| %>
+      <p><%= @agenda_times[i] %> <%= agenda.duration %>m <%= agenda.title%> <p>
+      
     <% end %>
   </body>
 </html>
