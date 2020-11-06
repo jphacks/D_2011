@@ -41,21 +41,21 @@ def timer(array, start)
 end
 
 post '/test' do
-  Thread.new { timer(params["agenda"], params["start"]) }
+  Thread.new { timer(params[:agenda], params[:start]) }
   meeting_id = SecureRandom.hex
   time = Time.at(params[:start])
   meeting = Meeting.create(
     random_num: meeting_id,
     start: time,
-    link: params["link"],
-    title: params["title"]
+    link: params[:link],
+    title: params[:title]
   )
 
   params["agenda"].each do |agenda|
     agenda = Agenda.create(
       meeting_id: meeting.id,
-      title: agenda["title"],
-      duration: agenda["duration"]
+      title: agenda[:title],
+      duration: agenda[:duration]
     )
   end
 
@@ -94,13 +94,29 @@ end
 # ----------
 post '/meetingaction' do
   request = params[:request]
-  if request == "next"
+  if request == "start" # ミーティングの開始(成功通知など何かしらのリスポンス)
+    return startMeeting(params[:id],params[:duration],params[:title])
+
+  elsif request == "next" #議題の変更(リターンは特になくてもOK)
     changePhoto(params[:id],params[:title],params[:duration].to_i)
+
+  elsif request == "finish" #ミーティングの終了(成功通知など何かしらのリスポンスが欲しい)
+    return finishMeeting(params[:id])
+
+  elsif request == "create" #ミーティングの作成(Base64の写真データと招待ページのURLをJSONで欲しい)
+    return createMeeting(params[:title],params[:start],params[:link],params[:agenda])
   end
 end
 
 # ----------
-# 写真を次に変更する（アプリからの通信）
+# ミーティングの開始
+# ----------
+def startMeeting(id,duration,title)
+
+end
+
+# ----------
+# 議題の変更（アプリからの通信）
 # ----------
 def changePhoto(id,title,duration)
   # 1. ファイル削除（エラー発生(ファイルが存在しない→無視）
@@ -109,6 +125,42 @@ def changePhoto(id,title,duration)
   # 3. Zoomに表示する画像を変える
 end
 
+# ----------
+# ミーティングの終了
+# ----------
+def finishMeeting(id)
+
+end
+
+# ----------
+# ミーティングの作成
+# ----------
+def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
+  Thread.new { timer(agendaAPI, startTimeAPI) }
+  meeting_id = SecureRandom.hex
+  time = Time.at(startTimeAPI)
+  meeting = Meeting.create(
+    random_num: meeting_id,
+    start: time,
+    link: linkAPI,
+    title: titleAPI
+  )
+
+  agendaAPI.each do |agenda|
+    agenda = Agenda.create(
+      meeting_id: meeting.id,
+      title: titleAPI,
+      duration: agenda[:duration]
+    )
+  end
+
+  return {
+    "agenda"=> agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)),
+    "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}"
+  }.to_json
+end
+
+# -----------
 
 post '/hoge' do
   title = params[:params]
