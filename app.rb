@@ -70,7 +70,7 @@ get '/' do
   SecureRandom.hex
 end
 
-get '/:id' do
+get '/agenda/:id' do
   hoge = Meeting.last
   # 本番はこれを使う
   # @meeting = Meeting.find_by(random_num: params[:id])
