@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta charset="UTF-8">
-	<title>タイトル</title>
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">
-	<style>
-	html,body{
-		width: 1280px;
-		height: 720px;
-		margin: 0;
-		padding: 0;
-		font-family: 'Noto Sans JP', sans-serif;
-	}
-	body{
-		color: #ffffff;
-		background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
-	}
-	h1{
-		font-size: 60px;
-		text-align: center;
-		margin-top: 60px;
-		margin-bottom: 40px;
-		overflow: hidden;
-		height: 1.4em;
-		padding: 0px 80px 0px 80px;
-	}
-	p{
-		overflow: hidden;
-		height: 1.5em;
-		font-size: 40px;
-		padding: 0px 80px 0px 80px;
-	}
-	</style>
+  <meta charset="UTF-8">
+  <title>aika</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">
+  <style>
+  html,body{
+    width: 1280px;
+    height: 720px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  body{
+    color: #ffffff;
+    background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+  }
+  h1{
+    font-size: 60px;
+    text-align: center;
+    margin-top: 60px;
+    margin-bottom: 40px;
+    overflow: hidden;
+    height: 1.4em;
+    padding: 0px 80px 0px 80px;
+  }
+  p{
+    overflow: hidden;
+    height: 1.5em;
+    font-size: 40px;
+    padding: 0px 80px 0px 80px;
+  }
+  </style>
 </head>
 <body>
-	<h1><%= @title %></h1>
-	<% @contents.each do |c| %>
-		<p><%= c[0] %>　<%= c[1] %>m　<%= c[2] %></p>
-	<% end %>
+  <h1><%= @title %></h1>
+  <% @contents.each do |c| %>
+    <p><%= c[0] %>　<%= c[1] %>m　<%= c[2] %></p>
+  <% end %>
 </body>
 </html>

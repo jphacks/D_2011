@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  <meta charset="UTF-8">
+  <title>aika</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">
+  <style>
+  html,body{
+    width: 1280px;
+    height: 720px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  h1{
+    font-size: 60px;
+    text-align: center;
+    margin-top: 60px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    height: 1.4em;
+    padding: 0px 80px 0px 80px;
+  }
+  h2{
+    text-align: center;
+    margin-top: 10px;
+  }
+  p,div{
+    text-align: center;
+    margin:0 auto;
+    width: 80%;
+    font-size: 30px;
+  }
+  td{
+    width:300px;
+  }
+  .agenda_title{
+    width: 2500px;
+  }
+  </style>
+  </head>
+  <body>
+    <h1><%= @meeting.title %></h1>
+    <h2><%= @start_time %></h2>
+    <p><a href="<%=@meeting.link %>" class="button"><button>会議に参加する</button></a></p>
+    <div>
+    <h3>アジェンダ</h3>
+      <table>
+        <tbody>
+          <% @meeting.agendas.each_with_index do |agenda, i| %>
+          <tr>
+            <td><%= @agenda_times[i] %></td>
+            <td><%= agenda.duration %>m</td>
+            <td class="agenda_title"><%= agenda.title%></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
