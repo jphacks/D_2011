@@ -77,13 +77,13 @@
         <tbody>
         <tr class="head">
           <th style="width:15%">開始時間</th>
-          <th style="width:15%">所用時間</th>
+          <th style="width:15%">所要時間</th>
           <th style="width:70%">内容</th>
         </tr>
           <% @meeting.agendas.each_with_index do |agenda, i| %>
             <tr>
               <td><%= @agenda_times[i] %></td>
-              <td><%= agenda.duration %>m</td>
+              <td><%= agenda.duration %>分</td>
               <td class="agenda_title"><%= agenda.title%></td>
             </tr>
           <% end %>

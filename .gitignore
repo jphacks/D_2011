@@ -61,3 +61,4 @@ build-iPhoneSimulator/
 .DS_Store
 token.js
 hoge.png
+/public/assets/img/tmp/
