@@ -135,7 +135,7 @@ def agendaSheetPhoto(title,agendas,num,length)
   return agendaWrite(title,text)
 end
 
-get '/invitation' do
+get '/aaa' do
   erb:invitation
 end
 
