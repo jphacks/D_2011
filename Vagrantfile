@@ -35,7 +35,6 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: "192.168.33.10"
   config.vm.network "forwarded_port", guest: 3000, host: 3000
 
-
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
@@ -46,7 +45,7 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-
+  
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
@@ -67,11 +66,16 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     apt update
-    apt install -y aptitude ruby ruby-dev libsqlite3-dev imagemagick chromium-browser chromium-chromedriver
-    aptitude install -y v4l2loopback-dkms ffmpeg
+    apt install -y ruby ruby-dev libsqlite3-dev imagemagick chromium-browser chromium-chromedriver ffmpeg firefox v4l2loopback-dkms=0.12.3-1
     modprobe v4l2loopback devices=100
     echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
+    usermod -aG video vagrant
     gem install bundler
+    wget https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux64.tar.gz
+    tar xvf geckodriver-v0.28.0-linux64.tar.gz
+    chmod 755 geckodriver
+    mv geckodriver /usr/bin
+    rm geckodriver-v0.28.0-linux64.tar.gz
     cd /vagrant
     bundle config set system 'true'
     bundle install --without production

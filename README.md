@@ -1,5 +1,21 @@
 # aika
 
+## 開発準備
+### Step 1. Zoom API Key
+token.jsをpublic/zoomに用意してください。
+内容はZoomのtokenです
+
+```js
+var API_KEY = "";
+var API_SECRET = "";
+```
+
+### Step 2. google-cloud-apikey.json
+google-cloud-apikey.jsonをプロジェクトルートに配置してください。
+
+### Step 3. index.js (DEBUG)
+デバッグ時はpublic/zoom/index.jsの上2行を適時修正して使用してください。
+
 ## 動作環境について
 当リポジトリのプログラムはVagrant上での動作を想定して開発しています。   
 基本的にホットリロード（sinatra/reloader）に対応していますが、Gemfileを更新した時などはコンテナを作り直してください。
@@ -7,8 +23,15 @@
 ```bash
 vagrant up
 vagrant ssh
-ruby app.rb
+ruby app.rb -o 0.0.0.0
 ```
+
+### 現時点での不具合
+ffmpegが標準出力を奪ってしまう仕様上、一度プログラムを起動すると正常に動作しなくなります。
+強制的にvagrantを終了し（exitコマンドで退出）、再度vagrant sshでコンソールに入ってください。
+
+### Vagrant採用理由について
+仮想カメラの実装に[v4l2loopback](https://github.com/umlaeute/v4l2loopback)を使用しています。v4l2loopbackはカーネルモジュールであり、全ての開発者のPCで環境を整えるのは難しいと判断したためVagrantを採用しています。
 
 [![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2020/09/JPHACKS2020_ogp.jpg)](https://www.youtube.com/watch?v=G5rULR53uMk)
 
@@ -16,9 +39,9 @@ ruby app.rb
 ### 背景(製品開発のきっかけ、課題等）
 ### 製品説明（具体的な製品の説明）
 ### 特長
-####1. 特長1
-####2. 特長2
-####3. 特長3
+#### 1. 特長1
+#### 2. 特長2
+#### 3. 特長3
 
 ### 解決出来ること
 ### 今後の展望

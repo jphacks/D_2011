@@ -10,7 +10,9 @@ require 'pry'
 require 'timers'
 require 'open3'
 require './image_edit.rb'
+require './zoom_client.rb'
 
+zoom = nil
 use Rack::PostBodyContentTypeParser
 
 def timer(array, start)
@@ -154,6 +156,20 @@ get '/cmdtest' do
   viewTopicPhoto("print_text","10")
 end
 
+get '/topic/:time/:title' do |time,title|
+  @time = time
+  @title = title
+  erb :topic
+end
+
+get '/api/zoom/connect' do
+  zoom = ZoomClient.new
+  'ok'
+end
+
+get '/api/zoom/change' do
+  zoom.changeImage('test2.jpeg')
+  'ok'
 # ----------
 # ffmpegの実行
 # ----------
