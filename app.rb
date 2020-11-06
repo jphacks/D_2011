@@ -11,59 +11,62 @@ require 'timers'
 require 'open3'
 require './image_edit.rb'
 require './zoom_client.rb'
+require 'grape'
+require "sinatra/json"
 
 zoom = nil
 use Rack::PostBodyContentTypeParser
 
-def timer(array, start)
-  timers = Timers::Group.new
-  # UNIX時間を生成
-  current_time = Time.new.to_i
-  loop do
-    break if start <= current_time
-    sleep 1
-  end
-  array.each do |agenda|
-    topic_image = topicWrite(agenda["title"]+"\n("+"#{agenda["duration"]}"+"分)")
-    # Zoom Clientのメソッドを起動する
+# def timer(array, start)
+#   timers = Timers::Group.new
+#   # UNIX時間を生成
+#   current_time = Time.new.to_i
+#   loop do
+#     break if start <= current_time
+#     sleep 1
+#   end
+#   array.each do |agenda|
+#     topic_image = topicWrite(agenda["title"]+"\n("+"#{agenda["duration"]}"+"分)")
+#     # Zoom Clientのメソッドを起動する
 
-    #
-    timer = timers.after(agenda["duration"]) {
+#     #
+#     timer = timers.after(agenda["duration"]) {
 
-    }
-    # timer = timers.after(agenda["duration"] * 60) {
-      # Zoom Clientでカメラを落とすなどする(?)
+#     }
+#     # timer = timers.after(agenda["duration"] * 60) {
+#       # Zoom Clientでカメラを落とすなどする(?)
 
-      #
-    # }
-    timers.wait
-  end
-end
+#       #
+#     # }
+#     timers.wait
+#   end
+# end
 
-post '/test' do
-  Thread.new { timer(params[:agenda], params[:start]) }
-  meeting_id = SecureRandom.hex
-  time = Time.at(params[:start])
-  meeting = Meeting.create(
-    random_num: meeting_id,
-    start: time,
-    link: params[:link],
-    title: params[:title]
-  )
+# post '/test' do
+#   Thread.new { timer(params[:agenda], params[:start]) }
+#   meeting_id = SecureRandom.hex
+#   time = Time.at(params[:start])
+#   meeting = Meeting.create(
+#     random_num: meeting_id,
+#     start: time,
+#     link: params[:link],
+#     title: params[:title]
+#   )
 
-  params["agenda"].each do |agenda|
-    agenda = Agenda.create(
-      meeting_id: meeting.id,
-      title: agenda[:title],
-      duration: agenda[:duration]
-    )
-  end
+#   params["agenda"].each do |agenda|
+#     agenda = Agenda.create(
+#       meeting_id: meeting.id,
+#       title: agenda[:title],
+#       duration: agenda[:duration]
+#     )
+#   end
 
-  return {
-    "agenda"=> agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json)),
-    "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}"
-  }.to_json
-end
+#   return {
+#     "agenda"=> agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json)),
+#     "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}",
+#     "id" => meeting.random_num
+#   }.to_json
+# end
 
 get '/' do
   'Hello World!'
@@ -74,17 +77,14 @@ end
 # アジェンダページの表示
 # ----------
 get '/agenda/:id' do
-  hoge = Meeting.last
   # 本番はこれを使う
-  # @meeting = Meeting.find_by(random_num: params[:id])
-  @meeting = Meeting.find_by(random_num: hoge.random_num)
+  @meeting = Meeting.find_by(random_num: params[:id])
   @agenda_times = []
   agenda_starting_time = @meeting.start
   @meeting.agendas.each do |agenda|
-    agenda_starting_time += agenda.duration * 60
     @agenda_times.append(Time.at(agenda_starting_time).strftime("%H:%M"))
+    agenda_starting_time += agenda.duration
   end
-  p @agenda_times
   @start_time =  Time.at(@meeting.start).strftime("%Y.%m.%d %H:%M~")
   erb :invite
 end
@@ -105,6 +105,7 @@ post '/meetingaction' do
 
   elsif request == "create" #ミーティングの作成(Base64の写真データと招待ページのURLをJSONで欲しい)
     return createMeeting(params[:title],params[:start],params[:link],params[:agenda])
+
   elsif request == "mute"
     muteAllPeople()
   end
@@ -117,10 +118,12 @@ def startMeeting(id,duration,title)
   begin
     zoom = ZoomClient.new
     zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
-    return "success"
+    data = { status: "success" }
+    json data
   rescue => e
-    print e
-    return "error"
+    print (e)
+    data = { status: "error" }
+    json data
   end
 end
 
@@ -142,17 +145,22 @@ end
 def finishMeeting(id)
   begin
     File.delete("public/assets/img/tmp/"+id+".png")
+    # data = { status: "success" }
+    # json data
+  # メモ：Zoomビデオを切れたらここに！
   rescue => e
     print(e)
+    # data = { status: "error" }
+    # json data
   end
-  # メモ：Zoomビデオを切れたらここに！
+  data = { status: "success" }
+  json data
 end
 
 # ----------
 # ミーティングの作成
 # ----------
 def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
-  Thread.new { timer(agendaAPI, startTimeAPI) }
   meeting_id = SecureRandom.hex
   time = Time.at(startTimeAPI)
   meeting = Meeting.create(
@@ -170,44 +178,45 @@ def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
     )
   end
 
-  return {
-    "agenda"=> agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)),
-    "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}"
-  }.to_json
+  # return {
+  #   "agenda"=> agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)),
+  #   "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}",
+  #   "id" => meeting.random_num
+  # }.to_json
+  data = { agenda: agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)) , url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}" , id: meeting.random_num }
+  json data
 end
 
 # ----------
 # ミュートにする
 # ----------
 def muteAllPeople()
-
-end
-
-# -----------
-
-post '/hoge' do
-  title = params[:params]
-  start = Time.at(params[:start].to_i)
-  link = params[:link]
-  agenda = JSON.parse(params[:agenda].to_json)
-  p agenda.to_s
+  begin
+    # ミュート処理をする
+    data = { status: "success" }
+    json data
+  rescue => e
+    data = { status: "error" }
+    json data
+  end
 end
 
 # ----------
 # 仮想カメラ用の画像生成
 # ----------
-post '/topicphoto' do
-  content = params[:content]
-  duration = params[:duration]
-  return {"photo"=>topicWrite(content+"\n("+duration+"分)")}.to_json
-end
+# post '/topicphoto' do
+#   content = params[:content]
+#   duration = params[:duration]
+#   data = { photo: topicWrite(content+"\n("+duration+"分)") }
+#   json data
+# end
 
 # ----------
 # アジェンダ用の画像生成
 # ----------
-post '/agendaphoto' do
-  return agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
-end
+# post '/agendaphoto' do
+#   return agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
+# end
 
 # ----------
 # アジェンダ画像生成（タイトル(String),開始時間(UNIX時間),アジェンダのリスト(連想配列)）
@@ -218,7 +227,7 @@ def agendaphoto(title,startTime,agendas)
   # p agendaList
   returnText = []
   agendaList.each_with_index do | a , i |
-    text = {"photo"=>agendaSheetPhoto(title,a,i+1,agendaList.length)}
+    text = { photo: agendaSheetPhoto(title,a,i+1,agendaList.length)}
     returnText = returnText.push(text)
   end
   return returnText.to_json
@@ -291,20 +300,45 @@ end
 # ----------
 # 検証コード
 # ----------
-get '/aaa' do
-  erb:invitation
+post '/test' do
+  a = SecureRandom.hex
+  data = { foo: a }
+  json data
 end
 
-get '/cmdtest' do
-  viewTopicPhoto("print_text","10")
-end
 
-get '/topic/:time/:title' do |time,title|
-  @time = time
-  @title = title
-  erb :topic
-end
+# get '/aaa' do
+#   erb:invitation
+# end
 
-post '/aaaa' do
-  return topicWrite("print_text","image_name")
-end
+# get '/cmdtest' do
+#   viewTopicPhoto("print_text","10")
+# end
+
+# get '/topic/:time/:title' do |time,title|
+#   @time = time
+#   @title = title
+#   erb :topic
+# end
+
+# post '/aaaa' do
+#   return { "status" => topicWrite("print_text","image_name")}.to_json
+# end
+
+# post '/hoge' do
+#   title = params[:params]
+#   start = Time.at(params[:start].to_i)
+#   link = params[:link]
+#   agenda = JSON.parse(params[:agenda].to_json)
+#   p agenda.to_s
+# end
+
+# post '/test' do
+#   # body = env['api.request.body']
+#   # return body # Response BodyにそのままRequest Bodyを返す
+#   api = nil
+#   api = API.new
+#   api.user("test")
+# end
+
+# run Rack::URLMap.new("/api" => Api.new)
