@@ -121,10 +121,10 @@ def startMeeting(id,duration,title)
   begin
     zoom = ZoomClient.new
     zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
-    json {status: "success"}
+    # json {status: "success"}
   rescue => e
     print (e)
-    json {status: "error"}
+    # json {status: "error"}
     # return { "status" => "error"}.to_json
   end
 end
@@ -148,12 +148,12 @@ def finishMeeting(id)
   begin
     File.delete("public/assets/img/tmp/"+id+".png")
     # return { "status" => "success"}.to_json
-    json {status: "success"}
+    # json {status: "success"}
   # メモ：Zoomビデオを切れたらここに！
   rescue => e
     print(e)
     # return { "status" => "error"}.to_json
-    json {status: "error"}
+    # json {status: "error"}
   end
 end
 
