@@ -98,16 +98,16 @@ end
 post '/meetingaction' do
   request = params[:request]
   if request == "start" # ミーティングの開始(成功通知など何かしらのリスポンス)
-    json startMeeting(params[:id],params[:duration],params[:title])
+    return startMeeting(params[:id],params[:duration],params[:title])
 
   elsif request == "next" #議題の変更(リターンは特になくてもOK)
     changePhoto(params[:id],params[:title],params[:duration].to_i)
 
   elsif request == "finish" #ミーティングの終了(成功通知など何かしらのリスポンスが欲しい)
-    json finishMeeting(params[:id])
+    return finishMeeting(params[:id])
 
   elsif request == "create" #ミーティングの作成(Base64の写真データと招待ページのURLをJSONで欲しい)
-    json createMeeting(params[:title],params[:start],params[:link],params[:agenda])
+    return createMeeting(params[:title],params[:start],params[:link],params[:agenda])
 
   elsif request == "mute"
     muteAllPeople()
@@ -121,10 +121,11 @@ def startMeeting(id,duration,title)
   begin
     zoom = ZoomClient.new
     zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
-    json { "status" => "success"}.to_json
+    json {status: "success"}
   rescue => e
     print (e)
-    json { "status" => "error"}.to_json
+    json {status: "error"}
+    # return { "status" => "error"}.to_json
   end
 end
 
@@ -146,11 +147,13 @@ end
 def finishMeeting(id)
   begin
     File.delete("public/assets/img/tmp/"+id+".png")
-    json { "status" => "success"}.to_json
+    # return { "status" => "success"}.to_json
+    json {status: "success"}
   # メモ：Zoomビデオを切れたらここに！
   rescue => e
     print(e)
-    json { "status" => "error"}.to_json
+    # return { "status" => "error"}.to_json
+    json {status: "error"}
   end
 end
 
@@ -189,9 +192,9 @@ end
 def muteAllPeople()
   begin
     # ミュート処理をする
-    json { "status" => "success"}.to_json
+    return { "status" => "success"}.to_json
   rescue => e
-    json { "status" => "error"}.to_json
+    return { "status" => "error"}.to_json
   end
 end
 
@@ -201,14 +204,14 @@ end
 post '/topicphoto' do
   content = params[:content]
   duration = params[:duration]
-  json {"photo"=>topicWrite(content+"\n("+duration+"分)")}.to_json
+  return {"photo"=>topicWrite(content+"\n("+duration+"分)")}.to_json
 end
 
 # ----------
 # アジェンダ用の画像生成
 # ----------
 post '/agendaphoto' do
-  json agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
+  return agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
 end
 
 # ----------
@@ -223,7 +226,7 @@ def agendaphoto(title,startTime,agendas)
     text = {"photo"=>agendaSheetPhoto(title,a,i+1,agendaList.length)}
     returnText = returnText.push(text)
   end
-  json returnText.to_json
+  return returnText.to_json
 end
 
 # ----------
@@ -246,7 +249,7 @@ def agendaSheetPhoto(title,agendas,num,length)
     text = text + start + " " + duration.to_s + "m " + titleA + "\n"
     @startTime = @startTime + a["duration"]
   end
-  json agendaWrite(title,text)
+  return agendaWrite(title,text)
 end
 
 # ----------
@@ -289,6 +292,12 @@ end
 # ----------
 # 検証コード
 # ----------
+post '/test' do
+  data = { foo: "bar" }
+  json data
+end
+
+
 # get '/aaa' do
 #   erb:invitation
 # end
