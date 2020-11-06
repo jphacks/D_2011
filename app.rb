@@ -121,11 +121,12 @@ def startMeeting(id,duration,title)
   begin
     zoom = ZoomClient.new
     zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
-    # json {status: "success"}
+    data = { status: "success" }
+    json data
   rescue => e
     print (e)
-    # json {status: "error"}
-    # return { "status" => "error"}.to_json
+    data = { status: "error" }
+    json data
   end
 end
 
@@ -147,13 +148,13 @@ end
 def finishMeeting(id)
   begin
     File.delete("public/assets/img/tmp/"+id+".png")
-    # return { "status" => "success"}.to_json
-    # json {status: "success"}
+    data = { status: "success" }
+    json data
   # メモ：Zoomビデオを切れたらここに！
   rescue => e
     print(e)
-    # return { "status" => "error"}.to_json
-    # json {status: "error"}
+    data = { status: "error" }
+    json data
   end
 end
 
@@ -179,11 +180,13 @@ def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
     )
   end
 
-  return {
-    "agenda"=> agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)),
-    "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}",
-    "id" => meeting.random_num
-  }.to_json
+  # return {
+  #   "agenda"=> agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)),
+  #   "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}",
+  #   "id" => meeting.random_num
+  # }.to_json
+  data = { agenda: "success" , url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}" , id: meeting.random_num }
+  json data
 end
 
 # ----------
@@ -192,27 +195,30 @@ end
 def muteAllPeople()
   begin
     # ミュート処理をする
-    return { "status" => "success"}.to_json
+    data = { status: "success" }
+    json data
   rescue => e
-    return { "status" => "error"}.to_json
+    data = { status: "error" }
+    json data
   end
 end
 
 # ----------
 # 仮想カメラ用の画像生成
 # ----------
-post '/topicphoto' do
-  content = params[:content]
-  duration = params[:duration]
-  return {"photo"=>topicWrite(content+"\n("+duration+"分)")}.to_json
-end
+# post '/topicphoto' do
+#   content = params[:content]
+#   duration = params[:duration]
+#   data = { photo: topicWrite(content+"\n("+duration+"分)") }
+#   json data
+# end
 
 # ----------
 # アジェンダ用の画像生成
 # ----------
-post '/agendaphoto' do
-  return agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
-end
+# post '/agendaphoto' do
+#   return agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json))
+# end
 
 # ----------
 # アジェンダ画像生成（タイトル(String),開始時間(UNIX時間),アジェンダのリスト(連想配列)）
