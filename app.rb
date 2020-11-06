@@ -15,55 +15,56 @@ require './zoom_client.rb'
 zoom = nil
 use Rack::PostBodyContentTypeParser
 
-def timer(array, start)
-  timers = Timers::Group.new
-  # UNIX時間を生成
-  current_time = Time.new.to_i
-  loop do
-    break if start <= current_time
-    sleep 1
-  end
-  array.each do |agenda|
-    topic_image = topicWrite(agenda["title"]+"\n("+"#{agenda["duration"]}"+"分)")
-    # Zoom Clientのメソッドを起動する
+# def timer(array, start)
+#   timers = Timers::Group.new
+#   # UNIX時間を生成
+#   current_time = Time.new.to_i
+#   loop do
+#     break if start <= current_time
+#     sleep 1
+#   end
+#   array.each do |agenda|
+#     topic_image = topicWrite(agenda["title"]+"\n("+"#{agenda["duration"]}"+"分)")
+#     # Zoom Clientのメソッドを起動する
 
-    #
-    timer = timers.after(agenda["duration"]) {
+#     #
+#     timer = timers.after(agenda["duration"]) {
 
-    }
-    # timer = timers.after(agenda["duration"] * 60) {
-      # Zoom Clientでカメラを落とすなどする(?)
+#     }
+#     # timer = timers.after(agenda["duration"] * 60) {
+#       # Zoom Clientでカメラを落とすなどする(?)
 
-      #
-    # }
-    timers.wait
-  end
-end
+#       #
+#     # }
+#     timers.wait
+#   end
+# end
 
-post '/test' do
-  Thread.new { timer(params[:agenda], params[:start]) }
-  meeting_id = SecureRandom.hex
-  time = Time.at(params[:start])
-  meeting = Meeting.create(
-    random_num: meeting_id,
-    start: time,
-    link: params[:link],
-    title: params[:title]
-  )
+# post '/test' do
+#   Thread.new { timer(params[:agenda], params[:start]) }
+#   meeting_id = SecureRandom.hex
+#   time = Time.at(params[:start])
+#   meeting = Meeting.create(
+#     random_num: meeting_id,
+#     start: time,
+#     link: params[:link],
+#     title: params[:title]
+#   )
 
-  params["agenda"].each do |agenda|
-    agenda = Agenda.create(
-      meeting_id: meeting.id,
-      title: agenda[:title],
-      duration: agenda[:duration]
-    )
-  end
+#   params["agenda"].each do |agenda|
+#     agenda = Agenda.create(
+#       meeting_id: meeting.id,
+#       title: agenda[:title],
+#       duration: agenda[:duration]
+#     )
+#   end
 
-  return {
-    "agenda"=> agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json)),
-    "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}"
-  }.to_json
-end
+#   return {
+#     "agenda"=> agendaphoto(params[:title],params[:start].to_i,JSON.parse(params[:agenda].to_json)),
+#     "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}",
+#     "id" => meeting.random_num
+#   }.to_json
+# end
 
 get '/' do
   'Hello World!'
@@ -105,6 +106,7 @@ post '/meetingaction' do
 
   elsif request == "create" #ミーティングの作成(Base64の写真データと招待ページのURLをJSONで欲しい)
     return createMeeting(params[:title],params[:start],params[:link],params[:agenda])
+
   elsif request == "mute"
     muteAllPeople()
   end
@@ -117,10 +119,10 @@ def startMeeting(id,duration,title)
   begin
     zoom = ZoomClient.new
     zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
-    return "success"
+    return { "status" => "success"}.to_json
   rescue => e
-    print e
-    return "error"
+    print (e)
+    return { "status" => "error"}.to_json
   end
 end
 
@@ -142,10 +144,12 @@ end
 def finishMeeting(id)
   begin
     File.delete("public/assets/img/tmp/"+id+".png")
+    return { "status" => "success"}.to_json
+  # メモ：Zoomビデオを切れたらここに！
   rescue => e
     print(e)
+    return { "status" => "error"}.to_json
   end
-  # メモ：Zoomビデオを切れたらここに！
 end
 
 # ----------
@@ -172,7 +176,8 @@ def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
 
   return {
     "agenda"=> agendaphoto(titleAPI,startTimeAPI.to_i,JSON.parse(agendaAPI.to_json)),
-    "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}"
+    "url" => "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}",
+    "id" => meeting.random_num
   }.to_json
 end
 
@@ -180,17 +185,12 @@ end
 # ミュートにする
 # ----------
 def muteAllPeople()
-
-end
-
-# -----------
-
-post '/hoge' do
-  title = params[:params]
-  start = Time.at(params[:start].to_i)
-  link = params[:link]
-  agenda = JSON.parse(params[:agenda].to_json)
-  p agenda.to_s
+  begin
+    # ミュート処理をする
+    return { "status" => "success"}.to_json
+  rescue => e
+    return { "status" => "error"}.to_json
+  end
 end
 
 # ----------
@@ -294,4 +294,12 @@ end
 
 post '/aaaa' do
   return topicWrite("print_text","image_name")
+end
+
+post '/hoge' do
+  title = params[:params]
+  start = Time.at(params[:start].to_i)
+  link = params[:link]
+  agenda = JSON.parse(params[:agenda].to_json)
+  p agenda.to_s
 end
