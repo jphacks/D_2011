@@ -13,6 +13,8 @@ gem 'mini_magick' #画像生成用
 gem 'selenium-webdriver'
 gem 'rack-contrib' #json(post)用
 gem 'timers'
+gem 'grape'
+gem 'rack'
 
 group :development do
   gem 'sqlite3', '~>1.4.1'

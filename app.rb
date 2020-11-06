@@ -11,6 +11,9 @@ require 'timers'
 require 'open3'
 require './image_edit.rb'
 require './zoom_client.rb'
+require 'grape'
+require "sinatra/json"
+require './api.rb'
 
 zoom = nil
 use Rack::PostBodyContentTypeParser
@@ -287,28 +290,38 @@ end
 # ----------
 # 検証コード
 # ----------
-get '/aaa' do
-  erb:invitation
-end
+# get '/aaa' do
+#   erb:invitation
+# end
 
-get '/cmdtest' do
-  viewTopicPhoto("print_text","10")
-end
+# get '/cmdtest' do
+#   viewTopicPhoto("print_text","10")
+# end
 
-get '/topic/:time/:title' do |time,title|
-  @time = time
-  @title = title
-  erb :topic
-end
+# get '/topic/:time/:title' do |time,title|
+#   @time = time
+#   @title = title
+#   erb :topic
+# end
 
-post '/aaaa' do
-  return topicWrite("print_text","image_name")
-end
+# post '/aaaa' do
+#   return { "status" => topicWrite("print_text","image_name")}.to_json
+# end
 
-post '/hoge' do
-  title = params[:params]
-  start = Time.at(params[:start].to_i)
-  link = params[:link]
-  agenda = JSON.parse(params[:agenda].to_json)
-  p agenda.to_s
-end
+# post '/hoge' do
+#   title = params[:params]
+#   start = Time.at(params[:start].to_i)
+#   link = params[:link]
+#   agenda = JSON.parse(params[:agenda].to_json)
+#   p agenda.to_s
+# end
+
+# post '/test' do
+#   # body = env['api.request.body']
+#   # return body # Response BodyにそのままRequest Bodyを返す
+#   api = nil
+#   api = API.new
+#   api.user("test")
+# end
+
+# run Rack::URLMap.new("/api" => Api.new)
