@@ -123,7 +123,7 @@ def startMeeting(id,duration,title,meetingId,meetingPass)
     json data
   rescue => e
     print (e)
-    data = { status: "error" }
+    data = { status: "error" , why: e.to_s }
     json data
   end
 end
@@ -195,7 +195,7 @@ def muteAllPeople()
     data = { status: "success" }
     json data
   rescue => e
-    data = { status: "error" }
+    data = { status: "error" , why: e.to_s }
     json data
   end
 end
