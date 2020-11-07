@@ -1,5 +1,5 @@
-![aika-image](public/assets/img/aika.jpg)
 
+[https://youtu.be/jOA8AHZRrZE](https://youtu.be/jOA8AHZRrZE)
 # aika
 ## 製品概要
 ### 背景(製品開発のきっかけ、課題等）
