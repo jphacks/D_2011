@@ -22,6 +22,18 @@ class ZoomClient
     rescue
       retry
     end
+    
+    Thread.new do
+      while @driver.current_url != "http://example.com/"
+        sleep 5
+      end
+      @driver.close
+      if @pid != 0
+        Process.kill 9, @pid.to_i
+        @pid = 0
+      end
+      puts "finished"
+    end
   end
 
   def changeImage(name)
