@@ -243,7 +243,7 @@ end
 # ----------
 # Zoomに接続
 get '/api/zoom/connect' do
-  zoom = ZoomClient.new("83465557585", "Z5jTwT")
+  zoom = ZoomClient.new("97630523903", "cavMy2")
   Thread.new do
     zoom.requestCoHost
   end
@@ -265,6 +265,10 @@ end
 # アンミュート（リクエスト）
 get '/api/zoom/unmute' do
   zoom.unmuteRequest(params[:userid])
+end
+# ミュート
+get '/api/zoom/muteall' do
+  zoom.muteAll()
 end
 
 # ----------

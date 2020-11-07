@@ -14,6 +14,7 @@ async function initialize(mn, pwd) {
   await initMeeting();
   ZoomMtg.inMeetingServiceListener('onMeetingStatus', function (data) {
     status = data.meetingStatus == 2 || status
+    if(data.meetingStatus == 3) window.location.href = "http://example.com"
   });
   await joinMeeting(mn, signature, pwd);
 
@@ -62,6 +63,10 @@ function mute(userId, mute) {
   ZoomMtg.mute({userId, mute});
 }
 
+function muteAll(mute) {
+  ZoomMtg.muteAll({muteAll: mute});
+}
+
 function generateSignature(meetingNumber) {
   return new Promise((resolve, reject) => {
     ZoomMtg.generateSignature({
@@ -78,7 +83,7 @@ function generateSignature(meetingNumber) {
 function initMeeting() {
   return new Promise((resolve, reject) => {
     ZoomMtg.init({
-      leaveUrl: "/zoom/index.html",
+      leaveUrl: "http://example.com/",
       success: (res) => resolve(res),
       error: (res) => reject(res),
     });
