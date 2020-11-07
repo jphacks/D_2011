@@ -232,7 +232,7 @@ def agendaSheetPhoto(title,agendas,num,length)
     else
       titleA = a["title"].delete("\n")
     end
-    text = text + start + " " + duration.to_s + "m " + titleA + "\n"
+    text = text + start + " " + duration.to_s + "分 " + titleA + "\n"
     @startTime = @startTime + a["duration"]
   end
   return agendaWrite(title,text)
