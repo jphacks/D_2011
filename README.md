@@ -52,7 +52,7 @@ ruby app.rb -o 0.0.0.0
 * アジェンダの自動生成
 * 仮想カメラの実装
 
-## 開発技術
+## 開発技術 (サーバーサイド)
 
 ### 活用した技術
 #### API・データ
@@ -70,3 +70,22 @@ ruby app.rb -o 0.0.0.0
 #### ハッカソンで開発した独自機能・技術
 * 仮想カメラ
 * https://github.com/jphacks/D_2011/blob/master/zoom_client.rb
+
+
+## 開発技術 (クライアントサイド)
+
+### 活用した技術
+#### SDK
+* ZoomSDK
+
+#### フレームワーク・ライブラリ・モジュール
+* Eureka
+* Floaty
+* PKHUD
+* RealmSwift
+* paper-onboarding
+* Alamofire
+
+#### デバイス
+* iPhone
+* iPad
