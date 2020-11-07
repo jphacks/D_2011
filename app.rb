@@ -188,10 +188,7 @@ end
 # ----------
 def muteAllPeople()
   begin
-    data = zoom.getAttendeesList
-    data.each do |people|
-      mute(people["userId"].to_i)
-    end
+    zoom.muteAll
     data = { status: "success" }
     json data
   rescue => e
