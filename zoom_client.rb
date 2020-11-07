@@ -85,6 +85,14 @@ class ZoomClient
     @driver.execute_script "mute(#{userId}, false)"
   end
 
+  def muteAll()
+    @driver.execute_script "muteAll(true)"
+  end
+
+  def unmuteRequestAll()
+    @driver.execute_script "muteAll(false)"
+  end
+
   def close
     @driver.quit
   end
