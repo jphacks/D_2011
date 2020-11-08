@@ -254,7 +254,7 @@ end
 # ----------
 # Zoomに接続
 get '/api/zoom/connect' do
-  zoom = ZoomClient.connect_with_url('https://us02web.zoom.us/j/86037017161?pwd=ZENvVGRCUitER2RwRUhZYXA3UEJoQT09')
+  zoom = ZoomClient.connect_with_url(params[:url])
   return 'failed' unless zoom
 
   Thread.new do
