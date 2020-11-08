@@ -189,11 +189,12 @@ def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
 end
 
 # ----------
-# ミュートにする
+# ミュートにする && アンミュートの通知表示
 # ----------
 def muteAllPeople()
   begin
     zoom.muteAll
+    zoom.reqyest_unmute_all
     data = { status: "success" }
     json data
   rescue => e
@@ -314,12 +315,12 @@ end
 # ----------
 # 仮想カメラ用の画像生成
 # ----------
-# post '/topicphoto' do
-#   content = params[:content]
-#   duration = params[:duration]
-#   data = { photo: topicWrite(content+"\n("+duration+"分)") }
-#   json data
-# end
+post '/topicphoto' do
+  content = params[:content]
+  duration = params[:duration]
+   data = { photo: topicWrite(content+"\n("+duration+"分)") }
+   json data
+ end
 
 # ----------
 # アジェンダ用の画像生成
