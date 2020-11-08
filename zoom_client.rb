@@ -7,6 +7,7 @@ require 'logger'
 # Zoomと接続して映像を表示するクラス
 # TODO: 複数仮想カメラ対応
 # TODO: 承認待機やカメラ有効化などのフローがイケてない
+#       ↓→ 「現在の画像」を保持して状態に応じて上から承認待機とか出すのが良さそう
 class ZoomClient
   private_class_method :new
 
@@ -44,8 +45,6 @@ class ZoomClient
       zoom.close
       return nil
     end
-
-    @wait.until { @driver.execute_script 'return canEnableVideo()' }
 
     zoom
   end

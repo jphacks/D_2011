@@ -122,9 +122,16 @@ end
 def startMeeting(id,duration,title,meetingId,meetingPass)
   begin
     zoom = ZoomClient.connect_with_number(meetingId,meetingPass)
-    zoom.enable_video
-    zoom.request_co_host
-    zoom.change_image(topicWrite(title+"\n("+duration+"分)",id))
+    
+    unless zoom
+      data = { status: "error", why: "zoom connection error" }
+      json data
+    end
+    Thread.new do
+      zoom.enable_video # カメラを有効化
+      zoom.request_co_host
+      zoom.change_image(topicWrite(title+"\n("+duration+"分)",id))
+    end
     data = { status: "success" }
     json data
   rescue => e
