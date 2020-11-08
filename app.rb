@@ -121,7 +121,8 @@ end
 # ----------
 def startMeeting(id,duration,title,meetingId,meetingPass)
   begin
-    zoom = ZoomClient.new(meetingId,meetingPass)
+    zoom = ZoomClient.connect_with_number(meetingId,meetingPass)
+    zoom.enable_video
     zoom.request_co_host
     zoom.change_image(topicWrite(title+"\n("+duration+"分)",id))
     data = { status: "success" }
