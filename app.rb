@@ -313,14 +313,16 @@ end
 # end
 
 # ----------
-# 仮想カメラ用の画像生成
+# 画像生成検証
 # ----------
-post '/topicphoto' do
-  content = params[:content]
-  duration = params[:duration]
-   data = { photo: topicWrite(content+"\n("+duration+"分)") }
-   json data
- end
+# get '/phototest' do
+  # content = params[:content]
+  # duration = params[:duration]
+  # topicWrite("content"+"\n(1分)","test3")
+  # agendaWrite("ここにテキスト","12:00 00分 ここにアジェンダ")
+  #  data = { photo: topicWrite(content+"\n("+duration+"分)") }
+  #  json data
+#  end
 
 # ----------
 # アジェンダ用の画像生成
