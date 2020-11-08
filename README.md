@@ -1,4 +1,4 @@
-![aika-image](public/assets/img/aika.jpg)
+![aika-image](https://github.com/jphacks/D_2011/raw/master/public/assets/img/aika.jpg)
 # aika
 ## 製品概要
 本アプリはZoomでのオンラインミーティングをより円滑に進めるための支援サービスです。

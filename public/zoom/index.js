@@ -29,10 +29,10 @@ function isCoHost() {
 }
 
 function canEnableVideo() {
-  return document.querySelector(".send-video-container--disabled") == null
+  return document.querySelector(".send-video-container--disabled") == null && document.querySelector(".send-video-container__btn i") != null
 }
 
-function isVideoOn() {
+function isEnabledVideo() {
   return document.querySelector(".send-video-container__btn i").classList.contains("zm-icon-stop-video")
 }
 

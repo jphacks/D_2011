@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'bundler/setup'
 Bundler.require
 require 'sinatra/reloader' if development?
 require './models.rb'
 require 'json'
 require 'date'
-require 'rack/contrib'
+# require 'rack/contrib'
 require 'base64'
 require 'pry'
 require 'timers'
@@ -14,8 +16,11 @@ require './zoom_client.rb'
 require 'grape'
 require "sinatra/json"
 
+set :server, :puma
+set :logging, false
+
 zoom = nil
-use Rack::PostBodyContentTypeParser
+use Rack::JSONBodyParser
 
 # def timer(array, start)
 #   timers = Timers::Group.new
@@ -69,7 +74,6 @@ use Rack::PostBodyContentTypeParser
 # end
 
 get '/' do
-  'Hello World!'
   SecureRandom.hex
 end
 
@@ -118,8 +122,8 @@ end
 def startMeeting(id,duration,title,meetingId,meetingPass)
   begin
     zoom = ZoomClient.new(meetingId,meetingPass)
-    zoom.requestCoHost
-    zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
+    zoom.request_co_host
+    zoom.change_image(topicWrite(title+"\n("+duration+"分)",id))
     data = { status: "success" }
     json data
   rescue => e
@@ -241,27 +245,26 @@ end
 # ----------
 # Zoomに接続
 get '/api/zoom/connect' do
-  zoom = ZoomClient.new("https://us02web.zoom.us/j/87141671402?pwd=YkdFZ1lyYkU3ZThUc01tNnorK3Z4QT09")
-  unless zoom
-    return 'failed'
-  end
+  zoom = ZoomClient.connect_with_url('https://us02web.zoom.us/j/86037017161?pwd=ZENvVGRCUitER2RwRUhZYXA3UEJoQT09')
+  return 'failed' unless zoom
+
   Thread.new do
-    zoom.requestCoHost
+    zoom.request_co_host
   end
   'ok'
 end
 # 画像変更
 get '/api/zoom/change' do
-  zoom.changeImage('test1.png')
+  zoom.change_image('test1.png')
   'ok'
 end
 get '/api/zoom/change2' do
-  zoom.changeImage('test2.png')
+  zoom.change_image('test2.png')
   'ok'
 end
 # 参加者一覧取得
 get '/api/zoom/attendees' do
-  zoom.getAttendeesList.to_s
+  zoom.attendeesList.to_s
 end
 # ミュート
 get '/api/zoom/mute' do
@@ -269,11 +272,15 @@ get '/api/zoom/mute' do
 end
 # アンミュート（リクエスト）
 get '/api/zoom/unmute' do
-  zoom.unmuteRequest(params[:userid])
+  zoom.request_unmute(params[:userid])
 end
-# ミュート
+# 全ミュート
 get '/api/zoom/muteall' do
-  zoom.muteAll()
+  zoom.muteAll
+end
+# 全アンミュート
+get '/api/zoom/muteall' do
+  zoom.reqyest_unmute_all
 end
 
 # ----------

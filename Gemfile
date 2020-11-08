@@ -1,32 +1,30 @@
-# ruby '2.6.2'
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-gem 'rake'
-gem 'sinatra'
-gem 'sinatra-contrib'
-gem 'activerecord' ,  '5.2.3'
-gem 'sinatra-activerecord'
+source 'https://rubygems.org'
+
+gem 'activerecord', '5.2.3'
+gem 'bcrypt'
 gem 'cloudinary'
 gem 'dotenv'
-gem 'bcrypt'
-gem 'mini_magick' #画像生成用
-gem 'selenium-webdriver'
-gem 'rack-contrib' #json(post)用
-gem 'timers'
 gem 'grape'
+gem 'mini_magick'
 gem 'rack'
+gem 'rack-contrib'
+gem 'rake'
+gem 'selenium-webdriver'
+gem 'sinatra'
+gem 'sinatra-activerecord'
+gem 'sinatra-contrib'
+gem 'sqlite3', '~>1.4.1'
+gem 'timers'
 
 group :development do
-  gem 'sqlite3', '~>1.4.1'
   gem 'debase'
+  gem 'fastri'
   gem 'pry'
+  gem 'rcodetools'
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'ruby-debug-ide'
-  gem 'rcodetools'
-  gem 'fastri'
-end
-
-group :production do
-  gem 'pg' , '0.21.0'
+  gem 'solargraph'
 end
