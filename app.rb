@@ -189,11 +189,12 @@ def createMeeting(titleAPI,startTimeAPI,linkAPI,agendaAPI)
 end
 
 # ----------
-# ミュートにする
+# ミュートにする && アンミュートの通知表示
 # ----------
 def muteAllPeople()
   begin
     zoom.muteAll
+    zoom.reqyest_unmute_all
     data = { status: "success" }
     json data
   rescue => e
