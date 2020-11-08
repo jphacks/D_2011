@@ -315,14 +315,14 @@ end
 # ----------
 # 画像生成検証
 # ----------
-get '/phototest' do
+# get '/phototest' do
   # content = params[:content]
   # duration = params[:duration]
   # topicWrite("content"+"\n(1分)","test3")
-  agendaWrite("ここにテキスト","12:00 00分 ここにアジェンダ")
+  # agendaWrite("ここにテキスト","12:00 00分 ここにアジェンダ")
   #  data = { photo: topicWrite(content+"\n("+duration+"分)") }
   #  json data
- end
+#  end
 
 # ----------
 # アジェンダ用の画像生成
