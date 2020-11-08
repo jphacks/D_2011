@@ -125,12 +125,12 @@ def startMeeting(id,duration,title,meetingId,meetingPass)
     
     unless zoom
       data = { status: "error", why: "zoom connection error" }
-      json data
+      return json data
     end
     Thread.new do
       zoom.enable_video # カメラを有効化
       zoom.request_co_host
-      zoom.change_image(topicWrite(title+"\n("+duration+"分)",id))
+      zoom.change_image(topicWrite("#{title}\n(#{duration}分)",id))
     end
     data = { status: "success" }
     json data
@@ -146,11 +146,11 @@ end
 # ----------
 def changePhoto(id,title,duration)
   begin
-    File.delete("public/assets/img/tmp/"+id+".png")
+    File.delete("public/assets/img/tmp/#{id}.png")
   rescue => e
     print(e)
   end
-  zoom.changeImage(topicWrite(title+"\n("+duration+"分)",id))
+  zoom.changeImage(topicWrite("#{title}\n(#{duration}分)",id))
 end
 
 # ----------
@@ -158,7 +158,7 @@ end
 # ----------
 def finishMeeting(id)
   begin
-    File.delete("public/assets/img/tmp/"+id+".png")
+    File.delete("public/assets/img/tmp/#{id}.png")
     # data = { status: "success" }
     # json data
     zoom.leaveMeeting()
@@ -231,20 +231,20 @@ end
 # ----------
 def agendaSheetPhoto(title,agendas,num,length)
   if title.length >= 14
-    title = title.delete("\n").slice(0 ,14) + "…"
+    title = "#{title.delete("\n").slice(0, 14)}…"
   end
-  title = title + "(" + num.to_s + "/" + length.to_s + ")"
+  title += "(#{num}/#{length})"
   text = ""
   agendas.each do |a|
     start = Time.at(@startTime).strftime("%H:%M") # このアジェンダシートの開始時刻
     duration = (a["duration"]/60).ceil
     if a["title"].length >= 12
-      titleA = a["title"].delete("\n").slice(0 ,12) + "…"
+      titleA = "#{a["title"].delete("\n").slice(0 ,12)}…"
     else
       titleA = a["title"].delete("\n")
     end
-    text = text + start + " " + duration.to_s + "分 " + titleA + "\n"
-    @startTime = @startTime + a["duration"]
+    text += "#{start} #{duration}分 #{titleA}\n"
+    @startTime += a["duration"]
   end
   return agendaWrite(title,text)
 end
