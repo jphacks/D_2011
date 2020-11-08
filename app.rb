@@ -317,7 +317,7 @@ end
 get '/phototest' do
   # content = params[:content]
   # duration = params[:duration]
-  # agendaWrite("content"+"\n(1分)","test3")
+  # topicWrite("content"+"\n(1分)","test3")
   agendaWrite("ここにテキスト","12:00 00分 ここにアジェンダ")
   #  data = { photo: topicWrite(content+"\n("+duration+"分)") }
   #  json data
