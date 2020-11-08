@@ -297,12 +297,12 @@ end
 # ----------
 # 仮想カメラ用の画像生成
 # ----------
-# post '/topicphoto' do
-#   content = params[:content]
-#   duration = params[:duration]
-#   data = { photo: topicWrite(content+"\n("+duration+"分)") }
-#   json data
-# end
+post '/topicphoto' do
+  content = params[:content]
+  duration = params[:duration]
+   data = { photo: topicWrite(content+"\n("+duration+"分)") }
+   json data
+ end
 
 # ----------
 # アジェンダ用の画像生成
