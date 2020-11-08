@@ -250,7 +250,8 @@ get '/api/zoom/connect' do
   return 'failed' unless zoom
 
   Thread.new do
-    zoom.request_co_host
+    zoom.enable_video # カメラを有効化
+    # zoom.request_co_host
   end
   'ok'
 end
