@@ -17,7 +17,7 @@ require 'grape'
 require "sinatra/json"
 
 set :server, :puma
-set :logging, false
+# set :logging, false
 
 zoom = nil
 use Rack::JSONBodyParser
