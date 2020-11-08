@@ -130,6 +130,10 @@ class ZoomClient
     @driver.execute_script "muteAll(false)"
   end
 
+  def leaveMeeting()
+    @driver.execute_script "leaveMeeting()"
+  end
+
   def close
     @driver.quit
   end

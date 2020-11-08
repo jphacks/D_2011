@@ -40,6 +40,10 @@ function getStatus() {
   return status
 }
 
+function leaveMeeting() {
+  ZoomMtg.leaveMeeting({});
+}
+
 function updateAttendeesList() {
   attendeesList = null
   ZoomMtg.getAttendeeslist({

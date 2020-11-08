@@ -78,7 +78,8 @@ end
 # ----------
 get '/agenda/:id' do
   # 本番はこれを使う
-  @meeting = Meeting.find_by(random_num: params[:id])
+  @meeting = Meeting.last
+  # @meeting = Meeting.find_by(random_num: params[:id])
   @agenda_times = []
   agenda_starting_time = @meeting.start
   @meeting.agendas.each do |agenda|
@@ -148,7 +149,7 @@ def finishMeeting(id)
     File.delete("public/assets/img/tmp/"+id+".png")
     # data = { status: "success" }
     # json data
-  # メモ：Zoomビデオを切れたらここに！
+    zoom.leaveMeeting()
   rescue => e
     print(e)
     # data = { status: "error" }
@@ -188,10 +189,7 @@ end
 # ----------
 def muteAllPeople()
   begin
-    data = zoom.getAttendeesList
-    data.each do |people|
-      mute(people["userId"].to_i)
-    end
+    zoom.muteAll
     data = { status: "success" }
     json data
   rescue => e
