@@ -5,9 +5,10 @@ require 'json'
 require 'logger'
 
 # Zoomと接続して映像を表示するクラス
+# TODO: 複数仮想カメラ対応
+# メモ: 承認待機やカメラ有効化などのフローがイケてない
 class ZoomClient
   private_class_method :new
-  # private :connect
 
   # パスワード付きURLの内容に基づいてZoomミーティングに接続します
   #
@@ -27,8 +28,6 @@ class ZoomClient
       return nil
     end
 
-    zoom.enable_video # カメラを有効化
-
     zoom
   end
 
@@ -46,48 +45,22 @@ class ZoomClient
       return nil
     end
 
-    # 承認待機
     @wait.until { @driver.execute_script 'return canEnableVideo()' }
-    zoom.enable_video # カメラを有効化
 
     zoom
   end
 
-  # 非公開クラス - 内部初期化用
-  def initialize(meeting_number, meeting_password)
-    @mn = meeting_number
-    @mp = meeting_password
-    @log = Logger.new(STDOUT)
-
-    @log.debug("[Meeting Info] Number: #{@mn}")
-    @log.debug("[Meeting Info] Password: #{@mp}")
-
-    start_browser # 接続するための準備
-    start_ffmpeg('public/assets/img/aika.jpg')
-
-    # @watch_leave = Thread.new do # ミーティング終了フック
-    #   @log.info('[ZoomClient] Detected leaving')
-    #   sleep 5 while @driver.current_url != 'http://example.com/'
-    #   close
-    # end
-
-    at_exit { close }
-  end
-
-  # Zoomミーティングに接続します
-  # @return [True] 成功した場合
-  # @return [False] 失敗した場合
   def connect
     return false if @driver.nil?
 
-    @log.info("[Zoom] Connecting...")
+    @log.info('[Zoom] Connecting...')
     @driver.execute_script "initialize('#{@mn}', '#{@mp}')"
     begin
       @wait.until { @driver.execute_script 'return getStatus() >= 2' }
-      @log.info("[Zoom] Connected")
+      @log.info('[Zoom] Connected')
       true
-    rescue => e
-      @log.error("[Zoom] Failed connect")
+    rescue StandardError => e
+      @log.error('[Zoom] Failed connect')
       @log.error e
       false
     end
@@ -97,22 +70,23 @@ class ZoomClient
   def enable_video
     return if @driver.nil?
 
-    return if @driver.execute_script 'return canEnableVideo()'
+    sleep 1 until @driver.execute_script 'return canEnableVideo()'
     return if @driver.execute_script 'return isEnabledVideo()'
 
-    @log.info("[Zoom] Enable video")
+    @log.info('[Zoom] Enable video')
     click_video_btn
+    sleep 5
   end
 
   # Zoomの映像を無効化します
-  def disable_video
-    return if @driver.nil?
+  # def disable_video
+  #   return if @driver.nil?
 
-    return unless @driver.execute_script 'return isEnabledVideo()'
+  #   return unless @driver.execute_script 'return isEnabledVideo()'
 
-    @log.info("[Zoom] Disable video")
-    click_video_btn
-  end
+  #   @log.info('[Zoom] Disable video')
+  #   click_video_btn
+  # end
 
   # ブラウザを起動してZoom用のページを開きます
   def start_browser
@@ -134,16 +108,17 @@ class ZoomClient
   def change_image(filename)
     return if @driver.nil?
 
-    start_ffmpeg(filename)
-    click_video_btn(2)
+    start_ffmpeg filename
   end
 
   # 共同ホスト権限を要求します
   def request_co_host
     return if @driver.nil?
 
+    @log.info('[Zoom] Request Co-host...')
     change_image('public/assets/img/request_co_host.jpg')
     sleep 1 until @driver.execute_script 'return isCoHost()'
+    @log.info('[Zoom] Done')
     change_image('public/assets/img/aika.jpg')
   end
 
@@ -169,9 +144,9 @@ class ZoomClient
   def start_ffmpeg(filename)
     return if @driver.nil?
 
-    @log.info('[FFmpeg] Starting FFmpeg...')
-
     stop_ffmpeg
+
+    @log.info('[FFmpeg] Starting FFmpeg...')
     Process.spawn("nohup ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0 > /dev/null 2>&1")
     @pid = `ps aux | grep #{filename} | awk '{ print $2 " " $11 }' | grep ffmpeg | awk '{ print $1 }'`.chomp
     @log.info('[FFmpeg] Started FFmpeg')
@@ -277,5 +252,27 @@ class ZoomClient
     end
     @driver = nil
     @log.info('[ZoomClient] Closed client')
+  end
+
+  private
+
+  def initialize(meeting_number, meeting_password)
+    @mn = meeting_number
+    @mp = meeting_password
+    @log = Logger.new(STDOUT)
+
+    @log.debug("[Meeting Info] Number: #{@mn}")
+    @log.debug("[Meeting Info] Password: #{@mp}")
+
+    start_browser # 接続するための準備
+    start_ffmpeg('public/assets/img/aika.jpg')
+
+    # @watch_leave = Thread.new do # ミーティング終了フック
+    #   @log.info('[ZoomClient] Detected leaving')
+    #   sleep 5 while @driver.current_url != 'http://example.com/'
+    #   close
+    # end
+
+    at_exit { close }
   end
 end
