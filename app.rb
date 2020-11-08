@@ -243,7 +243,10 @@ end
 # ----------
 # Zoomに接続
 get '/api/zoom/connect' do
-  zoom = ZoomClient.new("97630523903", "cavMy2")
+  zoom = ZoomClient.new("https://us02web.zoom.us/j/87141671402?pwd=YkdFZ1lyYkU3ZThUc01tNnorK3Z4QT09")
+  unless zoom
+    return 'failed'
+  end
   Thread.new do
     zoom.requestCoHost
   end
@@ -251,7 +254,11 @@ get '/api/zoom/connect' do
 end
 # 画像変更
 get '/api/zoom/change' do
-  zoom.changeImage('test2.jpeg')
+  zoom.changeImage('test1.png')
+  'ok'
+end
+get '/api/zoom/change2' do
+  zoom.changeImage('test2.png')
   'ok'
 end
 # 参加者一覧取得

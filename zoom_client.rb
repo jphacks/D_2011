@@ -2,48 +2,75 @@ require 'selenium-webdriver'
 require 'json'
 
 class ZoomClient
-  def initialize(meetingId, meetingPwd)
-    options = Selenium::WebDriver::Firefox::Options.new
-    options.add_argument('--headless')
-    options.add_preference("permissions.default.microphone", 1);
-    options.add_preference("permissions.default.camera", 1);
-    options.add_preference('media.navigator.permission.disabled', true)
 
+  # Zoomセッションを張ります
+  # @param [String] meetingInfo ミーティング番号かパスワード付きミーティングURL
+  # @param [meetingPwd] meetingPwd ミーティングパスワード
+  # @return [ZoomClient] インスタンス
+  # @return [nil] ミーティングに参加する事が出来なかった場合はnil
+  def initialize(meetingInfo, meetingPwd*)
+    @mp = meetingPwd
+    @mn = meetingInfo if meetingInfo.match(/^\d{9,}$/)
+    @mn = d[1] if d = meetingInfo.match(/^https:\/\/us02web\.zoom\.us\/j\/(\d+)/)
+    @mp = d[1] if d = meetingInfo.match(/^https:\/\/us02web\.zoom\.us\/j\/\d+\?pwd=(.+)$/)
+
+    return unless @mn && @mp
+
+    options = Selenium::WebDriver::Firefox::Options.new(args: ['--headless'], prefs: ["permissions.default.microphone": 1, "permissions.default.camera": 1, "media.navigator.permission.disabled": true])
+
+    @wait = Selenium::WebDriver::Wait.new(:timeout => 10)
     @driver = Selenium::WebDriver.for :firefox, options: options
     @driver.get "http://localhost:#{ENV['PORT']}/zoom/index.html"
-    @driver.execute_script "initialize('#{meetingId}', '#{meetingPwd}')"
+    @driver.execute_script "initialize('#{@mn}', '#{@mp}')"
 
-    @pid = startFfmpeg('public/assets/img/aika.jpg')
+    startFFmpeg('public/assets/img/aika.jpg')
 
-    wait = Selenium::WebDriver::Wait.new(:timeout => 60)
-    wait.until{@driver.execute_script 'return getStatus()'}
-    begin
-      clickVideoBtn()
+    begin 
+      @wait.until { @driver.execute_script 'return getStatus()' > 2 }
     rescue
-      retry
+      return nil # ミーティングへの接続に失敗
     end
+
+    @wait.until { @driver.execute_script 'return canEnableVideo()' }
+    clickVideoBtn()
+
+    Thread.new do
+
+    end
+
+    at_exit{
+      killFFmpeg()
+      # stopBrowser()
+    }
+
+    # wait = Selenium::WebDriver::Wait.new(:timeout => 60)
+    # wait.until{@driver.execute_script 'return getStatus()' > 2}
+    # begin
+    #   clickVideoBtn()
+    # rescue
+    #   retry
+    # end
     
+    watchLeave()
+  end
+
+  # 終了検知
+  def watchLeave
     Thread.new do
       while @driver.current_url != "http://example.com/"
         sleep 5
       end
       @driver.close
-      if @pid != 0
+      if @pid != nil
         Process.kill 9, @pid.to_i
-        @pid = 0
+        @pid = nil
       end
       puts "finished"
     end
   end
 
   def changeImage(name)
-    if @pid != 0
-      puts "kill: " + @pid
-      Process.kill 9, @pid.to_i
-      @pid = 0
-    end
-    @pid = startFfmpeg(name)
-    puts "start: " + @pid
+    startFFmpeg(name)
 
     clickVideoBtn()
     clickVideoBtn()
@@ -67,10 +94,20 @@ class ZoomClient
     return (@driver.execute_script 'return getCurrentUser()').to_json
   end
 
-  def startFfmpeg(filename)
-    cmd = "nohup ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0 > /dev/null 2>&1"
-    Process.spawn(cmd)
-    return `ps aux | grep #{filename} | awk '{ print $2 " " $11 }' | grep ffmpeg | awk '{ print $1 }'`
+  def startFFmpeg(filename)
+    killFFmpeg()
+    Process.spawn("nohup ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0 > /dev/null 2>&1")
+    @pid = `ps aux | grep #{filename} | awk '{ print $2 " " $11 }' | grep ffmpeg | awk '{ print $1 }'`
+  end
+
+  def killFFmpeg
+    if @pid != nil
+      begin 
+        Process.kill 9, @pid.to_i
+      rescue
+      end
+      @pid = nil
+    end
   end
 
   def clickVideoBtn

@@ -4,7 +4,7 @@ const userName = "aika";
 let isJoined = false
 let attendeesList = null
 let currentUser = null
-let status = false;
+let status = 0;
 
 async function initialize(mn, pwd) {
   ZoomMtg.preLoadWasm();
@@ -13,7 +13,7 @@ async function initialize(mn, pwd) {
   const signature = await generateSignature(mn);
   await initMeeting();
   ZoomMtg.inMeetingServiceListener('onMeetingStatus', function (data) {
-    status = data.meetingStatus == 2 || status
+    status = data.meetingStatus
     if(data.meetingStatus == 3) window.location.href = "http://example.com"
   });
   await joinMeeting(mn, signature, pwd);
@@ -22,11 +22,18 @@ async function initialize(mn, pwd) {
 }
 
 function isCoHost() {
-  let flag = false
-  for(e of document.querySelectorAll('.footer-button__button-label')) {
-    if(e.innerText.match(/Manage Participants/)) flag = true
-  }
-  return flag
+  for(e of document.querySelectorAll('.footer-button__button-label'))
+    if(e.innerText.match(/Manage Participants/))
+      return true
+  return false
+}
+
+function canEnableVideo() {
+  return document.querySelector(".send-video-container--disabled") == null
+}
+
+function isVideoOn() {
+  return document.querySelector(".send-video-container__btn i").classList.contains("zm-icon-stop-video")
 }
 
 function getStatus() {
