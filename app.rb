@@ -251,7 +251,7 @@ get '/api/zoom/connect' do
 
   Thread.new do
     zoom.enable_video # カメラを有効化
-    # zoom.request_co_host
+    zoom.request_co_host
   end
   'ok'
 end

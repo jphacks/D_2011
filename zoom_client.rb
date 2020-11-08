@@ -6,7 +6,7 @@ require 'logger'
 
 # Zoomと接続して映像を表示するクラス
 # TODO: 複数仮想カメラ対応
-# メモ: 承認待機やカメラ有効化などのフローがイケてない
+# TODO: 承認待機やカメラ有効化などのフローがイケてない
 class ZoomClient
   private_class_method :new
 
@@ -75,18 +75,7 @@ class ZoomClient
 
     @log.info('[Zoom] Enable video')
     click_video_btn
-    sleep 5
   end
-
-  # Zoomの映像を無効化します
-  # def disable_video
-  #   return if @driver.nil?
-
-  #   return unless @driver.execute_script 'return isEnabledVideo()'
-
-  #   @log.info('[Zoom] Disable video')
-  #   click_video_btn
-  # end
 
   # ブラウザを起動してZoom用のページを開きます
   def start_browser
@@ -99,7 +88,7 @@ class ZoomClient
 
     @driver = Selenium::WebDriver.for :firefox, options: options
     @driver.get "http://localhost:#{ENV['PORT']}/zoom/index.html"
-    @wait = Selenium::WebDriver::Wait.new(timeout: 10)
+    @wait = Selenium::WebDriver::Wait.new(timeout: 20)
     @log.info('[Firefox] Started Firefox')
   end
 
@@ -147,7 +136,7 @@ class ZoomClient
     stop_ffmpeg
 
     @log.info('[FFmpeg] Starting FFmpeg...')
-    Process.spawn("nohup ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -pix_fmt yuv420p /dev/video0 > /dev/null 2>&1")
+    Process.spawn("nohup ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p /dev/video0 > /dev/null 2>&1")
     @pid = `ps aux | grep #{filename} | awk '{ print $2 " " $11 }' | grep ffmpeg | awk '{ print $1 }'`.chomp
     @log.info('[FFmpeg] Started FFmpeg')
     @log.info("[FFmpeg] PID: #{@pid}, FileName: #{filename}")
