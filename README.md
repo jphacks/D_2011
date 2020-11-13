@@ -27,7 +27,7 @@ var API_SECRET = "";
 ```bash
 vagrant up
 vagrant ssh
-ruby app.rb -o 0.0.0.0
+bundle exec puma
 ```
 
 とすることで http://localhost:3000/ でサービスにアクセス出来るようになります。
