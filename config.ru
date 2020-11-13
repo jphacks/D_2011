@@ -1,5 +1,7 @@
-require 'bundler'
-Bundler.require
+# frozen_string_literal: true
 
-require './app'
-run Sinatra::Application
+require 'bundler/setup'
+Bundler.require :default, (ENV['ENV'] || 'development').to_sym
+
+require './src/aika'
+run Aika
