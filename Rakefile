@@ -1,3 +1,3 @@
 require 'sinatra/activerecord'
 require 'sinatra/activerecord/rake'
-require './models.rb'
+require './src/models.rb'
