@@ -7,14 +7,18 @@ class MeetingRouter < Base
     title = params[:title]
     start_time = params[:start_time]
     link = params[:link]
-    agendas = params[:agenda]
+    agendas = params[:agendas]
 
-    meeting = Meeting.create(meeting_id: SecureRandom.hex, start_time: Time.at(start_time), link: link, title: title)
+    meeting = Meeting.create(meeting_id: SecureRandom.hex, start_time: Time.at(start_time.to_i), link: link, title: title)
     agendas.each do |agenda|
-      Agenda.create(meeting_id: meeting.id, title: title, duration: agenda[:duration])
+      Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
     end
 
-    ok({ agenda: agendaphoto(title, start_time.to_i, JSON.parse(agenda.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
+    ok({url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}",id: meeting.meeting_id })
+  end
+
+  post '/api/test' do
+    ok({status: params[:name]})
   end
 
   # ミーティング開始
