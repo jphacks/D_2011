@@ -13,8 +13,7 @@ class MeetingRouter < Base
     agendas.each do |agenda|
       Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
     end
-
-    ok({url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}",id: meeting.meeting_id })
+    ok({agenda: agendaphoto(title, start_time.to_i, JSON.parse(agendas.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}",id: meeting.meeting_id })
   end
 
   post '/api/test' do
@@ -65,17 +64,17 @@ class MeetingRouter < Base
   def agendaSheetPhoto(title, agendas, num, length)
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
     title += "(#{num}/#{length})"
-    text = ''
+    text = ""
     agendas.each do |a|
       start = Time.at(@photo_start_time).strftime('%H:%M') # このアジェンダシートの開始時刻
-      duration = (a['duration'] / 60).ceil
+      duration = (a['duration'].to_i / 60).ceil
       titleA = if a['title'].length >= 12
                 "#{a['title'].delete("\n").slice(0, 12)}…"
               else
                 a['title'].delete("\n")
               end
-      text += "#{start} #{duration}分 #{titleA}\n"
-      @photo_start_time += a['duration']
+      text += "#{start} #{duration.to_s}分 #{titleA}\n"
+      @photo_start_time += a['duration'].to_i
     end
     agendaWrite(title, text)
   end
