@@ -1,14 +1,8 @@
-require 'bundler/setup'
-Bundler.require
-require 'sinatra/reloader' if development?
-require './src/models.rb'
-require 'active_support/all'
-require 'active_support/core_ext'
 require 'mini_magick'
 require 'securerandom'
 
 before do
-  @base_image_path = "public/assets/img/bg.jpg".freeze
+  @base_image_path = "public/assets/img/bg.jpg"
   @font = "public/assets/fonts/unifont-11.0.01.ttf".freeze
   @color = "white"
   @topic_indention_count = 10
@@ -21,7 +15,7 @@ end
 # アジェンダ用の画像生成(アプリへの送信用にJSONに変換)（タイトル , 内容）
 def agendaWrite(title,contents)
   # 画像の生成（タイトル）
-  @image = MiniMagick::Image.open(@base_image_path)
+  @image = MiniMagick::Image.open("public/assets/img/bg.jpg")
   configuration(title,'North',80,"0,50")
   # 画像の生成（内容）
   configuration(contents,'NorthWest',60,"100,200")
@@ -38,7 +32,7 @@ end
 def topicWrite(print_text,image_name)
   # 画像の生成
   text = topic_prepare_text(print_text)
-  @image = MiniMagick::Image.open(@base_image_path)
+  @image = MiniMagick::Image.open("public/assets/img/bg.jpg")
   configuration(print_text,'center',100,'0,0')
   # 画像の書き出し
   image_name = image_name + ".png"
@@ -65,7 +59,7 @@ end
 def configuration(text,gravity,pointsize,text_position)
   @image.combine_options do |config|
     config.fill @color
-    config.font @font
+    config.font "public/assets/fonts/unifont-11.0.01.ttf"
     config.gravity gravity
     config.pointsize pointsize.to_i
     config.draw "text #{text_position} '#{text}'"

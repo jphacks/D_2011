@@ -16,7 +16,7 @@ class MeetingTimer
     @thread = nil
     @current_agenda_count = 0
     # Unix時間
-    @time = meeting.start
+    @time = meeting.start_time
     self.create_meeting()
   end
 
@@ -42,7 +42,7 @@ class MeetingTimer
       end
     end
   end
-  
+
   def delay_agenda(time)
     @time += time
     @thread.kill
@@ -56,7 +56,7 @@ class MeetingTimer
     end
     self.start_agenda(@agendas[@current_agenda_count])
   end
-  
+
   def terminate_agenda
     @thread.kill
     finish_agenda()
@@ -70,8 +70,8 @@ class MeetingTimer
       self.start_agenda(@agendas[@current_agenda_count])
     end
   end
-  
-  
+
+
   def finish_meeting(thread)
     if thread
       thread.kill

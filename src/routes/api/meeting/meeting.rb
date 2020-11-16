@@ -5,16 +5,19 @@ class MeetingRouter < Base
   # ミーティング作成
   post '/api/meeting' do
     title = params[:title]
-    start = params[:start]
+    start_time = params[:start_time]
     link = params[:link]
-    agendas = params[:agenda]
+    agendas = params[:agendas]
 
-    meeting = Meeting.create(random_num: SecureRandom.hex, start: Time.at(start), link: link, title: title)
+    meeting = Meeting.create(meeting_id: SecureRandom.hex, start_time: Time.at(start_time.to_i), link: link, title: title)
     agendas.each do |agenda|
-      Agenda.create(meeting_id: meeting.id, title: title, duration: agenda[:duration])
+      Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
     end
+    ok({agenda: agendaphoto(title, start_time.to_i, JSON.parse(agendas.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}",id: meeting.meeting_id })
+  end
 
-    ok({ agenda: agendaphoto(title, start.to_i, JSON.parse(agenda.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}", id: meeting.random_num })
+  post '/api/test' do
+    ok({status: params[:name]})
   end
 
   # ミーティング開始
@@ -45,8 +48,8 @@ class MeetingRouter < Base
   end
 
   # アジェンダ画像生成（タイトル(String),開始時間(UNIX時間),アジェンダのリスト(連想配列)）
-  def agendaphoto(title, startTime, agendas)
-    @startTime = startTime
+  def agendaphoto(title, photo_start_time, agendas)
+    @photo_start_time = photo_start_time
     agendaList = agendas.each_slice(7).to_a
     # p agendaList
     returnText = []
@@ -61,17 +64,17 @@ class MeetingRouter < Base
   def agendaSheetPhoto(title, agendas, num, length)
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
     title += "(#{num}/#{length})"
-    text = ''
+    text = ""
     agendas.each do |a|
-      start = Time.at(@startTime).strftime('%H:%M') # このアジェンダシートの開始時刻
-      duration = (a['duration'] / 60).ceil
+      start = Time.at(@photo_start_time).strftime('%H:%M') # このアジェンダシートの開始時刻
+      duration = (a['duration'].to_i / 60).ceil
       titleA = if a['title'].length >= 12
                 "#{a['title'].delete("\n").slice(0, 12)}…"
               else
                 a['title'].delete("\n")
               end
-      text += "#{start} #{duration}分 #{titleA}\n"
-      @startTime += a['duration']
+      text += "#{start} #{duration.to_s}分 #{titleA}\n"
+      @photo_start_time += a['duration'].to_i
     end
     agendaWrite(title, text)
   end
