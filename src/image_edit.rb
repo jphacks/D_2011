@@ -19,13 +19,14 @@ def agendaWrite(title,contents)
   configuration(title,'North',80,"0,50")
   # 画像の生成（内容）
   configuration(contents,'NorthWest',60,"100,200")
+  return @image.to_blob
   # 画像の書き出し（タイトル & 内容）
-  image_name = uniq_file_name
-  @image.write image_name
-  binary_data = File.read(image_name)
-  json_data = Base64.strict_encode64(binary_data)
-  File.delete(image_name)
-  return json_data
+  # image_name = uniq_file_name
+  # @image.write image_name
+  # binary_data = File.read(image_name)
+  # json_data = Base64.strict_encode64(binary_data)
+  # File.delete(image_name)
+  # return json_data
 end
 
 # Zoomの仮想カメラ用の画像生成(テキスト , イメージ名)

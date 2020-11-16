@@ -47,6 +47,14 @@ class MeetingRouter < Base
     ok
   end
 
+  # アジェンダ画像を返す
+  get '/api/meeting/img/:meeting_id' do
+    
+    blob = agendaWrite('ABC',params[:meeting_id])
+    content_type "image/png"
+    blob
+  end
+
   # アジェンダ画像生成（タイトル(String),開始時間(UNIX時間),アジェンダのリスト(連想配列)）
   def agendaphoto(title, photo_start_time, agendas)
     @photo_start_time = photo_start_time
