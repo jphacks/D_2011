@@ -26,7 +26,7 @@ zoom = nil
 # # ----------
 # get '/agenda/:id' do
 #   @meeting = Meeting.last
-#   # @meeting = Meeting.find_by(random_num: params[:id])
+#   # @meeting = Meeting.find_by(meeting_id: params[:id])
 #   @agenda_times = []
 #   agenda_starting_time = @meeting.start
 #   @meeting.agendas.each do |agenda|
@@ -120,7 +120,7 @@ zoom = nil
 #   meeting_id = SecureRandom.hex
 #   time = Time.at(startTimeAPI)
 #   meeting = Meeting.create(
-#     random_num: meeting_id,
+#     meeting_id: meeting_id,
 #     start: time,
 #     link: linkAPI,
 #     title: titleAPI
@@ -134,7 +134,7 @@ zoom = nil
 #     )
 #   end
 
-#   data = { agenda: agendaphoto(titleAPI, startTimeAPI.to_i, JSON.parse(agendaAPI.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}", id: meeting.random_num }
+#   data = { agenda: agendaphoto(titleAPI, startTimeAPI.to_i, JSON.parse(agendaAPI.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id }
 #   json data
 # end
 

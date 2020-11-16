@@ -9,12 +9,12 @@ class MeetingRouter < Base
     link = params[:link]
     agendas = params[:agenda]
 
-    meeting = Meeting.create(random_num: SecureRandom.hex, start: Time.at(start), link: link, title: title)
+    meeting = Meeting.create(meeting_id: SecureRandom.hex, start: Time.at(start), link: link, title: title)
     agendas.each do |agenda|
       Agenda.create(meeting_id: meeting.id, title: title, duration: agenda[:duration])
     end
 
-    ok({ agenda: agendaphoto(title, start.to_i, JSON.parse(agenda.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.random_num}", id: meeting.random_num })
+    ok({ agenda: agendaphoto(title, start.to_i, JSON.parse(agenda.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
   end
 
   # ミーティング開始
