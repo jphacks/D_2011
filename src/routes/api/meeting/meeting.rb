@@ -5,16 +5,16 @@ class MeetingRouter < Base
   # ミーティング作成
   post '/api/meeting' do
     title = params[:title]
-    start = params[:start]
+    start_time = params[:start_time]
     link = params[:link]
     agendas = params[:agenda]
 
-    meeting = Meeting.create(meeting_id: SecureRandom.hex, start: Time.at(start), link: link, title: title)
+    meeting = Meeting.create(meeting_id: SecureRandom.hex, start_time: Time.at(start_time), link: link, title: title)
     agendas.each do |agenda|
       Agenda.create(meeting_id: meeting.id, title: title, duration: agenda[:duration])
     end
 
-    ok({ agenda: agendaphoto(title, start.to_i, JSON.parse(agenda.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
+    ok({ agenda: agendaphoto(title, start_time.to_i, JSON.parse(agenda.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
   end
 
   # ミーティング開始
@@ -45,8 +45,8 @@ class MeetingRouter < Base
   end
 
   # アジェンダ画像生成（タイトル(String),開始時間(UNIX時間),アジェンダのリスト(連想配列)）
-  def agendaphoto(title, startTime, agendas)
-    @startTime = startTime
+  def agendaphoto(title, photo_start_time, agendas)
+    @photo_start_time = photo_start_time
     agendaList = agendas.each_slice(7).to_a
     # p agendaList
     returnText = []
@@ -63,7 +63,7 @@ class MeetingRouter < Base
     title += "(#{num}/#{length})"
     text = ''
     agendas.each do |a|
-      start = Time.at(@startTime).strftime('%H:%M') # このアジェンダシートの開始時刻
+      start = Time.at(@photo_start_time).strftime('%H:%M') # このアジェンダシートの開始時刻
       duration = (a['duration'] / 60).ceil
       titleA = if a['title'].length >= 12
                 "#{a['title'].delete("\n").slice(0, 12)}…"
@@ -71,7 +71,7 @@ class MeetingRouter < Base
                 a['title'].delete("\n")
               end
       text += "#{start} #{duration}分 #{titleA}\n"
-      @startTime += a['duration']
+      @photo_start_time += a['duration']
     end
     agendaWrite(title, text)
   end
