@@ -13,7 +13,7 @@ class MeetingRouter < Base
     agendas.each do |agenda|
       Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
     end
-    ok({agenda: agendaphoto(title, start_time.to_i, JSON.parse(agendas.to_json)), url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}",id: meeting.meeting_id })
+    ok({url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}",id: meeting.meeting_id })
   end
 
   # ミーティング開始
