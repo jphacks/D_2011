@@ -4,22 +4,23 @@
 class MeetingRouter < Base
   # ミーティング作成
   post '/api/meeting' do
-    title = params[:title]
-    start_time = params[:start_time]
-    link = params[:link]
-    agendas = params[:agendas]
-
-    meeting = Meeting.create(meeting_id: SecureRandom.hex, start_time: Time.at(start_time.to_i), link: link, title: title)
-    agendas.each do |agenda|
+    meeting = Meeting.create(
+      meeting_id: SecureRandom.hex,
+      start_time: Time.at(params[:start_time].to_i),
+      link: params[:link],
+      title: params[:title]
+    )
+    params[:agendas].each do |agenda|
       Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
     end
-    ok({url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}",id: meeting.meeting_id })
+    ok({ url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
   end
 
   # ミーティング開始
   post '/api/meeting/:id/start' do
-    zoom = ZoomClient.connect_with_number(params[:meetingid], params[:meetingpass])
-    return internal_error 'zoom connection error' unless zoom
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.meeting_id, meeting.meeting_pwd)
+    return internal_error 'zoom connection error' if zoom.nil?
 
     Thread.new do
       zoom.enable_video
@@ -31,6 +32,8 @@ class MeetingRouter < Base
 
   # ミーティング終了
   post '/api/meeting/:id/finish' do
+    zoom = ZoomManager.instance.get(params[:id])
+    not_found("No such meeting: #{params[:id]}") if zoom.nil?
     File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
     zoom.leaveMeeting rescue puts $!
     ok
@@ -38,6 +41,8 @@ class MeetingRouter < Base
 
   # ミュート && アンミュート通知
   post '/api/meeting/:id/mute_all' do
+    zoom = ZoomManager.instance.get(params[:id])
+    not_found("No such meeting: #{params[:id]}") if zoom.nil?
     zoom.muteAll
     zoom.reqyest_unmute_all
     ok
