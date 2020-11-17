@@ -1,82 +1,69 @@
 # ミーティングのタイマー管理のクラス
 
-# こんな感じで使って~
-# meeting = Meeting.first
-# timer = MeetingTimer.new(meeting, meeting.agendas.order('id'))
-
-# メソッド毎の説明は後でやります。
-
 class MeetingTimer
 
-  attr_accessor :meeting, :agendas
-
-  def initialize(meeting, agendas)
-    @meeting = meeting
-    @agendas = agendas
+  def initialize()
     @thread = nil
-    @current_agenda_count = 0
-    # Unix時間
-    @time = meeting.start_time
-    self.create_meeting()
+    @methods = []
+    @time = 0
   end
 
-  def create_meeting()
+  def reserve_meeting(time)
+    @time = time
     @thread = Thread.new do
-      begin
-        while Time.now.to_i <= @time
-          sleep(1)
-        end
-        self.start_agenda(@agendas[@current_agenda_count])
+      while Time.now.to_i <= @time
+        sleep(1)
+        p 'tick'
       end
+      puts "ミーティング開始！"
+      start_agenda
     end
   end
 
-  def start_agenda(agenda)
-    @time += agenda.duration
+  def start_agenda()
+    @methods.first[:method].call
+    @time += @methods.first[:time]
     @thread = Thread.new do
-      begin
-        while Time.now.to_i <= @time
-          sleep(1)
-        end
-        finish_agenda()
+      while Time.now.to_i <= @time
+        p 'agenda'
+        sleep(1)
       end
+      next_agenda
     end
   end
 
-  def delay_agenda(time)
+  def enqueue_agenda(time, &method)
+    @methods << {
+      time: time,
+      method: method
+    }
+  end
+
+  def next_agenda()
+    p @methods
+    @methods.pop(1)
+    if @methods.empty?
+      p 'meeting finished!'
+      return
+    end
+    start_agenda()
+  end
+  
+  def delay(time)
     @time += time
     @thread.kill
-    @thread = Thread.new do
-      begin
-        while Time.now.to_i <= @time
-          sleep(1)
-        end
-        finish_agenda()
+    begin
+      while Time.now.to_i <= @time
+        p '延長'
+        sleep(1)
       end
+      next_agenda
     end
-    self.start_agenda(@agendas[@current_agenda_count])
   end
 
-  def terminate_agenda
+  def terminate
+    p 'terminate'
     @thread.kill
-    finish_agenda()
-  end
-
-  def finish_agenda
-    @current_agenda_count += 1
-    if @current_agenda_count == @agendas.length
-      p 'meeting ended'
-    else
-      self.start_agenda(@agendas[@current_agenda_count])
-    end
-  end
-
-
-  def finish_meeting(thread)
-    if thread
-      thread.kill
-    else
-      p 'Thread is not created'
-    end
+    next_agenda
   end
 end
