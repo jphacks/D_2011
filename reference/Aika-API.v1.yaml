@@ -1,0 +1,262 @@
+openapi: 3.0.0
+info:
+  title: Aika API
+  version: '1.0'
+  description: Zoom会議支援サービス「aika」用API
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /api/meeting:
+    post:
+      summary: ミーティング作成
+      tags:
+        - meeting
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  code:
+                    type: number
+                  data:
+                    type: object
+                    required:
+                      - agenda
+                      - url
+                      - id
+                    properties:
+                      agenda:
+                        type: array
+                        items:
+                          type: string
+                      url:
+                        type: string
+                        minLength: 1
+                      id:
+                        type: string
+                        minLength: 1
+                required:
+                  - ok
+                  - code
+                  - data
+              examples:
+                例:
+                  value:
+                    ok: true
+                    code: 200
+                    data:
+                      agenda:
+                        - 'http://example.com/image1'
+                        - 'http://example.com/image2'
+                      url: 'https://aika.lit-kansai-mentors.com/agenda/7e96e3956d65c49ed9dfec02b721e301'
+                      id: 7e96e3956d65c49ed9dfec02b721e301
+      operationId: post-api-meeting
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                start:
+                  type: string
+                  minLength: 1
+                link:
+                  type: string
+                  minLength: 1
+                agenda:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        minLength: 1
+                      duration:
+                        type: number
+                    required:
+                      - title
+                      - duration
+              required:
+                - title
+                - start
+                - link
+                - agenda
+            examples:
+              例:
+                value:
+                  title: taguchike meeting
+                  start: '1605020400'
+                  link: 'http://example.com/zoom_url'
+                  agenda:
+                    - title: 自己紹介
+                      duration: 120
+                    - title: 概要
+                      duration: 300
+  /api/meeting/start:
+    post:
+      summary: ミーティング開始
+      tags:
+        - meeting
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Zoom接続エラー
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  code:
+                    type: number
+                  error:
+                    type: string
+                    minLength: 1
+                required:
+                  - ok
+                  - code
+                  - error
+              examples:
+                例:
+                  value:
+                    ok: false
+                    code: 500
+                    error: zoom connection error
+      operationId: post-api-meeting-start
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                meetingid:
+                  type: string
+                  minLength: 1
+                meetingpass:
+                  type: string
+                  minLength: 1
+              required:
+                - meetingid
+                - meetingpass
+            examples:
+              例:
+                value:
+                  meetingid: string
+                  meetingpass: string
+  /api/meeting/finish:
+    post:
+      summary: ミーティング終了（Aika退出）
+      tags:
+        - meeting
+      responses:
+        '200':
+          description: OK
+      operationId: post-api-meeting-finish
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                id:
+                  type: string
+                  minLength: 1
+              required:
+                - id
+            examples:
+              例:
+                value:
+                  id: 7e96e3956d65c49ed9dfec02b721e301
+        description: ''
+  /api/meeting/mute_all:
+    post:
+      summary: 全員ミュート&アンミュート通知
+      tags:
+        - meeting
+      responses:
+        '200':
+          description: OK
+      operationId: post-api-meeting-mute_all
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                id:
+                  type: string
+                  minLength: 1
+              required:
+                - id
+            examples:
+              例:
+                value:
+                  id: 7e96e3956d65c49ed9dfec02b721e301
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+          multipart/form-data:
+            schema:
+              type: object
+              properties: {}
+      description: ''
+  /api/meeting/agenda/next:
+    post:
+      summary: 議題変更
+      tags:
+        - meeting
+        - agenda
+      responses:
+        '200':
+          description: OK
+      operationId: post-api-meeting-agenda-next
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                id:
+                  type: string
+                  minLength: 1
+                duration:
+                  type: string
+                  minLength: 1
+                title:
+                  type: string
+                  minLength: 1
+              required:
+                - id
+                - duration
+                - title
+            examples:
+              例:
+                value:
+                  id: 7e96e3956d65c49ed9dfec02b721e301
+                  duration: '120'
+                  title: 議題
+components:
+  schemas: {}
+  securitySchemes: {}

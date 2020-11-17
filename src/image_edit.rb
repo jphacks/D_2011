@@ -1,14 +1,8 @@
-require 'bundler/setup'
-Bundler.require
-require 'sinatra/reloader' if development?
-require './src/models.rb'
-require 'active_support/all'
-require 'active_support/core_ext'
 require 'mini_magick'
 require 'securerandom'
 
 before do
-  @base_image_path = "public/assets/img/bg.jpg".freeze
+  @base_image_path = "public/assets/img/bg.jpg"
   @font = "public/assets/fonts/unifont-11.0.01.ttf".freeze
   @color = "white"
   @topic_indention_count = 10
@@ -19,26 +13,22 @@ end
 # 画像の書き出し
 # ----------------------------
 # アジェンダ用の画像生成(アプリへの送信用にJSONに変換)（タイトル , 内容）
-def agendaWrite(title,contents)
+def agendaWrite(title,time_text,content_text)
   # 画像の生成（タイトル）
-  @image = MiniMagick::Image.open(@base_image_path)
+  @image = MiniMagick::Image.open("public/assets/img/bg.jpg")
   configuration(title,'North',80,"0,50")
+  # 画像の生成（時間）
+  configuration(time_text,'NorthWest',60,"100,200")
   # 画像の生成（内容）
-  configuration(contents,'NorthWest',60,"100,200")
-  # 画像の書き出し（タイトル & 内容）
-  image_name = uniq_file_name
-  @image.write image_name
-  binary_data = File.read(image_name)
-  json_data = Base64.strict_encode64(binary_data)
-  File.delete(image_name)
-  return json_data
+  configuration(content_text,'NorthWest',60,"300,200")
+  return @image.to_blob
 end
 
 # Zoomの仮想カメラ用の画像生成(テキスト , イメージ名)
 def topicWrite(print_text,image_name)
   # 画像の生成
   text = topic_prepare_text(print_text)
-  @image = MiniMagick::Image.open(@base_image_path)
+  @image = MiniMagick::Image.open("public/assets/img/bg.jpg")
   configuration(print_text,'center',100,'0,0')
   # 画像の書き出し
   image_name = image_name + ".png"
@@ -65,7 +55,7 @@ end
 def configuration(text,gravity,pointsize,text_position)
   @image.combine_options do |config|
     config.fill @color
-    config.font @font
+    config.font "public/assets/fonts/unifont-11.0.01.ttf"
     config.gravity gravity
     config.pointsize pointsize.to_i
     config.draw "text #{text_position} '#{text}'"

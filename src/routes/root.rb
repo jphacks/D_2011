@@ -13,14 +13,14 @@ class RootRouter < Base
   # アジェンダページの表示
   get '/agenda/:id' do
     @meeting = Meeting.last
-    # @meeting = Meeting.find_by(random_num: params[:id])
+    # @meeting = Meeting.find_by(meeting_id: params[:id])
     @agenda_times = []
-    agenda_starting_time = @meeting.start
+    agenda_starting_time = @meeting.start_time
     @meeting.agendas.each do |agenda|
       @agenda_times.append(Time.at(agenda_starting_time).strftime('%H:%M'))
       agenda_starting_time += agenda.duration
     end
-    @start_time = Time.at(@meeting.start).strftime('%Y.%m.%d %H:%M~')
+    @start_time = Time.at(@meeting.start_time).strftime('%Y.%m.%d %H:%M~')
     erb :invite
   end
 end
