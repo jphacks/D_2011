@@ -13,19 +13,15 @@ end
 # 画像の書き出し
 # ----------------------------
 # アジェンダ用の画像生成(アプリへの送信用にJSONに変換)（タイトル , 内容）
-def agendaWrite(title,contents)
+def agendaWrite(title,time_text,content_text)
   # 画像の生成（タイトル）
   @image = MiniMagick::Image.open("public/assets/img/bg.jpg")
   configuration(title,'North',80,"0,50")
+  # 画像の生成（時間）
+  configuration(time_text,'NorthWest',60,"100,200")
   # 画像の生成（内容）
-  configuration(contents,'NorthWest',60,"100,200")
-  # 画像の書き出し（タイトル & 内容）
-  image_name = uniq_file_name
-  @image.write image_name
-  binary_data = File.read(image_name)
-  json_data = Base64.strict_encode64(binary_data)
-  File.delete(image_name)
-  return json_data
+  configuration(content_text,'NorthWest',60,"300,200")
+  return @image.to_blob
 end
 
 # Zoomの仮想カメラ用の画像生成(テキスト , イメージ名)
