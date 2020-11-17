@@ -3,11 +3,8 @@
 # Agenda Router
 class AgendaRouter < Base
   # 議題変更
-  post '/api/meeting/agenda/next' do
-    id = params[:id]
-    duration = params[:duration]
-    title = params[:title]
-    File.delete("public/assets/img/tmp/#{id}.png") rescue puts $!
-    zoom.changeImage(topicWrite("#{title}\n(#{duration}分)", id))
+  post '/api/meeting/:id/agenda/next' do
+    File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
+    zoom.changeImage(topicWrite("#{params[:title]}\n(#{params[:duration]}分)", id))
   end
 end

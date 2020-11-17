@@ -17,7 +17,7 @@ class MeetingRouter < Base
   end
 
   # ミーティング開始
-  post '/api/meeting/start' do
+  post '/api/meeting/:id/start' do
     zoom = ZoomClient.connect_with_number(params[:meetingid], params[:meetingpass])
     return internal_error 'zoom connection error' unless zoom
 
@@ -30,22 +30,22 @@ class MeetingRouter < Base
   end
 
   # ミーティング終了
-  post '/api/meeting/finish' do
-    File.delete("public/assets/img/tmp/#{id}.png") rescue puts $!
+  post '/api/meeting/:id/finish' do
+    File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
     zoom.leaveMeeting rescue puts $!
     ok
   end
 
   # ミュート && アンミュート通知
-  post '/api/meeting/mute_all' do
+  post '/api/meeting/:id/mute_all' do
     zoom.muteAll
     zoom.reqyest_unmute_all
     ok
   end
 
   # アジェンダ画像を返す
-  get '/api/meeting/img/:meeting_id' do
-    meeting = Meeting.find_by(meeting_id: params[:meeting_id])
+  get '/api/meeting/:id/img' do
+    meeting = Meeting.find_by(meeting_id: params[:id])
     title = meeting.title
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
     agendas = Agenda.where(meeting_id: meeting.id)
