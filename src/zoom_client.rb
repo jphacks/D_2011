@@ -20,15 +20,13 @@ class ZoomClient
   def self.connect_with_url(meeting_url)
     meeting_number = meeting_url.match(%r{^https://us02web\.zoom\.us/j/(\d+)}) # ミーティング情報を整理
     mn = meeting_number[1] unless meeting_number.nil?
+    return nil unless mn
+
     meeting_password = meeting_url.match(%r{^https://us02web\.zoom\.us/j/\d+\?pwd=(.+)$})
     mp = meeting_password[1] unless meeting_password.nil?
-    return nil unless mn && mp
 
     zoom = __send__(:new, mn, mp) # ミーティングに接続
-    unless zoom.connect # 失敗したらnilを返す
-      zoom.close
-      return nil
-    end
+    return zoom.close unless zoom.connect # 失敗したらnilを返す
 
     zoom
   end
@@ -42,10 +40,7 @@ class ZoomClient
     return nil unless meeting_number.match(/^\d{9,12}$/) # ミーティング情報を整理
 
     zoom = __send__(:new, meeting_number, meeting_password) # ミーティングに接続
-    unless zoom.connect # 失敗したらnilを返す
-      zoom.close
-      return nil
-    end
+    return zoom.close unless zoom.connect # 失敗したらnilを返す
 
     zoom
   end
@@ -55,15 +50,14 @@ class ZoomClient
 
     @log.info('[Zoom] Connecting...')
     @driver.execute_script "initialize('#{@mn}', '#{@mp}')"
-    begin
-      @wait.until { @driver.execute_script 'return getStatus() >= 2' }
-      @log.info('[Zoom] Connected')
-      true
-    rescue StandardError => e
-      @log.error('[Zoom] Failed connect')
-      @log.error e
-      false
-    end
+
+    @wait.until { @driver.execute_script 'return getStatus() >= 2' }
+    @log.info('[Zoom] Connected')
+    true
+  rescue StandardError => e
+    @log.error('[Zoom] Failed connect')
+    @log.error e
+    false
   end
 
   # Zoomの映像を有効化します
@@ -219,26 +213,10 @@ class ZoomClient
 
     # @watch_leave.kill
     stop_ffmpeg
-    begin
-      @driver.execute_script 'leaveMeeting()'
-    rescue StandardError
-      nil
-    end
-    begin
-      @wait.until { @driver.current_url == 'http://example.com/' }
-    rescue StandardError
-      nil
-    end
-    begin
-      @driver.close
-    rescue StandardError
-      nil
-    end
-    begin
-      @driver.quit
-    rescue StandardError
-      nil
-    end
+    @driver.execute_script 'leaveMeeting()' rescue nil
+    @wait.until { @driver.current_url == 'http://example.com/' } rescue nil
+    @driver.close rescue nil
+    @driver.quit rescue nil
     @driver = nil
     @log.info('[ZoomClient] Closed client')
   end
