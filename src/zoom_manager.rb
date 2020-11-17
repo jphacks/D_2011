@@ -4,10 +4,6 @@ require 'singleton'
 
 # ZoomClientを管理するクラス
 # TODO: 再接続を考慮
-# TODO: 複数仮想カメラ対応
-# TODO: 承認待機やカメラ有効化などのフローがイケてない
-#       ↓→ 「現在の画像」を保持して状態に応じて上から承認待機とか出すのが良さそう
-# TODO: 終了したZoomでokが出る
 class ZoomManager
   include Singleton
 
