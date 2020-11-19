@@ -10,34 +10,45 @@ class MeetingRouter < Base
       link: params[:link],
       title: params[:title]
     )
+
+    ZoomManager.instance.reserve_meeting(meeting.id, meeting.start_time) {
+      # meeting = Meeting.find_by(meeting_id: params[:id])
+      zoom = ZoomManager.instance.create_by_meeting_number(meeting.id, meeting.meeting_id, meeting.meeting_pwd)
+      return internal_error 'zoom connection error' if zoom.nil?
+  
+      Thread.new do
+        zoom.enable_video
+        zoom.request_co_host
+      end
+      ok
+    }
+
     params[:agendas].each do |agenda|
-      Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
+      agenda = Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
+      ZoomManager.instance.enqueue_agenda(agenda.meeting_id, agenda.duration) {
+        zoom.change_image(topicWrite("#{agenda.title}\n(#{agenda.duration}分)", agenda.meeting_id ))
+      }
     end
-    ok({ url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
-  end
 
-  # ミーティング開始
-  post '/api/meeting/:id/start' do
-    meeting = Meeting.find_by(meeting_id: params[:id])
-    zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.meeting_id, meeting.meeting_pwd)
-    return internal_error 'zoom connection error' if zoom.nil?
+    ZoomManager.instance.enqueue_cleanup_methods(meeting.id) {
+      zoom = ZoomManager.instance.get(params[:id])
+      not_found("No such meeting: #{params[:id]}") if zoom.nil?
+      File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
+      zoom.leaveMeeting rescue puts $!
+      ok
+    }
 
-    Thread.new do
-      zoom.enable_video
-      zoom.request_co_host
-      zoom.change_image(topicWrite("#{params[:title]}\n(#{params[:duration]}分)", id))
-    end
-    ok
+    ok({ url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: agenda.meeting_id })
   end
 
   # ミーティング終了
-  post '/api/meeting/:id/finish' do
-    zoom = ZoomManager.instance.get(params[:id])
-    not_found("No such meeting: #{params[:id]}") if zoom.nil?
-    File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
-    zoom.leaveMeeting rescue puts $!
-    ok
-  end
+  # post '/api/meeting/:id/finish' do
+  #   zoom = ZoomManager.instance.get(params[:id])
+  #   not_found("No such meeting: #{params[:id]}") if zoom.nil?
+  #   File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
+  #   zoom.leaveMeeting rescue puts $!
+  #   ok
+  # end
 
   # ミュート && アンミュート通知
   post '/api/meeting/:id/mute_all' do
