@@ -49,7 +49,7 @@ class MeetingRouter < Base
     zoom = ZoomManager.instance.get(params[:id])
     not_found("No such meeting: #{params[:id]}") if zoom.nil?
     zoom.muteAll
-    zoom.reqyest_unmute_all
+    zoom.request_unmute_all
     ok
   end
 
