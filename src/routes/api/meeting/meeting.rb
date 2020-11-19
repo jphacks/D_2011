@@ -17,6 +17,13 @@ class MeetingRouter < Base
     ok({ url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
   end
 
+  # aikaの追加
+  post '/api/meeting/:id/join' do
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    # ここで、タイマーの処理を開始してほしい
+    ok
+  end
+
   # ミーティング開始
   post '/api/meeting/:id/start' do
     meeting = Meeting.find_by(meeting_id: params[:id])
