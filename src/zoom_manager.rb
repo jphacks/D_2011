@@ -31,7 +31,7 @@ class ZoomManager
     # なかったら空いている映像デバイスを割り当てたZoomClientを返す
     return nil if id.nil? || id.empty?
 
-    @clients[id] = {}
+    @clients[id] = {} if @clients[id] == nil
     @clients[id][:zoom] = ZoomClient.connect_with_url(url) if @clients[id].nil?
     @clients[id][:zoom]
   end
@@ -39,7 +39,7 @@ class ZoomManager
   def create_by_meeting_number(id, meeting_number, pwd)
     return nil if id.nil? || id.empty?
 
-    @clients[id] = {}
+    @clients[id] = {} if @clients[id] == nil
     @clients[id][:zoom] = ZoomClient.connect_with_number(meeting_number, pwd) if @clients[id].nil?
     @clients[id][:zoom]
   end
@@ -59,7 +59,8 @@ class ZoomManager
     true
   end
 
-  def reserve_meeting(id, time)
+  def reserve_meeting(id, time, &method)
+    @clients[id] = {} if @clients[id] == nil
     @clients[id][:time] = time
     @clients[id][:thread] = Thread.new do
       while Time.now.to_i <= @clients[id][:time]
@@ -67,6 +68,7 @@ class ZoomManager
         p 'tick'
       end
       puts "ミーティング開始！"
+      method.call
       start_agenda(id)
     end
   end
@@ -91,11 +93,16 @@ class ZoomManager
     }
   end
 
+  def enqueue_cleanup_methods(id, &method) {
+    @clients[id][:cleanup] = method
+  }
+
   def next_agenda(id)
     p @clients[id][:methods]
     @clients[id][:methods].pop(1)
     if @clients[id][:methods].empty?
       p 'meeting finished!'
+      cleanup_meeting(id)
       return
     end
     start_agenda(id)
@@ -118,4 +125,9 @@ class ZoomManager
     @clients[id][:thread].kill
     next_agenda(id)
   end
+
+  def cleanup_meeting(id)
+    @clients[id][:cleanup].call
+  end
+
 end
