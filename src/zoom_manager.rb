@@ -2,14 +2,15 @@
 
 require 'singleton'
 
+# こんなイメージ
 # @clients = {
-#   "id": {
+#   id: {
 #     zoom: '',
 #     thread: nil,
 #     methods: [],
 #     time: 0
 #   },
-#   "id": {
+#   id: {
 #     zoom: '',
 #     thread: nil,
 #     methods: [],
