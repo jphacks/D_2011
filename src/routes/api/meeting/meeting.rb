@@ -7,7 +7,8 @@ class MeetingRouter < Base
     meeting = Meeting.create(
       meeting_id: SecureRandom.hex,
       start_time: Time.at(params[:start_time].to_i),
-      link: params[:link],
+      zoom_id: params[:zoom_id],
+      zoom_pass: params[:zoom_pass],
       title: params[:title]
     )
     params[:agendas].each do |agenda|
