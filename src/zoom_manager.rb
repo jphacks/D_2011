@@ -93,9 +93,9 @@ class ZoomManager
     }
   end
 
-  def enqueue_cleanup_methods(id, &method) {
+  def enqueue_cleanup_methods(id, &method) 
     @clients[id][:cleanup] = method
-  }
+  end
 
   def next_agenda(id)
     p @clients[id][:methods]
