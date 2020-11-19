@@ -11,8 +11,8 @@ class MeetingRouter < Base
       title: params[:title]
     )
 
+    # ミーティングを予約
     ZoomManager.instance.reserve_meeting(meeting.id, meeting.start_time) {
-      # meeting = Meeting.find_by(meeting_id: params[:id])
       zoom = ZoomManager.instance.create_by_meeting_number(meeting.id, meeting.meeting_id, meeting.meeting_pwd)
       return internal_error 'zoom connection error' if zoom.nil?
   
@@ -23,6 +23,7 @@ class MeetingRouter < Base
       ok
     }
 
+    # ミーティングのアジェンダを予約
     params[:agendas].each do |agenda|
       agenda = Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
       ZoomManager.instance.enqueue_agenda(agenda.meeting_id, agenda.duration) {
@@ -30,10 +31,11 @@ class MeetingRouter < Base
       }
     end
 
+    # ミーティング終了後の処理を登録
     ZoomManager.instance.enqueue_cleanup_methods(meeting.id) {
-      zoom = ZoomManager.instance.get(params[:id])
-      not_found("No such meeting: #{params[:id]}") if zoom.nil?
-      File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
+      zoom = ZoomManager.instance.get(meeting.id)
+      not_found("No such meeting: #{meeting.id}") if zoom.nil?
+      File.delete("public/assets/img/tmp/#{meeting.id}.png") rescue puts $!
       zoom.leaveMeeting rescue puts $!
       ok
     }
@@ -41,14 +43,6 @@ class MeetingRouter < Base
     ok({ url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: agenda.meeting_id })
   end
 
-  # ミーティング終了
-  # post '/api/meeting/:id/finish' do
-  #   zoom = ZoomManager.instance.get(params[:id])
-  #   not_found("No such meeting: #{params[:id]}") if zoom.nil?
-  #   File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
-  #   zoom.leaveMeeting rescue puts $!
-  #   ok
-  # end
 
   # ミュート && アンミュート通知
   post '/api/meeting/:id/mute_all' do
