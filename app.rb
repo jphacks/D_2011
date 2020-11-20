@@ -228,5 +228,5 @@ get '/api/zoom/muteall' do
 end
 # 全アンミュート
 get '/api/zoom/muteall' do
-  zoom.reqyest_unmute_all
+  zoom.request_unmute_all
 end
