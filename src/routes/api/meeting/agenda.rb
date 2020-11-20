@@ -7,6 +7,6 @@ class AgendaRouter < Base
     zoom = ZoomManager.instance.get(params[:id])
     not_found("No such meeting: #{params[:id]}") if zoom.nil?
     File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
-    zoom.changeImage(topicWrite("#{params[:title]}\n(#{params[:duration]}分)", id))
+    zoom.changeImage(topic_write("#{params[:title]}\n(#{params[:duration]}分)", id))
   end
 end

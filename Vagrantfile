@@ -16,7 +16,12 @@ Vagrant.configure('2') do |config|
   # Provision
   config.vm.provision 'shell', inline: <<-SHELL
     apt update
-    apt install -y ruby ruby-dev libsqlite3-dev imagemagick ffmpeg firefox libxslt1-dev zlib1g-dev v4l2loopback-dkms=0.12.3-1
+    apt install -y ruby ruby-dev libsqlite3-dev imagemagick ffmpeg firefox libxslt1-dev zlib1g-dev build-essential linux-headers-$(uname -r)
+    git clone https://github.com/umlaeute/v4l2loopback.git /v4l2loopback
+    cd /v4l2loopback
+    make KCPPFLAGS="-DMAX_DEVICES=100"
+    make install
+    depmod -a
     modprobe v4l2loopback devices=100
     echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
     usermod -aG video vagrant

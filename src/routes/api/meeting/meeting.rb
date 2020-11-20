@@ -54,7 +54,7 @@ class MeetingRouter < Base
     zoom = ZoomManager.instance.get(params[:id])
     not_found("No such meeting: #{params[:id]}") if zoom.nil?
     zoom.muteAll
-    zoom.reqyest_unmute_all
+    zoom.request_unmute_all
     ok
   end
 
@@ -64,20 +64,43 @@ class MeetingRouter < Base
     title = meeting.title
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
     agendas = Agenda.where(meeting_id: meeting.id)
-    time_text = ""
-    content_text = ""
+    time_text = ''
+    content_text = ''
     p agendas
-    agendas.each_with_index do |value,i|
+    agendas.each_with_index do |value, i|
       p value.duration
-      time_text += ((value.duration / 60).ceil).to_s + "分\n"
+      time_text += (value.duration / 60).ceil.to_s + "分\n"
       content_text += if value.title.length >= 12
                         "#{value.title.delete("\n").slice(0, 12)}…\n"
                       else
-                        value.title.delete("\n")+"\n"
+                        value.title.delete("\n") + "\n"
                       end
       break if i == 6
     end
-    blob = agendaWrite(title,time_text,content_text)
+    blob = agenda_write(title, time_text, content_text)
+    content_type 'image/png'
+    blob
+  end
+
+  # OGP画像を返す
+  get '/api/ogp/:id' do
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    title = meeting.title
+    title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
+    time_text = meeting.start_time
+    time_text = Time.at(time_text).strftime("開始時刻: %Y年%m月%d日 %H:%M")
+    blob = ogpWrite(title,time_text)
+    content_type "image/png"
+    blob
+  end
+
+  # OGP画像を返す
+  get '/api/ogp/:id' do
+    # meeting = Meeting.find_by(meeting_id: params[:id])
+    meeting = Meeting.last
+    title = meeting.title
+    time_text = meeting.start_time
+    blob = ogpWrite(title,time_text)
     content_type "image/png"
     blob
   end
