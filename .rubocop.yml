@@ -1,2 +1,4 @@
 Style/AsciiComments:
   Enabled: false
+Style/RescueModifier:
+  Enabled: false
