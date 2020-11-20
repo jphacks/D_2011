@@ -14,8 +14,4 @@ class Aika < Base
   configure do
     set :server, :puma
   end
-
-  not_found do
-    erb :notfound
-  end
 end

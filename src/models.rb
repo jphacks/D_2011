@@ -3,7 +3,8 @@
 require 'bundler/setup'
 Bundler.require
 
-ActiveRecord::Base.establish_connection(ENV['DATABASE_URL']||"sqlite3:db/development.db")
+ActiveRecord::Base.configurations = YAML.load_file('database.yml')
+ActiveRecord::Base.establish_connection((ENV['ENV'] || 'development').intern)
 
 # Meeting Table
 class Meeting < ActiveRecord::Base
