@@ -13,12 +13,12 @@ class Base < Sinatra::Base
 
     def notfound(error)
       status 404
-      json({ ok: false, status: 'error', code: 404, error: error })
+      json({ ok: false, status: 'error', code: 404, error: error, stacktrace: Thread.current.backtrace })
     end
 
     def internal_error(error)
       status 500
-      json({ ok: false, status: 'error', code: 500, error: error })
+      json({ ok: false, status: 'error', code: 500, error: error, stacktrace: Thread.current.backtrace })
     end
   end
 
@@ -34,7 +34,6 @@ class Base < Sinatra::Base
   end
 
   error 500 do |e|
-    puts e.to_s
     internal_error e.to_s
   end
 end
