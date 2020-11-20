@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_19_104749) do
+ActiveRecord::Schema.define(version: 2020_11_20_151853) do
 
   create_table "agendas", force: :cascade do |t|
     t.integer "meeting_id"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 2020_11_19_104749) do
     t.string "title"
     t.string "zoom_id"
     t.string "zoom_pass"
+    t.integer "agenda_now", default: 0, null: false
   end
 
 end
