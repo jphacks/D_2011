@@ -26,7 +26,7 @@ class MeetingRouter < Base
     Thread.new do
       zoom.enable_video
       zoom.request_co_host
-      zoom.change_image(topicWrite("#{params[:title]}\n(#{params[:duration]}分)", id))
+      zoom.change_image(topic_write("#{params[:title]}\n(#{params[:duration]}分)", id))
     end
     ok
   end
@@ -45,7 +45,7 @@ class MeetingRouter < Base
     zoom = ZoomManager.instance.get(params[:id])
     not_found("No such meeting: #{params[:id]}") if zoom.nil?
     zoom.muteAll
-    zoom.reqyest_unmute_all
+    zoom.request_unmute_all
     ok
   end
 
@@ -55,21 +55,21 @@ class MeetingRouter < Base
     title = meeting.title
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
     agendas = Agenda.where(meeting_id: meeting.id)
-    time_text = ""
-    content_text = ""
+    time_text = ''
+    content_text = ''
     p agendas
-    agendas.each_with_index do |value,i|
+    agendas.each_with_index do |value, i|
       p value.duration
-      time_text += ((value.duration / 60).ceil).to_s + "分\n"
+      time_text += (value.duration / 60).ceil.to_s + "分\n"
       content_text += if value.title.length >= 12
                         "#{value.title.delete("\n").slice(0, 12)}…\n"
                       else
-                        value.title.delete("\n")+"\n"
+                        value.title.delete("\n") + "\n"
                       end
       break if i == 6
     end
-    blob = agendaWrite(title,time_text,content_text)
-    content_type "image/png"
+    blob = agenda_write(title, time_text, content_text)
+    content_type 'image/png'
     blob
   end
 

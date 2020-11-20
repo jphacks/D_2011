@@ -11,7 +11,6 @@ class Base < Sinatra::Base
       json({ ok: true, status: 'success', code: 200, data: data })
     end
 
-    # エラーにスタックトーレスとか入れたい
     def notfound(error)
       status 404
       json({ ok: false, status: 'error', code: 404, error: error })
