@@ -40,8 +40,9 @@ end
 
 def ogpWrite(title,time_text)
   @image = MiniMagick::Image.open("public/assets/img/bg.jpg")
-  configuration(print_text,'center',100,'0,-20')
+  configuration(title,'center',100,'0,-20')
   configuration(time_text,'center',80,'0,10')
+  return @image.to_blob
 end
 
 private
