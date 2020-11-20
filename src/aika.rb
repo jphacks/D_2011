@@ -9,6 +9,7 @@ require './src/models'
 
 # Aika
 class Aika < Base
+  use Rack::JSONBodyParser
   use RootRouter
 
   configure do

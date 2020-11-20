@@ -30,7 +30,6 @@ class Base < Sinatra::Base
 
   configure :development do
     register Sinatra::Reloader
-    use Rack::JSONBodyParser
   end
 
   not_found do |e|

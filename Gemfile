@@ -18,15 +18,20 @@ gem 'sqlite3', '~>1.4.1'
 gem 'timers'
 
 group :development do
-  gem 'codecov'
   gem 'debase'
   gem 'fastri'
   gem 'pry'
-  gem 'rack-test'
   gem 'rcodetools'
-  gem 'rspec'
   gem 'rubocop'
   gem 'ruby-debug-ide'
-  gem 'simplecov'
   gem 'solargraph', '>=0.30'
+end
+
+group :test do
+  gem 'codecov'
+  gem 'database_cleaner'
+  gem 'factory_bot'
+  gem 'rack-test'
+  gem 'rspec'
+  gem 'simplecov'
 end
