@@ -15,7 +15,7 @@ class AgendaRouter < Base
       not_found("Not found next agenda.")
     end
 
-    zoom.changeImage(topic_write("#{next_agenda.title}\n(#{(next_agenda.duration / 60).to_s}分)", id))
-    ok
+    zoom.changeImage(topic_write("#{next_agenda.title}\n(#{(next_agenda.duration / 60).to_s}分)", params[:id]))
+    ok('')
   end
 end
