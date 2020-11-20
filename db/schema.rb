@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_16_091517) do
+ActiveRecord::Schema.define(version: 2020_11_19_104749) do
 
   create_table "agendas", force: :cascade do |t|
     t.integer "meeting_id"
@@ -24,11 +24,12 @@ ActiveRecord::Schema.define(version: 2020_11_16_091517) do
   create_table "meetings", force: :cascade do |t|
     t.string "meeting_id"
     t.integer "start_time"
-    t.string "link"
     t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "title"
+    t.string "zoom_id"
+    t.string "zoom_pass"
   end
 
 end

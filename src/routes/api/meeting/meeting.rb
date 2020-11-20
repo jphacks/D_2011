@@ -7,7 +7,8 @@ class MeetingRouter < Base
     meeting = Meeting.create(
       meeting_id: SecureRandom.hex,
       start_time: Time.at(params[:start_time].to_i),
-      link: params[:link],
+      zoom_id: params[:zoom_id],
+      zoom_pass: params[:zoom_pass],
       title: params[:title]
     )
     params[:agendas].each do |agenda|
@@ -68,6 +69,18 @@ class MeetingRouter < Base
       break if i == 6
     end
     blob = agendaWrite(title,time_text,content_text)
+    content_type "image/png"
+    blob
+  end
+
+  # OGP画像を返す
+  get '/api/ogp/:id' do
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    title = meeting.title
+    title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
+    time_text = meeting.start_time
+    time_text = Time.at(time_text).strftime("開始時刻: %Y年%m月%d日 %H:%M")
+    blob = ogpWrite(title,time_text)
     content_type "image/png"
     blob
   end
