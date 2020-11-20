@@ -55,9 +55,6 @@ def topic_prepare_text(print_text)
   print_text.scan(/.{1,#{@topic_indention_count}}/)[0...@topic_row_limit].join("\n")
 end
 
-# OGP画像用の文字列整理
-
-
 # ----------------------------
 # 共通処理
 # ----------------------------
