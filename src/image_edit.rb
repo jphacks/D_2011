@@ -58,11 +58,6 @@ def topic_prepare_text(print_text)
   print_text.scan(/.{1,#{@topic_indention_count}}/)[0...@topic_row_limit].join("\n")
 end
 
-# OGP用の折り返し
-def ogp_text(print_text)
-  print_text.scan(/.{1,10}/)[0...8].join("\n")
-end
-
 # ----------------------------
 # 共通処理
 # ----------------------------
