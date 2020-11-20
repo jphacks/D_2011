@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Aika API
-  version: '1.0'
+  version: '1.1'
   description: Zoom会議支援サービス「aika」用API
 servers:
   - url: 'http://localhost:3000'
@@ -31,10 +31,6 @@ paths:
                       - url
                       - id
                     properties:
-                      agenda:
-                        type: array
-                        items:
-                          type: string
                       url:
                         type: string
                         minLength: 1
@@ -51,9 +47,6 @@ paths:
                     ok: true
                     code: 200
                     data:
-                      agenda:
-                        - 'http://example.com/image1'
-                        - 'http://example.com/image2'
                       url: 'https://aika.lit-kansai-mentors.com/agenda/7e96e3956d65c49ed9dfec02b721e301'
                       id: 7e96e3956d65c49ed9dfec02b721e301
       operationId: post-api-meeting
@@ -68,10 +61,13 @@ paths:
                 title:
                   type: string
                   minLength: 1
-                start:
+                start_time:
                   type: string
                   minLength: 1
-                link:
+                zoom_id:
+                  type: string
+                  minLength: 1
+                zoom_pass:
                   type: string
                   minLength: 1
                 agenda:
@@ -91,23 +87,25 @@ paths:
                       - duration
               required:
                 - title
-                - start
-                - link
+                - start_time
+                - zoom_id
+                - zoom_pass
                 - agenda
             examples:
               例:
                 value:
                   title: taguchike meeting
-                  start: '1605020400'
-                  link: 'http://example.com/zoom_url'
+                  start_time: '1605020400'
+                  zoom_id: '5534291784'
+                  zoom_pass: '3k0wsA'
                   agenda:
                     - title: 自己紹介
                       duration: 120
                     - title: 概要
                       duration: 300
-  /api/meeting/start:
+  /api/meeting/:id/join:
     post:
-      summary: ミーティング開始
+      summary: AikaをZoomに招待
       tags:
         - meeting
       responses:
@@ -138,30 +136,19 @@ paths:
                     ok: false
                     code: 500
                     error: zoom connection error
+      operationId: post-api-meeting-join
+      description: idには、ミーティング作成時にサーバーから返されるIDを入れる
+  /api/meeting/:id/start:
+    post:
+      summary: ミーティング開始
+      tags:
+        - meeting
+      responses:
+        '200':
+          description: OK
       operationId: post-api-meeting-start
-      description: ''
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                meetingid:
-                  type: string
-                  minLength: 1
-                meetingpass:
-                  type: string
-                  minLength: 1
-              required:
-                - meetingid
-                - meetingpass
-            examples:
-              例:
-                value:
-                  meetingid: string
-                  meetingpass: string
-  /api/meeting/finish:
+      description: idには、ミーティング作成時にサーバーから返されるIDを入れる
+  /api/meeting/:id/finish:
     post:
       summary: ミーティング終了（Aika退出）
       tags:
@@ -170,24 +157,8 @@ paths:
         '200':
           description: OK
       operationId: post-api-meeting-finish
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                id:
-                  type: string
-                  minLength: 1
-              required:
-                - id
-            examples:
-              例:
-                value:
-                  id: 7e96e3956d65c49ed9dfec02b721e301
-        description: ''
-  /api/meeting/mute_all:
+      description: 'idには、ミーティング作成時にサーバーから返されるIDを入れる'
+  /api/meeting/:id/mute_all:
     post:
       summary: 全員ミュート&アンミュート通知
       tags:
@@ -196,67 +167,37 @@ paths:
         '200':
           description: OK
       operationId: post-api-meeting-mute_all
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                id:
-                  type: string
-                  minLength: 1
-              required:
-                - id
-            examples:
-              例:
-                value:
-                  id: 7e96e3956d65c49ed9dfec02b721e301
-          application/xml:
-            schema:
-              type: object
-              properties: {}
-          multipart/form-data:
-            schema:
-              type: object
-              properties: {}
-      description: ''
-  /api/meeting/agenda/next:
+      description: 'idには、ミーティング作成時にサーバーから返されるIDを入れる'
+  /api/meeting/:id/img:
+    get:
+      summary: アジェンダ画像取得
+      tags:
+        - meeting
+      responses:
+        '200':
+            description: 'アジェンダ一覧の画像（1枚）'
+      operationId: get-api-meeting-img
+      description: 'idには、ミーティング作成時にサーバーから返されるIDを入れる。アジェンダ一覧の画像が返される。'
+  /api/ogp/:id:
+    get:
+      summary: OGP画像取得
+      tags:
+        - meeting
+      responses:
+        '200':
+            description: 'OGP画像（1枚）'
+      operationId: get-api-ogp-img
+      description: 'idには、ミーティング作成時にサーバーから返されるIDを入れる。OGP画像が返される。'
+  /api/meeting/:id/agenda/next:
     post:
       summary: 議題変更
       tags:
-        - meeting
         - agenda
       responses:
         '200':
           description: OK
       operationId: post-api-meeting-agenda-next
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                id:
-                  type: string
-                  minLength: 1
-                duration:
-                  type: string
-                  minLength: 1
-                title:
-                  type: string
-                  minLength: 1
-              required:
-                - id
-                - duration
-                - title
-            examples:
-              例:
-                value:
-                  id: 7e96e3956d65c49ed9dfec02b721e301
-                  duration: '120'
-                  title: 議題
+      description: 'idには、ミーティング作成時にサーバーから返されるIDを入れる'
 components:
   schemas: {}
   securitySchemes: {}
