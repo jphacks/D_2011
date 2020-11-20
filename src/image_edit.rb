@@ -38,6 +38,12 @@ def topicWrite(print_text,image_name)
   return "public/assets/img/tmp/"+image_name
 end
 
+def ogpWrite(title,time_text)
+  @image = MiniMagick::Image.open("public/assets/img/bg.jpg")
+  configuration(print_text,'center',100,'0,-20')
+  configuration(time_text,'center',80,'0,10')
+end
+
 private
 
 # ----------------------------
@@ -47,6 +53,9 @@ private
 def topic_prepare_text(print_text)
   print_text.scan(/.{1,#{@topic_indention_count}}/)[0...@topic_row_limit].join("\n")
 end
+
+# OGP画像用の文字列整理
+
 
 # ----------------------------
 # 共通処理
