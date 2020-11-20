@@ -17,17 +17,26 @@ class MeetingRouter < Base
     ok({ url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
   end
 
-  # ミーティング開始
-  post '/api/meeting/:id/start' do
+  # aikaの追加
+  post '/api/meeting/:id/join' do
     meeting = Meeting.find_by(meeting_id: params[:id])
-    zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.meeting_id, meeting.meeting_pwd)
+    zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.zoom_id, meeting.zoom_pass)
     return internal_error 'zoom connection error' if zoom.nil?
 
     Thread.new do
       zoom.enable_video
       zoom.request_co_host
-      zoom.change_image(topic_write("#{params[:title]}\n(#{params[:duration]}分)", id))
+      zoom.change_image(topicWrite("しばらくお待ちください", id))
     end
+    ok
+  end
+
+  # ミーティング開始
+  post '/api/meeting/:id/start' do
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    # ここにタイマーの処理書いて欲しい
+    # 下のコードがzoomの画像変更するコード
+    # zoom.change_image(topicWrite("#{params[:title]}\n(#{params[:duration]}分)", id))
     ok
   end
 
