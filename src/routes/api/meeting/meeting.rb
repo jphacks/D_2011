@@ -75,9 +75,7 @@ class MeetingRouter < Base
 
   # OGP画像を返す
   get '/api/ogp/:id' do
-    # meeting = Meeting.find_by(meeting_id: params[:id])
-    meeting = Meeting.last
-    print(meeting.meeting_id)
+    meeting = Meeting.find_by(meeting_id: params[:id])
     title = meeting.title
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
     time_text = meeting.start_time
