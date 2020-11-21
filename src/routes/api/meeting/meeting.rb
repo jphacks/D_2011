@@ -79,9 +79,9 @@ class MeetingRouter < Base
     title = meeting.title
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
     time_text = meeting.start_time
-    time_text = Time.at(time_text).strftime("開始時刻: %Y年%m月%d日 %H:%M")
+    time_text = Time.at(time_text).strftime('開始時刻: %Y年%m月%d日 %H:%M')
     blob = ogpWrite(title,time_text)
-    content_type "image/png"
+    content_type 'image/png'
     blob
   end
 end

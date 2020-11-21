@@ -3,14 +3,15 @@
 require 'bundler/setup'
 Bundler.require :default, :development, :test
 Dotenv.load
-ENV['ENV'] = 'test'
+SimpleCov.start
 
 require './src/aika'
 
-SimpleCov.start
 # SimpleCov.formatter = SimpleCov::Formatter::Codecov
 
 RSpec.configure do |config|
+  ENV['ENV'] = 'test'
+
   config.include Rack::Test::Methods
   config.include FactoryBot::Syntax::Methods
 
@@ -39,4 +40,5 @@ RSpec.configure do |config|
   def app
     Aika
   end
+
 end
