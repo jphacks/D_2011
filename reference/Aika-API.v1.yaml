@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Aika API
-  version: '1.1'
+  version: '1.2'
   description: Zoom会議支援サービス「aika」用API
 servers:
   - url: 'http://localhost:3000'
@@ -168,7 +168,7 @@ paths:
           description: OK
       operationId: post-api-meeting-mute_all
       description: 'idには、ミーティング作成時にサーバーから返されるIDを入れる'
-  /api/meeting/:id/img:
+  /api/meeting/:id/agenda/list.png:
     get:
       summary: アジェンダ画像取得
       tags:
@@ -178,7 +178,7 @@ paths:
             description: 'アジェンダ一覧の画像（1枚）'
       operationId: get-api-meeting-img
       description: 'idには、ミーティング作成時にサーバーから返されるIDを入れる。アジェンダ一覧の画像が返される。'
-  /api/ogp/:id:
+  /api/meeting/:id/ogp:
     get:
       summary: OGP画像取得
       tags:
