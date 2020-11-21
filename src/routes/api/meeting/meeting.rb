@@ -17,17 +17,26 @@ class MeetingRouter < Base
     ok({ url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
   end
 
-  # ミーティング開始
-  post '/api/meeting/:id/start' do
+  # aikaの追加
+  post '/api/meeting/:id/join' do
     meeting = Meeting.find_by(meeting_id: params[:id])
-    zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.meeting_id, meeting.meeting_pwd)
+    zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.zoom_id, meeting.zoom_pass)
     return internal_error 'zoom connection error' if zoom.nil?
 
     Thread.new do
       zoom.enable_video
       zoom.request_co_host
-      zoom.change_image(topic_write("#{params[:title]}\n(#{params[:duration]}分)", id))
+      zoom.change_image(topicWrite("しばらくお待ちください", id))
     end
+    ok
+  end
+
+  # ミーティング開始
+  post '/api/meeting/:id/start' do
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    # ここにタイマーの処理書いて欲しい
+    # 下のコードがzoomの画像変更するコード
+    # zoom.change_image(topicWrite("#{params[:title]}\n(#{params[:duration]}分)", id))
     ok
   end
 
@@ -76,10 +85,11 @@ class MeetingRouter < Base
   # OGP画像を返す
   get '/api/ogp/:id' do
     meeting = Meeting.find_by(meeting_id: params[:id])
+    print(meeting.meeting_id+'\n')
     title = meeting.title
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
     time_text = meeting.start_time
-    time_text = Time.at(time_text).strftime('開始時刻: %Y年%m月%d日 %H:%M')
+    time_text = Time.at(time_text).strftime('Start: %Y.%m.%d %H:%M')
     blob = ogpWrite(title,time_text)
     content_type 'image/png'
     blob

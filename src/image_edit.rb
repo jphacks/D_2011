@@ -40,6 +40,7 @@ def topic_write(print_text, image_name)
   path
 end
 
+# OGP用の画像生成
 def ogpWrite(title,time_text)
   @image = MiniMagick::Image.open("public/assets/img/ogp_bg.png")
   configuration(title,'center',80,'0,-30')
