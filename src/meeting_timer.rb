@@ -20,6 +20,13 @@ class MeetingTimer
     end
   end
 
+  # @param [Integer] time ミーティングを開始したい時間
+  def start_meeting(time)
+    @time = time
+    @thread.kill
+    start_agenda
+  end
+
   def start_agenda()
     @methods.first[:method].call
     @time += @methods.first[:time]
