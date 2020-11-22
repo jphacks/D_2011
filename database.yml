@@ -1,0 +1,13 @@
+production:
+  adapter: postgresql
+  host: <%= ENV['DATABASE_URL'] %>
+  encoding: unicode
+  pool: 5
+
+development: &development
+  adapter: sqlite3
+  database: db/development.db
+
+test:
+  <<: *development
+  database: db/test.db

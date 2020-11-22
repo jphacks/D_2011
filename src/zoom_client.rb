@@ -11,6 +11,7 @@ require 'logger'
 # TODO: 終了したZoomでokが出る
 class ZoomClient
   @video_devices = {}
+  @img_path = 'public/assets/img'
 
   # パスワード付きURLの内容に基づいてZoomミーティングに接続します
   #
@@ -20,7 +21,7 @@ class ZoomClient
   def self.connect_with_url(meeting_url)
     meeting_number = meeting_url.match(%r{^https://us02web\.zoom\.us/j/(\d+)}) # ミーティング情報を整理
     mn = meeting_number[1] unless meeting_number.nil?
-    return nil unless mn
+    return unless mn
 
     meeting_password = meeting_url.match(%r{^https://us02web\.zoom\.us/j/\d+\?pwd=(.+)$})
     mp = meeting_password[1] unless meeting_password.nil?
@@ -37,7 +38,7 @@ class ZoomClient
   # @return [ZoomClient] インスタンス
   # @return [nil] ミーティングに参加する事が出来なかった場合はnil
   def self.connect_with_number(meeting_number, meeting_password)
-    return nil unless meeting_number.match(/^\d{9,12}$/) # ミーティング情報を整理
+    return unless meeting_number.match(/^\d{9,12}$/) # ミーティング情報を整理
 
     zoom = create_client(meeting_number, meeting_password) # ミーティングに接続
     return zoom.close unless zoom.connect # 失敗したらnilを返す
@@ -95,11 +96,25 @@ class ZoomClient
   end
 
   # 指定されたファイルをZoomに表示します
-  # @param [String] filename 表示する画像のパス
-  def change_image(filename)
+  # @param [String] image 流し込む画像のblob
+  def show_image(image)
     return if @driver.nil?
 
-    start_ffmpeg filename
+    @log.info('[FFmpeg] Running FFmpeg...')
+    Open3.capture2(
+      "ffmpeg -loop 1 -i pipe:0 -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video}",
+      stdin_data: image,
+      binmode: true
+    )
+  end
+
+  # 指定されたファイルをZoomに表示します
+  # @param [String] filepath 流し込む画像のパス
+  def show_image_by_path(filepath)
+    return if @driver.nil?
+
+    @log.info('[FFmpeg] Running FFmpeg...')
+    Open3.capture2("ffmpeg -loop 1 -i #{filepath} -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video}")
   end
 
   # 共同ホスト権限を要求します
@@ -107,10 +122,10 @@ class ZoomClient
     return if @driver.nil?
 
     @log.info('[Zoom] Request Co-host...')
-    change_image('public/assets/img/request_co_host.jpg')
+    show_image_by_path("#{@img_path}/request_co_host.jpg")
     sleep 1 until @driver.execute_script 'return isCoHost()'
     @log.info('[Zoom] Done')
-    change_image('public/assets/img/aika.jpg')
+    show_image_by_path("#{@img_path}/aika.jpg")
   end
 
   # ミーティングに参加している参加者の一覧を配列で取得します
@@ -127,37 +142,6 @@ class ZoomClient
 
     @driver.execute_script 'updateCurrentUser()'
     (@driver.execute_script 'return getCurrentUser()').to_json
-  end
-
-  # 指定されたファイルをFFmpegで映像デバイスに流し込みます
-  # 現在のクライアント用にFFmpegが動いている場合は先に停止します
-  # @param [String] filename 流し込む画像のパス
-  def start_ffmpeg(filename)
-    return if @driver.nil?
-
-    stop_ffmpeg
-
-    @log.info('[FFmpeg] Starting FFmpeg...')
-    Process.spawn("nohup ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video} > /dev/null 2>&1")
-    @pid = `ps aux | grep #{filename} | awk '{ print $2 " " $11 }' | grep ffmpeg | awk '{ print $1 }'`.chomp
-    @log.info('[FFmpeg] Started FFmpeg')
-    @log.info("[FFmpeg] PID: #{@pid}, FileName: #{filename}")
-  end
-
-  # 現在のクライアント用に動いているFFmpegを停止します
-  def stop_ffmpeg
-    return if @driver.nil?
-    return if @pid.nil?
-
-    @log.info('[FFmpeg] Stopping FFmpeg...')
-
-    begin
-      Process.kill 9, @pid.to_i
-      @log.info('[FFmpeg] Stopped FFmpeg')
-    rescue StandardError
-      @log.info('[FFmpeg] Already stopped!')
-    end
-    @pid = nil
   end
 
   # 映像の有効/無効ボタンをクリックします
@@ -220,7 +204,6 @@ class ZoomClient
     @log.info('[ZoomClient] Closing client...')
 
     # @watch_leave.kill
-    stop_ffmpeg
     @driver.execute_script 'leaveMeeting()' rescue nil
     @wait.until { @driver.current_url == 'http://example.com/' } rescue nil
     @driver.close rescue nil
@@ -241,7 +224,7 @@ class ZoomClient
     @log.debug("[Meeting Info] Password: #{@mp}")
 
     start_browser # 接続するための準備
-    start_ffmpeg('public/assets/img/aika.jpg')
+    show_image_by_path("#{@img_path}/aika.jpg")
 
     # @watch_leave = Thread.new do # ミーティング終了フック
     #   @log.info('[ZoomClient] Detected leaving')
