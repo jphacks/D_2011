@@ -34,10 +34,6 @@ class AgendaRouter < Base
   end
 
   def adjust_content_text(text)
-    if text.length >= 12
-      "#{text.delete('\n').slice(0, 12)}…\n"
-    else
-      "#{text.delete('\n')}\n"
-    end
+    text.length >= 12 ? "#{text.delete('\n').slice(0, 12)}…\n" : "#{text.delete('\n')}\n"
   end
 end

@@ -40,5 +40,4 @@ RSpec.configure do |config|
   def app
     Aika
   end
-
 end

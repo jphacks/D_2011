@@ -11,9 +11,9 @@ class MeetingRouter < Base
       zoom_pass: params[:zoom_pass],
       title: params[:title]
     )
-    # params[:agendas].each do |agenda|
-    #   Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
-    # end
+    params[:agendas].each do |agenda|
+      Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
+    end
     ok({ url: "https://aika.lit-kansai-mentors.com/agenda/#{meeting.meeting_id}", id: meeting.meeting_id })
   end
 

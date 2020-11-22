@@ -6,7 +6,7 @@ FactoryBot.define do
     start_time { 1605020400 }
     zoom_id { '1234567890' }
     zoom_pass { '3jZ25d' }
-    agenda {
+    agendas {
       [
         {
           "title": '自己紹介',
@@ -26,7 +26,7 @@ FactoryBot.define do
     title { 'sample meeting' }
     start_time { 1605020400 }
     zoom_pass { '3jZ25d' }
-    agenda {
+    agendas {
       [
         {
           "title": '自己紹介',
@@ -46,7 +46,7 @@ FactoryBot.define do
     title { 'sample meeting' }
     start_time { '2020/11/12 10:05:23' }
     zoom_pass { '3jZ25d' }
-    agenda {
+    agendas {
       [
         {
           "title": '自己紹介',
