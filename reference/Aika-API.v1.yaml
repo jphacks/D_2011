@@ -172,7 +172,7 @@ paths:
     get:
       summary: アジェンダ画像取得
       tags:
-        - meeting
+        - agenda
       responses:
         '200':
             description: 'アジェンダ一覧の画像（1枚）'
