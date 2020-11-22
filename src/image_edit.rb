@@ -26,25 +26,22 @@ class ImageEdit
   end
 
   # Zoomの仮想カメラ用の画像生成(テキスト , イメージ名)
-  def self.topic_write(print_text, image_name)
-    # 画像の生成
+  def self.topic_write(print_text)
     @image = MiniMagick::Image.open("#{@img_path}/bg.jpg")
-    configuration(print_text, 'center', 100, '0,0')
-    # 画像の書き出し
-    image_name += '.png'
-    @image.write image_name
 
-    path = "#{@img_path}/tmp/#{image_name}"
-    FileUtils.mv(image_name, path)
-    path
+    configuration(print_text, 'center', 100, '0,0')
+
+    @image.to_blob
   end
 
   # OGP用の画像生成
-  def self.ogpWrite(title,time_text)
-    @image = MiniMagick::Image.open("public/assets/img/ogp_bg.png")
-    configuration(title,'center',80,'0,-30')
-    configuration(time_text,'center',40,'0,40')
-    return @image.to_blob
+  def self.ogpWrite(title, time_text)
+    @image = MiniMagick::Image.open("#{@img_path}/ogp_bg.png")
+
+    configuration(title, 'center', 80, '0,-30')
+    configuration(time_text, 'center', 40, '0,40')
+
+    @image.to_blob
   end
 
   # ----------------------------

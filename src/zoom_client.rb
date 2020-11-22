@@ -123,17 +123,17 @@ class ZoomClient
 
   # 指定されたファイルをFFmpegで映像デバイスに流し込みます
   # 現在のクライアント用にFFmpegが動いている場合は先に停止します
-  # @param [String] filename 流し込む画像のパス
-  def start_ffmpeg(filename)
+  # @param [String] image 流し込む画像のblob
+  def start_ffmpeg(image)
     return if @driver.nil?
 
-    stop_ffmpeg
+    # stop_ffmpeg
 
-    @log.info('[FFmpeg] Starting FFmpeg...')
-    Process.spawn("nohup ffmpeg -loop 1 -re -i #{filename} -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p /dev/video0 > /dev/null 2>&1")
-    @pid = `ps aux | grep #{filename} | awk '{ print $2 " " $11 }' | grep ffmpeg | awk '{ print $1 }'`.chomp
-    @log.info('[FFmpeg] Started FFmpeg')
-    @log.info("[FFmpeg] PID: #{@pid}, FileName: #{filename}")
+    @log.info('[FFmpeg] Running FFmpeg...')
+    Open3.capture2("ffmpeg -loop 1 -i pipe:0 -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p /dev/video0",
+      stdin_data: image,
+      binmode: true
+    )
   end
 
   # 現在のクライアント用に動いているFFmpegを停止します
@@ -212,7 +212,7 @@ class ZoomClient
     @log.info('[ZoomClient] Closing client...')
 
     # @watch_leave.kill
-    stop_ffmpeg
+    # stop_ffmpeg
     @driver.execute_script 'leaveMeeting()' rescue nil
     @wait.until { @driver.current_url == 'http://example.com/' } rescue nil
     @driver.close rescue nil
