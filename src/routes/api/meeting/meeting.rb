@@ -58,8 +58,8 @@ class MeetingRouter < Base
     ok
   end
 
-  # アジェンダ画像を返す
-  get '/api/meeting/:id/img' do
+  # アジェンダ一覧画像を返す
+  get '/api/meeting/:id/agenda/list.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
     title = meeting.title
     title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
@@ -83,7 +83,7 @@ class MeetingRouter < Base
   end
 
   # OGP画像を返す
-  get '/api/ogp/:id' do
+  get '/api/meeting/:id/ogp.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
     print(meeting.meeting_id+'\n')
     title = meeting.title
