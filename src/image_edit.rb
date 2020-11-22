@@ -11,9 +11,10 @@ class ImageEdit
   @topic_indention_count = 10
   @topic_row_limit = 8
 
-  # ----------------------------``
+  # ----------------------------
   # 画像の書き出し
   # ----------------------------
+
   # アジェンダ用の画像生成(アプリへの送信用にJSONに変換)（タイトル , 内容）
   def self.agenda_write(title, time_text, content_text)
     @image = MiniMagick::Image.open("#{@img_path}/bg.jpg")
@@ -35,7 +36,7 @@ class ImageEdit
   end
 
   # OGP用の画像生成
-  def self.ogpWrite(title, time_text)
+  def self.ogp_write(title, time_text)
     @image = MiniMagick::Image.open("#{@img_path}/ogp_bg.png")
 
     configuration(title, 'center', 80, '0,-30')

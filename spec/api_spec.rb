@@ -33,7 +33,7 @@ RSpec.describe '/api' do
 
       example('レスポンスがOKである') { expect(last_response).to be_ok }
       example('DBのレコードが1件増えた') { expect(Meeting.count - @count).to eq 1 }
-      example '正しく生成に成功した' do
+      example '正常に生成された' do
         expect(Meeting.last.meeting_id).not_to eq ''
         expect(Meeting.last.title).to eq attributes_for(:meeting)[:title]
         expect(Meeting.last.zoom_id).to eq attributes_for(:meeting)[:zoom_id]
@@ -42,27 +42,27 @@ RSpec.describe '/api' do
       end
     end
 
-    # context '不足したリクエスト' do
-    #   before :all do
-    #     @count = Meeting.count
-    #     header 'Content-Type', 'application/json'
-    #     post '/api/meeting', attributes_for(:missing_zoom_id_meeting).to_json.to_s
-    #   end
+    context '不足したリクエスト' do
+      before :all do
+        @count = Meeting.count
+        header 'Content-Type', 'application/json'
+        post '/api/meeting', attributes_for(:missing_zoom_id_meeting).to_json.to_s
+      end
 
-    #   example('レスポンスがOKでない') { expect(last_response).not_to be_ok }
-    #   example('ステータスコードが400である') { expect(last_response.status).to eq 400 }
-    #   example('DBのレコードが増えていない') { expect(Meeting.count - @count).to eq 0 }
-    # end
-    # context '無効なリクエスト' do
-    #   before :all do
-    #     @count = Meeting.count
-    #     header 'Content-Type', 'application/json'
-    #     post '/api/meeting', attributes_for(:invalid_meeting).to_json.to_s
-    #   end
+      example('レスポンスがOKでない') { expect(last_response).not_to be_ok }
+      example('ステータスコードが400である') { expect(last_response.status).to eq 400 }
+      example('DBのレコードが増えていない') { expect(Meeting.count - @count).to eq 0 }
+    end
+    context '無効なリクエスト' do
+      before :all do
+        @count = Meeting.count
+        header 'Content-Type', 'application/json'
+        post '/api/meeting', attributes_for(:invalid_meeting).to_json.to_s
+      end
 
-    #   example('レスポンスがOKでない') { expect(last_response).not_to be_ok }
-    #   example('ステータスコードが400である') { expect(last_response.status).to eq 400 }
-    #   example('DBのレコードが増えていない') { expect(Meeting.count - @count).to eq 0 }
-    # end
+      example('レスポンスがOKでない') { expect(last_response).not_to be_ok }
+      example('ステータスコードが400である') { expect(last_response.status).to eq 400 }
+      example('DBのレコードが増えていない') { expect(Meeting.count - @count).to eq 0 }
+    end
   end
 end
