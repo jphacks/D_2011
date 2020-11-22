@@ -84,7 +84,7 @@
     
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="ZoomClient.html" title="ZoomClient (class)">ZoomClient</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Agenda.html" title="Agenda (class)">Agenda</a></span>, <span class='object_link'><a href="AgendaRouter.html" title="AgendaRouter (class)">AgendaRouter</a></span>, <span class='object_link'><a href="Aika.html" title="Aika (class)">Aika</a></span>, <span class='object_link'><a href="ApiRouter.html" title="ApiRouter (class)">ApiRouter</a></span>, <span class='object_link'><a href="Base.html" title="Base (class)">Base</a></span>, <span class='object_link'><a href="Meeting.html" title="Meeting (class)">Meeting</a></span>, <span class='object_link'><a href="MeetingRouter.html" title="MeetingRouter (class)">MeetingRouter</a></span>, <span class='object_link'><a href="MeetingTimer.html" title="MeetingTimer (class)">MeetingTimer</a></span>, <span class='object_link'><a href="RootRouter.html" title="RootRouter (class)">RootRouter</a></span>, <span class='object_link'><a href="ZoomClient.html" title="ZoomClient (class)">ZoomClient</a></span>, <span class='object_link'><a href="ZoomManager.html" title="ZoomManager (class)">ZoomManager</a></span>
     
   
 </p>
@@ -95,14 +95,265 @@
 
 
 
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
 
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#agenda_write-instance_method" title="#agenda_write (instance method)">#<strong>agenda_write</strong>(title, time_text, content_text)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>—————————-“ 画像の書き出し —————————- アジェンダ用の画像生成(アプリへの送信用にJSONに変換)（タイトル , 内容）.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#ogpWrite-instance_method" title="#ogpWrite (instance method)">#<strong>ogpWrite</strong>(title, time_text)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>OGP用の画像生成.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#topic_write-instance_method" title="#topic_write (instance method)">#<strong>topic_write</strong>(print_text, image_name)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Zoomの仮想カメラ用の画像生成(テキスト , イメージ名).</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="agenda_write-instance_method">
+  
+    #<strong>agenda_write</strong>(title, time_text, content_text)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>—————————-“ 画像の書き出し</p>
+<hr>
+
+<p>アジェンダ用の画像生成(アプリへの送信用にJSONに変換)（タイトル , 内容）</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'src/image_edit.rb', line 19</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_agenda_write'>agenda_write</span><span class='lparen'>(</span><span class='id identifier rubyid_title'>title</span><span class='comma'>,</span> <span class='id identifier rubyid_time_text'>time_text</span><span class='comma'>,</span> <span class='id identifier rubyid_content_text'>content_text</span><span class='rparen'>)</span>
+  <span class='ivar'>@image</span> <span class='op'>=</span> <span class='const'>MiniMagick</span><span class='op'>::</span><span class='const'>Image</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@img_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>/bg.jpg</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_configuration'>configuration</span><span class='lparen'>(</span><span class='id identifier rubyid_title'>title</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>North</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>80</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0,50</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'># 画像の生成（タイトル）
+</span>  <span class='id identifier rubyid_configuration'>configuration</span><span class='lparen'>(</span><span class='id identifier rubyid_time_text'>time_text</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NorthWest</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>60</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>100,200</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'># 画像の生成（時間）
+</span>  <span class='id identifier rubyid_configuration'>configuration</span><span class='lparen'>(</span><span class='id identifier rubyid_content_text'>content_text</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NorthWest</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>60</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>300,200</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'># 画像の生成（内容）
+</span>
+  <span class='ivar'>@image</span><span class='period'>.</span><span class='id identifier rubyid_to_blob'>to_blob</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="ogpWrite-instance_method">
+  
+    #<strong>ogpWrite</strong>(title, time_text)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>OGP用の画像生成</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+44
+45
+46
+47
+48
+49</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'src/image_edit.rb', line 44</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_ogpWrite'>ogpWrite</span><span class='lparen'>(</span><span class='id identifier rubyid_title'>title</span><span class='comma'>,</span><span class='id identifier rubyid_time_text'>time_text</span><span class='rparen'>)</span>
+  <span class='ivar'>@image</span> <span class='op'>=</span> <span class='const'>MiniMagick</span><span class='op'>::</span><span class='const'>Image</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>public/assets/img/ogp_bg.png</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_configuration'>configuration</span><span class='lparen'>(</span><span class='id identifier rubyid_title'>title</span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>center</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span><span class='int'>80</span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0,-30</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_configuration'>configuration</span><span class='lparen'>(</span><span class='id identifier rubyid_time_text'>time_text</span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>center</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span><span class='int'>40</span><span class='comma'>,</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0,40</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@image</span><span class='period'>.</span><span class='id identifier rubyid_to_blob'>to_blob</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="topic_write-instance_method">
+  
+    #<strong>topic_write</strong>(print_text, image_name)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Zoomの仮想カメラ用の画像生成(テキスト , イメージ名)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'src/image_edit.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_topic_write'>topic_write</span><span class='lparen'>(</span><span class='id identifier rubyid_print_text'>print_text</span><span class='comma'>,</span> <span class='id identifier rubyid_image_name'>image_name</span><span class='rparen'>)</span>
+  <span class='comment'># 画像の生成
+</span>  <span class='ivar'>@image</span> <span class='op'>=</span> <span class='const'>MiniMagick</span><span class='op'>::</span><span class='const'>Image</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@img_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>/bg.jpg</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_configuration'>configuration</span><span class='lparen'>(</span><span class='id identifier rubyid_print_text'>print_text</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>center</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>100</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0,0</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='comment'># 画像の書き出し
+</span>  <span class='id identifier rubyid_image_name'>image_name</span> <span class='op'>+=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.png</span><span class='tstring_end'>&#39;</span></span>
+  <span class='ivar'>@image</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span> <span class='id identifier rubyid_image_name'>image_name</span>
+
+  <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@img_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>/tmp/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_image_name'>image_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_mv'>mv</span><span class='lparen'>(</span><span class='id identifier rubyid_image_name'>image_name</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_path'>path</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
 </div>
 
       <div id="footer">
-  Generated on Mon Nov  9 04:16:16 2020 by
+  Generated on Sun Nov 22 15:57:40 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.25 (ruby-2.7.2).
+  0.9.25 (ruby-2.7.0).
 </div>
 
     </div>
