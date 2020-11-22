@@ -11,9 +11,7 @@ class AgendaRouter < Base
     agendas = Agenda.where(meeting_id: meeting.id)
 
     next_agenda = agendas[meeting.agenda_now + 1]
-    if next_agenda.nil?
-      not_found("Not found next agenda.")
-    end
+    not_found('Not found next agenda.') if next_agenda.nil?
 
     zoom.changeImage(topic_write("#{next_agenda.title}\n(#{(next_agenda.duration / 60).to_s}分)", params[:id]))
     ok('')
