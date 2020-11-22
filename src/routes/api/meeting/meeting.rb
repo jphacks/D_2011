@@ -58,30 +58,6 @@ class MeetingRouter < Base
     ok
   end
 
-  # アジェンダ一覧画像を返す
-  get '/api/meeting/:id/agenda/list.png' do
-    meeting = Meeting.find_by(meeting_id: params[:id])
-    title = meeting.title
-    title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
-    agendas = Agenda.where(meeting_id: meeting.id)
-    time_text = ''
-    content_text = ''
-    p agendas
-    agendas.each_with_index do |value, i|
-      p value.duration
-      time_text += (value.duration / 60).ceil.to_s + "分\n"
-      content_text += if value.title.length >= 12
-                        "#{value.title.delete("\n").slice(0, 12)}…\n"
-                      else
-                        value.title.delete("\n") + "\n"
-                      end
-      break if i == 6
-    end
-    blob = agenda_write(title, time_text, content_text)
-    content_type 'image/png'
-    blob
-  end
-
   # OGP画像を返す
   get '/api/meeting/:id/ogp.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
