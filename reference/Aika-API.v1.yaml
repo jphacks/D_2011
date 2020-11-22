@@ -178,7 +178,7 @@ paths:
             description: 'アジェンダ一覧の画像（1枚）'
       operationId: get-api-meeting-img
       description: 'idには、ミーティング作成時にサーバーから返されるIDを入れる。アジェンダ一覧の画像が返される。'
-  /api/meeting/:id/ogp:
+  /api/meeting/:id/ogp.png:
     get:
       summary: OGP画像取得
       tags:
