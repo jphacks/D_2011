@@ -38,7 +38,7 @@ class MeetingRouter < Base
 
     # タイマーの処理
 
-    zoom.show_image(ImageEdit.topic_Write("#{params[:title]}\n(#{params[:duration]}分)", id))
+    zoom.show_image(ImageEdit.topic_write("#{params[:title]}\n(#{params[:duration]}分)"))
     ok
   end
 

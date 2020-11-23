@@ -19,10 +19,10 @@ Vagrant.configure('2') do |config|
     apt install -y ruby ruby-dev libsqlite3-dev imagemagick ffmpeg firefox libxslt1-dev zlib1g-dev build-essential linux-headers-$(uname -r)
     git clone https://github.com/umlaeute/v4l2loopback.git /v4l2loopback
     cd /v4l2loopback
-    make KCPPFLAGS="-DMAX_DEVICES=100"
+    make KCPPFLAGS="-DMAX_DEVICES=64"
     make install-all
     depmod -a
-    modprobe v4l2loopback devices=100
+    modprobe v4l2loopback devices=64
     for video in /dev/video*; do v4l2loopback-ctl set-caps $video "YU12:1280x720"; done
     echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
     usermod -aG video vagrant

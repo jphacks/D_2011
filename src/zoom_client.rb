@@ -3,6 +3,7 @@
 require 'selenium-webdriver'
 require 'json'
 require 'logger'
+require 'open3'
 
 # Zoomと接続して映像を表示するクラス
 # TODO: 複数仮想カメラ対応
@@ -11,7 +12,6 @@ require 'logger'
 # TODO: 終了したZoomでokが出る
 class ZoomClient
   @video_devices = {}
-  @img_path = 'public/assets/img'
 
   # パスワード付きURLの内容に基づいてZoomミーティングに接続します
   #
@@ -60,11 +60,13 @@ class ZoomClient
     @log.info('[Zoom] Connecting...')
     @driver.execute_script "initialize('#{@mn}', '#{@mp}')"
 
+    puts @driver.execute_script "return navigator.mediaDevices.enumerateDevices()"
+
     @wait.until { @driver.execute_script 'return getStatus() >= 2' }
     @log.info('[Zoom] Connected')
     true
   rescue StandardError => e
-    @log.error('[Zoom] Failed connect')
+    @log.error('[Zoom] Failed to connect')
     @log.error e
     false
   end
@@ -86,7 +88,7 @@ class ZoomClient
     options = Selenium::WebDriver::Firefox::Options.new
     options.add_argument('--headless')
     options.add_preference('permissions.default.microphone', 1)
-    options.add_preference('permissions.default.camera', 1)
+    options.add_preference('permissions.default.camera', 100)
     options.add_preference('media.navigator.permission.disabled', true)
 
     @driver = Selenium::WebDriver.for :firefox, options: options
@@ -102,7 +104,7 @@ class ZoomClient
 
     @log.info('[FFmpeg] Running FFmpeg...')
     Open3.capture2(
-      "ffmpeg -loop 1 -i pipe:0 -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video}",
+      "ffmpeg -i pipe:0 -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video} > /dev/null 2>&1",
       stdin_data: image,
       binmode: true
     )
@@ -114,7 +116,9 @@ class ZoomClient
     return if @driver.nil?
 
     @log.info('[FFmpeg] Running FFmpeg...')
-    Open3.capture2("ffmpeg -loop 1 -i #{filepath} -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video}")
+    Open3.capture2(
+      "ffmpeg -i #{filepath} -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video} > /dev/null 2>&1"
+    )
   end
 
   # 共同ホスト権限を要求します
@@ -122,10 +126,10 @@ class ZoomClient
     return if @driver.nil?
 
     @log.info('[Zoom] Request Co-host...')
-    show_image_by_path("#{@img_path}/request_co_host.jpg")
+    show_image_by_path('public/assets/img/request_co_host.jpg')
     sleep 1 until @driver.execute_script 'return isCoHost()'
     @log.info('[Zoom] Done')
-    show_image_by_path("#{@img_path}/aika.jpg")
+    show_image_by_path('public/assets/img/aika.jpg')
   end
 
   # ミーティングに参加している参加者の一覧を配列で取得します
@@ -224,7 +228,7 @@ class ZoomClient
     @log.debug("[Meeting Info] Password: #{@mp}")
 
     start_browser # 接続するための準備
-    show_image_by_path("#{@img_path}/aika.jpg")
+    show_image_by_path('public/assets/img/aika.jpg')
 
     # @watch_leave = Thread.new do # ミーティング終了フック
     #   @log.info('[ZoomClient] Detected leaving')
