@@ -8,31 +8,20 @@ class MeetingTimer
     @time = 0
   end
 
-  def reserve_meeting(time)
-    @time = time
-    @thread = Thread.new do
-      while Time.now.to_i <= @time
-        sleep(1)
-        p 'tick'
-      end
-      puts "ミーティング開始！"
-      start_agenda
-    end
-  end
-
   # @param [Integer] time ミーティングを開始したい時間
   def start_meeting(time)
-    @time = time
-    @thread.kill
+    @time = Time.now.to_i
     start_agenda
   end
 
   def start_agenda()
+    if @methods.length == 0
+      p 'アジェンダを登録してください'
+    end
     @methods.first[:method].call
     @time += @methods.first[:time]
     @thread = Thread.new do
       while Time.now.to_i <= @time
-        p 'agenda'
         sleep(1)
       end
       next_agenda
@@ -47,13 +36,11 @@ class MeetingTimer
   end
 
   def next_agenda()
-    p @methods
     @methods.pop(1)
     if @methods.empty?
-      p 'meeting finished!'
       return
     end
-    start_agenda()
+    start_agenda
   end
   
   def delay(time)
@@ -61,7 +48,6 @@ class MeetingTimer
     @thread.kill
     begin
       while Time.now.to_i <= @time
-        p '延長'
         sleep(1)
       end
       next_agenda
@@ -69,7 +55,6 @@ class MeetingTimer
   end
 
   def terminate
-    p 'terminate'
     @thread.kill
     next_agenda
   end
