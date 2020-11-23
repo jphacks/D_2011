@@ -6,32 +6,33 @@ class MeetingTimer
     @thread = nil
     @methods = []
     @time = 0
+    @duration = 0
   end
 
-  def reserve_meeting(time)
-    @time = time
-    @thread = Thread.new do
-      while Time.now.to_i <= @time
-        sleep(1)
-        p 'tick'
-      end
-      puts 'ミーティング開始！'
-      start_agenda
+  # @param [Integer] time ミーティングを開始したい時間
+  def start_meeting(time)
+    @time = Time.now.to_i
+    start_agenda
+  end
+
+
+  # アジェンダを開始
+  def start_agenda()
+    if @methods.length == 0
+      p 'アジェンダを登録してください'
+      return
     end
-  end
-
-  def start_agenda
     @methods.first[:method].call
-    @time += @methods.first[:time]
     @thread = Thread.new do
-      while Time.now.to_i <= @time
-        p 'agenda'
+      while Time.now.to_i <= @time + @methods.first[:time]
+        @duration += 1
         sleep(1)
       end
       next_agenda
     end
   end
 
+  # アジェンダを登録
   def enqueue_agenda(time, &method)
     @methods << {
       time: time,
@@ -39,28 +40,34 @@ class MeetingTimer
     }
   end
 
-  def next_agenda
-    p @methods
+  # 次のアジェンダへ
+  def next_agenda()
+    @time += @duration
+    @duration = 0
     @methods.pop(1)
     if @methods.empty?
-      p 'meeting finished!'
       return
     end
     start_agenda
   end
 
+  # アジェンダを延長する
   def delay(time)
-    @time += time
     @thread.kill
-    while Time.now.to_i <= @time
-      p '延長'
-      sleep(1)
+    @time += @duration
+    @duration = 0
+    begin
+      while Time.now.to_i <= @time + time
+        @duration += 1
+        sleep(1)
+      end
+      next_agenda
     end
     next_agenda
   end
 
+  # アジェンダを強制終了させる
   def terminate
-    p 'terminate'
     @thread.kill
     next_agenda
   end
