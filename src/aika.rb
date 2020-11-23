@@ -2,6 +2,7 @@
 
 require './src/base'
 require './src/routes/root'
+require './src/meeting_timer'
 require './src/image_edit'
 require './src/zoom_client'
 require './src/zoom_manager'
