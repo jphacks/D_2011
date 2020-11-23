@@ -2,12 +2,6 @@
 
 require 'timeout'
 
-def wait
-  q = Queue.new
-  yield proc { |res| q.push res }
-  q.pop
-end
-
 RSpec.describe 'meeting_timer.rb' do
   describe '待機処理' do
     before(:all) do
