@@ -30,7 +30,12 @@ class Base < Sinatra::Base
 
   configure :development do
     register Sinatra::Reloader
-    use Rack::JSONBodyParser
+  end
+
+  not_found do |e|
+    return notfound e.to_s if request.path.start_with?('/api/')
+
+    erb :notfound
   end
 
   error 500 do |e|

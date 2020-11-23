@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 # ミーティングのタイマー管理のクラス
-
 class MeetingTimer
-
-  def initialize()
+  def initialize
     @thread = nil
     @methods = []
     @time = 0
@@ -50,7 +50,7 @@ class MeetingTimer
     end
     start_agenda
   end
-  
+
   # アジェンダを延長する
   def delay(time)
     @thread.kill
@@ -63,6 +63,7 @@ class MeetingTimer
       end
       next_agenda
     end
+    next_agenda
   end
 
   # アジェンダを強制終了させる

@@ -21,77 +21,55 @@ class MeetingRouter < Base
   post '/api/meeting/:id/join' do
     meeting = Meeting.find_by(meeting_id: params[:id])
     zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.zoom_id, meeting.zoom_pass)
-    return internal_error 'zoom connection error' if zoom.nil?
+    return internal_error 'Failed to connect to Zoom' if zoom.nil?
 
     Thread.new do
       zoom.enable_video
       zoom.request_co_host
-      zoom.change_image(topicWrite("しばらくお待ちください", id))
+      zoom.show_image ImageEdit.topic_write('しばらくお待ちください')
     end
     ok
   end
 
   # ミーティング開始
   post '/api/meeting/:id/start' do
-    meeting = Meeting.find_by(meeting_id: params[:id])
-    # ここにタイマーの処理書いて欲しい
-    # 下のコードがzoomの画像変更するコード
-    # zoom.change_image(topicWrite("#{params[:title]}\n(#{params[:duration]}分)", id))
+    zoom = ZoomManager.instance.get(params[:id])
+    return not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    # タイマーの処理
+
+    zoom.show_image(ImageEdit.topic_Write("#{params[:title]}\n(#{params[:duration]}分)", id))
     ok
   end
 
   # ミーティング終了
   post '/api/meeting/:id/finish' do
     zoom = ZoomManager.instance.get(params[:id])
-    not_found("No such meeting: #{params[:id]}") if zoom.nil?
-    File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $!
-    zoom.leaveMeeting rescue puts $!
+    return not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $ERROR_INFO
+    zoom.leave_meeting rescue puts $ERROR_INFO
     ok
   end
 
-  # ミュート && アンミュート通知
+  # ミュート & アンミュート通知
   post '/api/meeting/:id/mute_all' do
     zoom = ZoomManager.instance.get(params[:id])
-    not_found("No such meeting: #{params[:id]}") if zoom.nil?
-    zoom.muteAll
+    return not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    zoom.mute_all
     zoom.request_unmute_all
     ok
   end
 
-  # アジェンダ画像を返す
-  get '/api/meeting/:id/img' do
-    meeting = Meeting.find_by(meeting_id: params[:id])
-    title = meeting.title
-    title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
-    agendas = Agenda.where(meeting_id: meeting.id)
-    time_text = ''
-    content_text = ''
-    p agendas
-    agendas.each_with_index do |value, i|
-      p value.duration
-      time_text += (value.duration / 60).ceil.to_s + "分\n"
-      content_text += if value.title.length >= 12
-                        "#{value.title.delete("\n").slice(0, 12)}…\n"
-                      else
-                        value.title.delete("\n") + "\n"
-                      end
-      break if i == 6
-    end
-    blob = agenda_write(title, time_text, content_text)
-    content_type 'image/png'
-    blob
-  end
-
   # OGP画像を返す
-  get '/api/ogp/:id' do
+  get '/api/meeting/:id/ogp.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
-    print(meeting.meeting_id+'\n')
-    title = meeting.title
-    title = "#{title.delete("\n").slice(0, 14)}…" if title.length >= 14
-    time_text = meeting.start_time
-    time_text = Time.at(time_text).strftime("Start: %Y.%m.%d %H:%M")
-    blob = ogpWrite(title,time_text)
-    content_type "image/png"
-    blob
+    return not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    title = title.length >= 14 ? "#{title.delete("\n").slice(0, 14)}…" : meeting.title
+    time_text = Time.at(meeting.start_time).strftime('Start: %Y.%m.%d %H:%M')
+    content_type 'image/png'
+    ImateEdit.ogp_write(title, time_text)
   end
 end

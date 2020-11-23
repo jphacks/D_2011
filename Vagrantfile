@@ -20,9 +20,10 @@ Vagrant.configure('2') do |config|
     git clone https://github.com/umlaeute/v4l2loopback.git /v4l2loopback
     cd /v4l2loopback
     make KCPPFLAGS="-DMAX_DEVICES=100"
-    make install
+    make install-all
     depmod -a
     modprobe v4l2loopback devices=100
+    for video in /dev/video*; do v4l2loopback-ctl set-caps $video "YU12:1280x720"; done
     echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
     usermod -aG video vagrant
     gem install bundler
@@ -36,5 +37,6 @@ Vagrant.configure('2') do |config|
     bundle install --without production
     echo 'cd /vagrant' >> /home/vagrant/.bashrc
     echo 'export PORT=3000' >> /home/vagrant/.bashrc
+    echo "export RUBYOPT='-W:no-deprecated -W:no-experimental'" >> /home/vagrant/.bashrc
   SHELL
 end
