@@ -14,6 +14,8 @@ class MeetingTimer
     start_agenda
   end
 
+
+  # アジェンダを開始
   def start_agenda()
     if @methods.length == 0
       p 'アジェンダを登録してください'
@@ -28,6 +30,7 @@ class MeetingTimer
     end
   end
 
+  # アジェンダを登録
   def enqueue_agenda(time, &method)
     @methods << {
       time: time,
@@ -35,6 +38,7 @@ class MeetingTimer
     }
   end
 
+  # 次のアジェンダへ
   def next_agenda()
     @methods.pop(1)
     if @methods.empty?
@@ -43,6 +47,7 @@ class MeetingTimer
     start_agenda
   end
   
+  # アジェンダを延長する
   def delay(time)
     @time += time
     @thread.kill
@@ -54,6 +59,7 @@ class MeetingTimer
     end
   end
 
+  # アジェンダを強制終了させる
   def terminate
     @thread.kill
     next_agenda
