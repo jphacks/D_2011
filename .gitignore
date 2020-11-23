@@ -63,3 +63,6 @@ token.js
 hoge.png
 /public/assets/img/tmp/*.jpg
 test.db
+
+/docs/*
+!api.html
