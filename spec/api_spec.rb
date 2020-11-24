@@ -79,10 +79,10 @@ RSpec.describe '/api' do
     # end
   end
 
-  describe 'GET /api/meeting/:id/agenda/next_agenda' do
+  describe 'GET /api/meeting/:id/agenda/next' do
     before :all do
       meeting = Meeting.first
-      get "/api/meeting/#{meeting.meeting_id}/agenda/next_agenda"
+      get "/api/meeting/#{meeting.meeting_id}/agenda/next"
       @body = JSON.parse(last_response.body)
     end
 
