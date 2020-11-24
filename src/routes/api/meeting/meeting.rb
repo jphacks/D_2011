@@ -73,4 +73,10 @@ class MeetingRouter < Base
     content_type 'image/png'
     ImateEdit.ogp_write(title, time_text)
   end
+
+  # emailでの検索
+  post '/api/meeting/find' do
+    meeting = Meeting.where(email: params[:email])
+    ok(meeting)
+  end
 end
