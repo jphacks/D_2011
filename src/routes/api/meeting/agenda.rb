@@ -15,6 +15,15 @@ class AgendaRouter < Base
     ok
   end
 
+  # 次の議題を返す
+  post '/api/meeting/:id/agenda/next_agenda' do
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    next_agenda = meeting.agendas[meeting.agenda_now + 1]
+    not_found('Not found next agenda.') if next_agenda.nil?
+
+    ok({title: next_agenda.title, duration: next_agenda.duration})
+  end
+
   # アジェンダ一覧画像を返す
   get '/api/meeting/:id/agenda/list.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
