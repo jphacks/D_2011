@@ -388,20 +388,26 @@
 56
 57
 58
-59</pre>
+59
+60
+61
+62</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'src/meeting_timer.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delay'>delay</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span>
   <span class='ivar'>@thread</span><span class='period'>.</span><span class='id identifier rubyid_kill'>kill</span>
-  <span class='ivar'>@time</span> <span class='op'>+=</span> <span class='ivar'>@duration</span>
+  <span class='ivar'>@time</span> <span class='op'>=</span> <span class='ivar'>@time</span> <span class='op'>+</span> <span class='ivar'>@duration</span> <span class='op'>+</span> <span class='id identifier rubyid_time'>time</span>
   <span class='ivar'>@duration</span> <span class='op'>=</span> <span class='int'>0</span>
-  <span class='kw'>while</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>&lt;=</span> <span class='ivar'>@time</span> <span class='op'>+</span> <span class='id identifier rubyid_time'>time</span>
-    <span class='ivar'>@duration</span> <span class='op'>+=</span> <span class='int'>1</span>
-    <span class='id identifier rubyid_sleep'>sleep</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+  <span class='ivar'>@thread</span> <span class='op'>=</span> <span class='const'>Thread</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span>
+    <span class='kw'>while</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>&lt;=</span> <span class='ivar'>@time</span>
+      <span class='ivar'>@duration</span> <span class='op'>+=</span> <span class='int'>1</span>
+      <span class='id identifier rubyid_sleep'>sleep</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='ivar'>@methods</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='lbracket'>[</span><span class='symbol'>:method</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span>
+    <span class='id identifier rubyid_next_agenda'>next_agenda</span>
   <span class='kw'>end</span>
-  <span class='id identifier rubyid_next_agenda'>next_agenda</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -623,13 +629,13 @@
       <pre class="lines">
 
 
-62
-63
-64
-65</pre>
+65
+66
+67
+68</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'src/meeting_timer.rb', line 62</span>
+      <pre class="code"><span class="info file"># File 'src/meeting_timer.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_terminate'>terminate</span>
   <span class='ivar'>@thread</span><span class='period'>.</span><span class='id identifier rubyid_kill'>kill</span>
@@ -645,7 +651,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Nov 24 15:23:25 2020 by
+  Generated on Tue Nov 24 15:59:01 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.7.2).
 </div>
