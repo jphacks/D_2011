@@ -9,7 +9,8 @@ class MeetingRouter < Base
       start_time: Time.at(params[:start_time].to_i),
       zoom_id: params[:zoom_id],
       zoom_pass: params[:zoom_pass],
-      title: params[:title]
+      title: params[:title],
+      email: params[:email]
     )
     params[:agendas].each do |agenda|
       Agenda.create(meeting_id: meeting.id, title: agenda[:title], duration: agenda[:duration].to_i)
@@ -71,5 +72,11 @@ class MeetingRouter < Base
     time_text = Time.at(meeting.start_time).strftime('Start: %Y.%m.%d %H:%M')
     content_type 'image/png'
     ImateEdit.ogp_write(title, time_text)
+  end
+
+  # emailでの検索
+  post '/api/meeting/find' do
+    meeting = Meeting.where(email: params[:email])
+    ok(meeting)
   end
 end
