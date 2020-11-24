@@ -16,7 +16,7 @@ class AgendaRouter < Base
   end
 
   # 次の議題を返す
-  post '/api/meeting/:id/agenda/next_agenda' do
+  get '/api/meeting/:id/agenda/next' do
     meeting = Meeting.find_by(meeting_id: params[:id])
     next_agenda = meeting.agendas[meeting.agenda_now + 1]
     not_found('Not found next agenda.') if next_agenda.nil?
