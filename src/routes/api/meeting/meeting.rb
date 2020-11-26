@@ -84,8 +84,8 @@ class MeetingRouter < Base
     ok(meeting)
   end
 
-  # ユーザーの参加しているミーティング情報を取得
-  post '/api/meeting/:id/join' do
+  # Macアプリで擬似的に参加する（時間延長などのために）
+  get '/api/meeting/:id/join_status_bar' do
     meeting = Meeting.find_by(email: params[:email], meeting_id: params[:id])
     if meeting.nil?
       ok({ "isJoining": false })
