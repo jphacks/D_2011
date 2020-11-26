@@ -87,7 +87,7 @@ class MeetingRouter < Base
     if meeting.nil?
       ok({ "isJoining": false })
     else
-      ok({ "isJoining": false , "meeting": meeting })
+      ok({ "isJoining": true , "meeting": meeting })
     end
   end
 end
