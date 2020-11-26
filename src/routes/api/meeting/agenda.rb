@@ -13,6 +13,8 @@ class AgendaRouter < Base
     not_found('Not found next agenda.') if next_agenda.nil?
     meeting.update(agenda_now: next_agenda_id)
 
+    # タイマーの処理（強制終了・次のタイマー開始）
+
     zoom.changeImage(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)", params[:id]))
     ok
   end

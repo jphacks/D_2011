@@ -38,7 +38,7 @@ class MeetingRouter < Base
     zoom = ZoomManager.instance.get(params[:id])
     return not_found("No such meeting: #{params[:id]}") if zoom.nil?
 
-    # タイマーの処理
+    # タイマーの処理（開始）
 
     zoom.show_image(ImageEdit.topic_write("#{params[:title]}\n(#{params[:duration]}分)"))
     ok
@@ -48,6 +48,8 @@ class MeetingRouter < Base
   post '/api/meeting/:id/finish' do
     zoom = ZoomManager.instance.get(params[:id])
     return not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    # タイマーの処理（終了）
 
     File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $ERROR_INFO
     zoom.leave_meeting rescue puts $ERROR_INFO
