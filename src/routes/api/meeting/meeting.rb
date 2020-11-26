@@ -67,8 +67,8 @@ class MeetingRouter < Base
   get '/api/meeting/:id/ogp.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
     return not_found("No such meeting: #{params[:id]}") if zoom.nil?
-
-    title = title.length >= 14 ? "#{title.delete("\n").slice(0, 14)}…" : meeting.title
+    title = meeting.title
+    title = title.length >= 14 ? "#{title.delete("\n").slice(0, 14)}…" : title
     time_text = Time.at(meeting.start_time).strftime('Start: %Y.%m.%d %H:%M')
     content_type 'image/png'
     ImateEdit.ogp_write(title, time_text)
