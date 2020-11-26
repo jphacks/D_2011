@@ -3,10 +3,10 @@
 FactoryBot.define do
   factory :meeting, class: Meeting do
     title { 'sample meeting' }
-    start_time { 1605020400 }
+    start_time { 1_605_020_400 }
     zoom_id { '1234567890' }
     zoom_pass { '3jZ25d' }
-    agendas {
+    agendas do
       [
         {
           "title": '自己紹介',
@@ -17,16 +17,16 @@ FactoryBot.define do
           "duration": 300
         }
       ]
-    }
+    end
   end
 end
 
 FactoryBot.define do
   factory :missing_zoom_id_meeting, class: Meeting do
     title { 'sample meeting' }
-    start_time { 1605020400 }
+    start_time { 1_605_020_400 }
     zoom_pass { '3jZ25d' }
-    agendas {
+    agendas do
       [
         {
           "title": '自己紹介',
@@ -37,7 +37,7 @@ FactoryBot.define do
           "duration": 300
         }
       ]
-    }
+    end
   end
 end
 
@@ -46,7 +46,7 @@ FactoryBot.define do
     title { 'sample meeting' }
     start_time { '2020/11/12 10:05:23' }
     zoom_pass { '3jZ25d' }
-    agendas {
+    agendas do
       [
         {
           "title": '自己紹介',
@@ -57,6 +57,6 @@ FactoryBot.define do
           "duration": 300
         }
       ]
-    }
+    end
   end
 end
