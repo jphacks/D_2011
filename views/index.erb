@@ -1,11 +1,265 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
+<head>
     <meta charset="UTF-8">
-    <title>aika</title>
-    <link rel="icon" href="/favicon.ico" />
-  </head>
-  <body>
-    <h1>aika</h1>
-  </body>
-</html>
+    <title>aika | Zoomを最強のツールへ</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .content {
+            background: none;
+            width: 100%;
+            margin: 0 auto;
+            padding: 200px 0 200px 0;
+            /*                        @media screen and (min-width:1280px) {*/
+            max-width: 1280px;
+            /*                        }*/
+        }
+
+        .gradation {
+            background: linear-gradient(to bottom right, #1C62FF, #00F5FF);
+        }
+
+        .gradation h1,
+        .gradation h2,
+        .gradation h3,
+        .gradation p {
+            color: white;
+        }
+
+        .naname {
+            position: relative;
+        }
+
+        .naname::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            border-top: 60px solid transparent;
+            border-left: 50vw solid transparent;
+            border-right: 50vw solid #fff;
+            border-bottom: 60px solid #fff;
+        }
+
+        .naname_before {
+            position: relative;
+        }
+
+        .naname_before::before {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-bottom: 60px solid transparent;
+            border-right: 50vw solid transparent;
+            border-left: 50vw solid #fff;
+            border-top: 60px solid #fff;
+        }
+
+        h2 {
+            font-size: 3em;
+            margin: 0;
+            padding-bottom: 80px;
+            text-align: center;
+        }
+
+        h3 {
+            margin: 10px 0 10px 0;
+            font-size: 150%;
+        }
+
+        p {
+            margin: 0;
+            word-wrap: break-word;
+        }
+
+        nav {
+            width: 100vw;
+            position:absolute;
+            z-index: 999;
+            background: rgba(0, 69, 255,0.1);
+        }
+
+        nav .content{
+            padding: 0;
+        }
+
+        nav img {
+            margin-left: 30px;
+            height: 90px;
+        }
+
+        .head {
+            width: 100vw;
+            height: 90vh;
+            display: flex;
+        }
+
+        .head_contents {
+            background: none;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .head .pop h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 3em;
+        }
+
+        .pop p {
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        .pop .download img {
+            width: auto;
+            height: 50px;
+            margin: 0 10px 0 0;
+        }
+
+        .head_contents img {
+            width: 50%;
+            max-width: 600px;
+        }
+
+        .nayami p {
+            text-align: center;
+            font-size: 1.5em;
+            line-height: 50px;
+        }
+
+        .topic_box {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .topic {
+            max-width: 250px;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+        }
+
+        .footer .download_box {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 50px;
+        }
+
+
+        .footer .download_box .download img {
+            width: auto;
+            height: 50px;
+            margin: 0 10px 0 0;
+        }
+
+        .footer .content {
+            padding-bottom: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="content">
+            <img src="/assets/img/aika_logo.svg">
+        </div>
+    </nav>
+    <section class="head gradation naname">
+        <div class="content head_contents">
+            <div class="pop">
+                <h1>Zoomを<br>最強のツールへ</h1>
+                <p>オンラインミーティングって難しい。<br>雑談もいいけど時間はしっかり守りたい。<br>aikaはそんなオンラインミーティングをする<br>すべての人を支えます。</p>
+                <div class="download">
+                    <img src="/assets/img/app_store.svg"><img src="/assets/img/google-play-badge.svg">
+                </div>
+            </div>
+            <img src="/assets/img/head.png">
+        </div>
+    </section>
+    <section class="nayami naname_before">
+        <div class="content">
+            <h2>ミーティングでこんなお悩みはありませんか?</h2>
+            <p>会議がなかなか終わらない。<br>議題が逸れてしまう。<br>そもそもなにを話し合うのかを知らない。</p>
+        </div>
+    </section>
+    <section class="gradation naname naname_before">
+        <div class="content">
+            <h2>特徴</h2>
+            <div class="topic_box">
+                <div class="topic">
+                    <img src="/assets/img/agenda.svg">
+                    <h3>アジェンダ</h3>
+                    <p>アジェンダを登録することができます。</p>
+                </div>
+                <div class="topic">
+                    <img src="/assets/img/agenda.svg">
+                    <h3>議題の提示</h3>
+                    <p>今話すべき議題がZoom上に表示されます。</p>
+                </div>
+                <div class="topic">
+                    <img src="/assets/img/agenda.svg">
+                    <h3>ミュート</h3>
+                    <p>時間が来たら参加者全員ミュートになります。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="use">
+        <div class="content">
+            <h2>導入は3ステップ</h2>
+            <div class="topic_box">
+                <div class="topic">
+                    <img src="/assets/img/agenda.svg">
+                    <h3>1. Zoomにログイン</h3>
+                    <p>新規アカウント作成不要！</p>
+                </div>
+                <div class="topic">
+                    <img src="/assets/img/agenda.svg">
+                    <h3>2. Meetingを作成</h3>
+                    <p>アジェンダとZoom Meetingを作成します。</p>
+                </div>
+                <div class="topic">
+                    <img src="/assets/img/agenda.svg">
+                    <h3>3. シェア</h3>
+                    <p>参加者に共有しアジェンダ内容を確認してもらおう！</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="footer gradation naname_before">
+        <div class="content">
+            <h2>さっそく使ってみる</h2>
+            <h3>スマホアプリ</h3>
+            <div class="download_box">
+                <div class="download">
+                    <img src="/assets/img/app_store.svg">
+                </div>
+                <div class="download">
+                    <img src="/assets/img/google-play-badge.svg">
+                </div>
+            </div>
+            <h3>PCアプリ</h3>
+            <div class="download_box">
+                <div class="download">
+                    <img src="/assets/img/app_store.svg">
+                </div>
+            </div>
+            <p>&copy; 2020 Taguchike. All Rights Reserved.</p>
+        </div>
+    </section>
+</body></html>
