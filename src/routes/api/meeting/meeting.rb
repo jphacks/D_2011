@@ -79,4 +79,9 @@ class MeetingRouter < Base
     meeting = Meeting.where(email: params[:email])
     ok(meeting)
   end
+
+  # ユーザーの参加しているミーティング情報を取得
+  post '/api/meeting/:id/join' do
+    meeting = Meeting.find_by(email: params[:email], meeting_id: params[:id])
+  end
 end
