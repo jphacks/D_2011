@@ -29,6 +29,7 @@ class MeetingRouter < Base
       zoom.request_co_host
       zoom.show_image ImageEdit.topic_write('しばらくお待ちください')
     end
+    meeting.update(join: true)
     ok
   end
 
@@ -50,6 +51,8 @@ class MeetingRouter < Base
 
     File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $ERROR_INFO
     zoom.leave_meeting rescue puts $ERROR_INFO
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    meeting.update(join: false)
     ok
   end
 
