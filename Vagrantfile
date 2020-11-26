@@ -27,6 +27,7 @@ Vagrant.configure('2') do |config|
     for i in `seq 0 63`; do
       v4l2loopback-ctl add -n "video$i" /dev/video$i
       v4l2loopback-ctl set-caps /dev/video$i "YU12:1280x720"
+      ffmpeg -i /vagrant/public/assets/img/aika.jpg -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p /dev/video$i > /dev/null 2>&1
     done
 
     echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant

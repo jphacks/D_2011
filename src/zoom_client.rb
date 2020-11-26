@@ -58,9 +58,14 @@ class ZoomClient
     return false if @driver.nil?
 
     @log.info('[Zoom] Connecting...')
-    @driver.execute_script "initialize('#{@mn}', '#{@mp}')"
 
-    puts @driver.execute_script "return navigator.mediaDevices.enumerateDevices()"
+    # devices = @driver.execute_script "return navigator.mediaDevices.enumerateDevices();"
+    # device = devices.find { |d| d['label'] == @video.split('/')[2] }
+    # return false if device.nil?
+
+    @driver.execute_script "window.video = '#{@video.split('/')[2]}'"
+    @driver.execute_script "initialize('#{@mn}', '#{@mp}')"
+    # sleep 1 until @driver.execute_script 'return window.test != undefined' # タイムアウト設定
 
     @wait.until { @driver.execute_script 'return getStatus() >= 2' }
     @log.info('[Zoom] Connected')
@@ -75,6 +80,7 @@ class ZoomClient
   def enable_video
     return if @driver.nil?
 
+    @log.info('[Zoom] Enable video(before)')
     sleep 1 until @driver.execute_script 'return canEnableVideo()'
     return if @driver.execute_script 'return isEnabledVideo()'
 
@@ -92,7 +98,14 @@ class ZoomClient
     options.add_preference('media.navigator.permission.disabled', true)
 
     @driver = Selenium::WebDriver.for :firefox, options: options
-    @driver.get "http://localhost:#{ENV['PORT']}/zoom/index.html"
+    @driver.get 'https://romantic-wing-4e2620.netlify.app/index.html'
+
+    devices = @driver.execute_script 'return navigator.mediaDevices.enumerateDevices();'
+    device = devices.find { |d| d['label'] == @video.split('/')[2] }
+
+    @log.info('[Firefox] Reloading page...')
+    @log.info('[Firefox] Device ID: ' + device['deviceId'])
+    @driver.get "https://romantic-wing-4e2620.netlify.app/index.html?#{device['deviceId']}"
     @wait = Selenium::WebDriver::Wait.new(timeout: 20)
     @log.info('[Firefox] Started Firefox')
   end
@@ -127,7 +140,7 @@ class ZoomClient
 
     @log.info('[Zoom] Request Co-host...')
     show_image_by_path('public/assets/img/request_co_host.jpg')
-    sleep 1 until @driver.execute_script 'return isCoHost()'
+    sleep 1 until @driver.execute_script 'return window.isCoHost'
     @log.info('[Zoom] Done')
     show_image_by_path('public/assets/img/aika.jpg')
   end
