@@ -49,13 +49,16 @@ class MeetingTimer
   # アジェンダを延長する
   def delay(time)
     @thread.kill
-    @time += @duration
+    @time = @time + @duration + time
     @duration = 0
-    while Time.now.to_i <= @time + time
-      @duration += 1
-      sleep(1)
+    @thread = Thread.new do
+      while Time.now.to_i <= @time
+        @duration += 1
+        sleep(1)
+      end
+      @methods.first[:method].call
+      next_agenda
     end
-    next_agenda
   end
 
   # アジェンダを強制終了させる

@@ -62,7 +62,7 @@ build-iPhoneSimulator/
 token.js
 hoge.png
 /public/assets/img/tmp/*.jpg
-test.db
+*.db
 
 /docs/*
 !api.html
