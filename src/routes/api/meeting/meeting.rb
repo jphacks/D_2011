@@ -82,6 +82,11 @@ class MeetingRouter < Base
 
   # ユーザーの参加しているミーティング情報を取得
   post '/api/meeting/:id/join' do
-    meeting = Meeting.find_by(email: params[:email], meeting_id: params[:id])
+    meeting = Meeting.find_by(email: params[:email], meeting_id: params[:id], join: true)
+    if meeting.nil?
+      ok({ "isJoining": false })
+    else
+      ok({ "isJoining": false , "meeting": meeting })
+    end
   end
 end
