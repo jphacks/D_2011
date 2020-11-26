@@ -21,7 +21,7 @@ class AgendaRouter < Base
     next_agenda = meeting.agendas[meeting.agenda_now + 1]
     not_found('Not found next agenda.') if next_agenda.nil?
 
-    ok({title: next_agenda.title, duration: next_agenda.duration})
+    ok({ title: next_agenda.title, duration: next_agenda.duration })
   end
 
   # アジェンダ一覧画像を返す
