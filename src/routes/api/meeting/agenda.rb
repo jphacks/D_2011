@@ -26,6 +26,15 @@ class AgendaRouter < Base
     ok({ title: next_agenda.title, duration: next_agenda.duration })
   end
 
+  # 今の議題を返す（ポーリング用）
+  get '/api/meeting/:id/agenda/now' do
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    agenda = meeting.agendas[meeting.agenda_now]
+    not_found('Not found agenda.') if agenda.nil?
+    # タイマーの経過時間を追加する
+    ok({ title: next_agenda.title, duration: next_agenda.duration })
+  end
+
   # アジェンダ一覧画像を返す
   get '/api/meeting/:id/agenda/list.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
