@@ -29,8 +29,8 @@ class AgendaRouter < Base
   # アジェンダ一覧画像を返す
   get '/api/meeting/:id/agenda/list.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
-
-    meeting_title = title.length >= 14 ? "#{title.delete("\n").slice(0, 14)}…" : meeting.title
+    title = meeting.title
+    meeting_title = title.length >= 14 ? "#{title.delete("\n").slice(0, 14)}…" : title
 
     time_text = ''
     content_text = ''
