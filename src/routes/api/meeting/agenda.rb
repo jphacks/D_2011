@@ -8,8 +8,10 @@ class AgendaRouter < Base
     not_found("No such meeting: #{params[:id]}") if zoom.nil?
 
     meeting = Meeting.find_by(meeting_id: params[:id])
-    next_agenda = meeting.agendas[meeting.agenda_now + 1]
+    next_agenda_id = meeting.agenda_now + 1
+    next_agenda = meeting.agendas[next_agenda_id]
     not_found('Not found next agenda.') if next_agenda.nil?
+    meeting.update(agenda_now: next_agenda_id)
 
     zoom.changeImage(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)", params[:id]))
     ok
@@ -27,8 +29,8 @@ class AgendaRouter < Base
   # アジェンダ一覧画像を返す
   get '/api/meeting/:id/agenda/list.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
-
-    meeting_title = title.length >= 14 ? "#{title.delete("\n").slice(0, 14)}…" : meeting.title
+    title = meeting.title
+    meeting_title = title.length >= 14 ? "#{title.delete("\n").slice(0, 14)}…" : title
 
     time_text = ''
     content_text = ''

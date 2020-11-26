@@ -19,11 +19,17 @@ Vagrant.configure('2') do |config|
     apt install -y ruby ruby-dev libsqlite3-dev imagemagick ffmpeg firefox libxslt1-dev zlib1g-dev build-essential linux-headers-$(uname -r)
     git clone https://github.com/umlaeute/v4l2loopback.git /v4l2loopback
     cd /v4l2loopback
-    make KCPPFLAGS="-DMAX_DEVICES=100"
+    make KCPPFLAGS="-DMAX_DEVICES=64"
     make install-all
     depmod -a
-    modprobe v4l2loopback devices=100
-    for video in /dev/video*; do v4l2loopback-ctl set-caps $video "YU12:1280x720"; done
+    modprobe v4l2loopback devices=0
+
+    for i in `seq 0 63`; do
+      v4l2loopback-ctl add -n "video$i" /dev/video$i
+      v4l2loopback-ctl set-caps /dev/video$i "YU12:1280x720"
+      ffmpeg -i /vagrant/public/assets/img/aika.jpg -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p /dev/video$i > /dev/null 2>&1
+    done
+
     echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
     usermod -aG video vagrant
     gem install bundler
