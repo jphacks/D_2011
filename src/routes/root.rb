@@ -12,8 +12,8 @@ class RootRouter < Base
 
   # アジェンダページの表示
   get '/agenda/:id' do
-    @meeting = Meeting.last
-    # @meeting = Meeting.find_by(meeting_id: params[:id])
+    # @meeting = Meeting.last
+    @meeting = Meeting.find_by(meeting_id: params[:id])
     @agenda_times = []
     agenda_starting_time = @meeting.start_time
     @meeting.agendas.each do |agenda|
