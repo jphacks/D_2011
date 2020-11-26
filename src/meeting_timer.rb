@@ -66,4 +66,10 @@ class MeetingTimer
     @thread.kill
     next_agenda
   end
+
+  def finish_meeting
+    return if @thread == nil
+    @thread.kill
+    p 'ミーティングが終了しました。'
+  end
 end

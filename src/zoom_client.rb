@@ -3,6 +3,7 @@
 require 'selenium-webdriver'
 require 'json'
 require 'logger'
+require 'open3'
 
 # Zoomと接続して映像を表示するクラス
 # TODO: 複数仮想カメラ対応
@@ -11,7 +12,6 @@ require 'logger'
 # TODO: 終了したZoomでokが出る
 class ZoomClient
   @video_devices = {}
-  @img_path = 'public/assets/img'
 
   # パスワード付きURLの内容に基づいてZoomミーティングに接続します
   #
@@ -58,13 +58,20 @@ class ZoomClient
     return false if @driver.nil?
 
     @log.info('[Zoom] Connecting...')
+
+    # devices = @driver.execute_script "return navigator.mediaDevices.enumerateDevices();"
+    # device = devices.find { |d| d['label'] == @video.split('/')[2] }
+    # return false if device.nil?
+
+    @driver.execute_script "window.video = '#{@video.split('/')[2]}'"
     @driver.execute_script "initialize('#{@mn}', '#{@mp}')"
+    # sleep 1 until @driver.execute_script 'return window.test != undefined' # タイムアウト設定
 
     @wait.until { @driver.execute_script 'return getStatus() >= 2' }
     @log.info('[Zoom] Connected')
     true
   rescue StandardError => e
-    @log.error('[Zoom] Failed connect')
+    @log.error('[Zoom] Failed to connect')
     @log.error e
     false
   end
@@ -73,6 +80,7 @@ class ZoomClient
   def enable_video
     return if @driver.nil?
 
+    @log.info('[Zoom] Enable video(before)')
     sleep 1 until @driver.execute_script 'return canEnableVideo()'
     return if @driver.execute_script 'return isEnabledVideo()'
 
@@ -86,11 +94,18 @@ class ZoomClient
     options = Selenium::WebDriver::Firefox::Options.new
     options.add_argument('--headless')
     options.add_preference('permissions.default.microphone', 1)
-    options.add_preference('permissions.default.camera', 1)
+    options.add_preference('permissions.default.camera', 100)
     options.add_preference('media.navigator.permission.disabled', true)
 
     @driver = Selenium::WebDriver.for :firefox, options: options
-    @driver.get "http://localhost:#{ENV['PORT']}/zoom/index.html"
+    @driver.get 'https://romantic-wing-4e2620.netlify.app/index.html'
+
+    devices = @driver.execute_script 'return navigator.mediaDevices.enumerateDevices();'
+    device = devices.find { |d| d['label'] == @video.split('/')[2] }
+
+    @log.info('[Firefox] Reloading page...')
+    @log.info('[Firefox] Device ID: ' + device['deviceId'])
+    @driver.get "https://romantic-wing-4e2620.netlify.app/index.html?#{device['deviceId']}"
     @wait = Selenium::WebDriver::Wait.new(timeout: 20)
     @log.info('[Firefox] Started Firefox')
   end
@@ -102,7 +117,7 @@ class ZoomClient
 
     @log.info('[FFmpeg] Running FFmpeg...')
     Open3.capture2(
-      "ffmpeg -loop 1 -i pipe:0 -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video}",
+      "ffmpeg -i pipe:0 -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video} > /dev/null 2>&1",
       stdin_data: image,
       binmode: true
     )
@@ -114,7 +129,9 @@ class ZoomClient
     return if @driver.nil?
 
     @log.info('[FFmpeg] Running FFmpeg...')
-    Open3.capture2("ffmpeg -loop 1 -i #{filepath} -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video}")
+    Open3.capture2(
+      "ffmpeg -i #{filepath} -f v4l2 -vcodec rawvideo -vf format=pix_fmts=yuv420p #{@video} > /dev/null 2>&1"
+    )
   end
 
   # 共同ホスト権限を要求します
@@ -122,10 +139,10 @@ class ZoomClient
     return if @driver.nil?
 
     @log.info('[Zoom] Request Co-host...')
-    show_image_by_path("#{@img_path}/request_co_host.jpg")
-    sleep 1 until @driver.execute_script 'return isCoHost()'
+    show_image_by_path('public/assets/img/request_co_host.jpg')
+    sleep 1 until @driver.execute_script 'return window.isCoHost'
     @log.info('[Zoom] Done')
-    show_image_by_path("#{@img_path}/aika.jpg")
+    show_image_by_path('public/assets/img/aika.jpg')
   end
 
   # ミーティングに参加している参加者の一覧を配列で取得します
@@ -224,7 +241,7 @@ class ZoomClient
     @log.debug("[Meeting Info] Password: #{@mp}")
 
     start_browser # 接続するための準備
-    show_image_by_path("#{@img_path}/aika.jpg")
+    show_image_by_path('public/assets/img/aika.jpg')
 
     # @watch_leave = Thread.new do # ミーティング終了フック
     #   @log.info('[ZoomClient] Detected leaving')
