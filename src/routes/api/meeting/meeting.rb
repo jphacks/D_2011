@@ -93,4 +93,15 @@ class MeetingRouter < Base
       ok({ "isJoining": true , "meeting": meeting })
     end
   end
+
+  # テンプレート機能（タイトルを受け取って反応するものをJSONで返却）
+  get '/api/meeting/template/:title' do
+    respond_word_list = RespondWord.pluck(:word)
+    yatta = []
+    yatta = respond_word_list.select { |e| e =~ %r{^.*#{params[:title]}.*} }
+    respond_word_list.each do |word|
+      yatta.append(params[:title].include?(word))
+    end
+    ok({ "words": yatta })
+  end
 end
