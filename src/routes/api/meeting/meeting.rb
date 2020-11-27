@@ -33,6 +33,11 @@ class MeetingRouter < Base
         next_agenda = meeting.agendas[next_agenda_id]
         next_agenda_id = -1 if next_agenda.nil?
         meeting.update(agenda_now: next_agenda_id)
+
+        timer = ZoomManager.instance.get_timer(@mtg_id)
+        timer.next_agenda
+
+        zoom.show_image(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)"))
       end
     end
 
