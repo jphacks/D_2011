@@ -65,6 +65,7 @@ class MeetingRouter < Base
 
     File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $ERROR_INFO
     zoom.leave_meeting rescue puts $ERROR_INFO
+    ZoomManager.instance.destroy(params[:id])
     meeting = Meeting.find_by(meeting_id: params[:id])
     meeting.update(join: false)
     ok
