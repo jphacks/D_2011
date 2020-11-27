@@ -26,7 +26,7 @@ class MeetingRouter < Base
 
     meeting = Meeting.find_by(meeting_id: params[:id])
     meeting.agendas.each do |a|
-      ZoomManager.instance.get_timer(params[:id]).enqueue_agenda(a.duration) do    
+      ZoomManager.instance.get_timer(params[:id]).enqueue_agenda(a.duration) do
         meeting = Meeting.find_by(meeting_id: params[:id])
         next_agenda_id = meeting.agenda_now + 1
         next_agenda = meeting.agendas[next_agenda_id]
@@ -37,7 +37,7 @@ class MeetingRouter < Base
 
     Thread.new do
       zoom.enable_video
-      zoom.request_co_host
+      # zoom.request_co_host
       zoom.show_image ImageEdit.topic_write('しばらくお待ちください')
     end
     meeting.update(join: true)
@@ -51,7 +51,7 @@ class MeetingRouter < Base
 
     timer = ZoomManager.instance.get_timer(params[:id])
     timer.delay params[:dif].to_i
-    ok({ title: meeting.agendas[meeting.agenda_now].title, duration: timer.time_limit + next_agenda.duration })
+    ok({ title: meeting.agendas[meeting.agenda_now].title, duration: timer.time_limit })
   end
 
   # ミーティング開始
