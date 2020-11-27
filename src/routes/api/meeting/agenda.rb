@@ -30,16 +30,6 @@ class AgendaRouter < Base
     ok({ title: next_agenda.title, duration: timer.time_limit + next_agenda.duration })
   end
 
-  # 現在のトピックの時間を変更する
-  put '/api/meeting/:id/agenda/reschedule' do
-    meeting = Meeting.find_by(meeting_id: params[:id])
-    not_found("No such meeting: #{params[:id]}") if meeting.nil?
-
-    timer = ZoomManager.instance.get_timer(params[:id])
-    timer.delay params[:dif].to_i
-    ok({ title: next_agenda.title, duration: timer.time_limit + next_agenda.duration })
-  end
-
   # アジェンダ一覧画像を返す
   get '/api/meeting/:id/agenda/list.png' do
     meeting = Meeting.find_by(meeting_id: params[:id])
