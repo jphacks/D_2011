@@ -86,6 +86,18 @@ class ZoomClient
 
     @log.info('[Zoom] Enable video')
     click_video_btn
+
+    loop do
+      sleep 5
+      pixels = @driver.execute_script 'return document.querySelector("#suspension-my-video").getContext("2d").getImageData(0, 0, 2, 2).data'
+
+      @log.info("[Zoom] pixels sum: #{pixels.values.sum}")
+      break unless pixels.values.sum.zero?
+
+      @log.info('[Zoom] Video Refresh')
+      click_video_btn 2
+    end
+    @log.info('[Zoom] Video is now enabled')
   end
 
   # ブラウザを起動してZoom用のページを開きます
@@ -228,10 +240,10 @@ class ZoomClient
 
     @log.info('[ZoomClient] Closing client...')
 
-    @watch_leave.status
+    # @watch_leave.status
 
     @log.info('@watch_leave.kill rescue nil')
-    Thread.kill @watch_leave rescue nil
+    # Thread.kill @watch_leave rescue nil
 
     @log.info("@driver.execute_script 'leaveMeeting()' rescue nil")
     @driver.execute_script 'leaveMeeting()' rescue nil
