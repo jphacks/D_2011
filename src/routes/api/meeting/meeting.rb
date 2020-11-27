@@ -24,6 +24,17 @@ class MeetingRouter < Base
     zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.zoom_id, meeting.zoom_pass)
     return internal_error 'Failed to connect to Zoom' if zoom.nil?
 
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    meeting.agendas.each do |a|
+      ZoomManager.instance.get_timer(params[:id]).enqueue_agenda(a.duration) do    
+        meeting = Meeting.find_by(meeting_id: params[:id])
+        next_agenda_id = meeting.agenda_now + 1
+        next_agenda = meeting.agendas[next_agenda_id]
+        next_agenda_id = -1 if next_agenda.nil?
+        meeting.update(agenda_now: next_agenda_id)
+      end
+    end
+
     Thread.new do
       zoom.enable_video
       zoom.request_co_host
@@ -42,8 +53,7 @@ class MeetingRouter < Base
     agenda = meeting.agendas[0]
     return not_found('Not found first agenda.') if agenda.nil?
 
-    # タイマーの処理
-
+    ZoomManager.instance.get_timer(params[:id]).start_meeting
     zoom.show_image(ImageEdit.topic_write("#{params[:title]}\n(#{params[:duration]}分)"))
     ok({ title: agenda.title, duration: agenda.duration })
   end
@@ -55,6 +65,7 @@ class MeetingRouter < Base
 
     File.delete("public/assets/img/tmp/#{params[:id]}.png") rescue puts $ERROR_INFO
     zoom.leave_meeting rescue puts $ERROR_INFO
+    ZoomManager.instance.destroy(params[:id])
     meeting = Meeting.find_by(meeting_id: params[:id])
     meeting.update(join: false)
     ok
