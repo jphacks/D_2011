@@ -157,6 +157,7 @@
             <h1><%= @meeting.title %></h1>
             <h2><%= @start_time %></h2>
             <a href="zoommtg://zoom.us/join?confno=<%= @meeting.zoom_id %>&pwd=<%= @meeting.zoom_pass %>" class="btn-gradient-radius">会議に参加する</a>
+            <form action="#" method="post">
             <table>
                 <tbody>
                     <tr>
@@ -166,12 +167,13 @@
                     <% @meeting.agendas.each do |agenda| %>
                       <tr>
                           <td><%= agenda.duration / 60 %>分</td>
-                          <td><%= agenda.title %></td>
+                          <td><input type="test" name="title" value="<%= agenda.title %>"></td>
                       </tr>
                     <% end %>
                 </tbody>
             </table>
-           <a href="#">編集</a>
+            <input type="submit" value="更新">
+          </form>
         </div>
     </section>
     <footer>
