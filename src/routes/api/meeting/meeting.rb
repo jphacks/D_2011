@@ -101,8 +101,8 @@ class MeetingRouter < Base
     suggestion_bool = respond_word_list.map{ | word | params[:title].include?(word) }
     suggestion = suggestion_bool.map.with_index{| tf , index |
       if tf == true
-        group = RespondContent.where(respond_words_id: index)
-        group
+        agendas = RespondContent.where(respond_words_id: index)
+        {"title": respond_word_list[index], "agendas": agendas}
       end
     }.compact.reject(&:empty?)
     ok({ "suggestion": suggestion })
