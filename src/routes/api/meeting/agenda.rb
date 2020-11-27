@@ -13,10 +13,11 @@ class AgendaRouter < Base
     not_found('Not found next agenda.') if next_agenda.nil?
     meeting.update(agenda_now: next_agenda_id)
 
-    # タイマーの処理（強制終了・次のタイマー開始）
+    timer = ZoomManager.instance.get_timer(params[:id])
+    timer.next_agenda
 
     zoom.show_image(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)"))
-    ok({ title: next_agenda.title, duration: next_agenda.duration })
+    ok({ title: next_agenda.title, duration: timer.time_limit })
   end
 
   # 次の議題を返す
@@ -25,7 +26,8 @@ class AgendaRouter < Base
     next_agenda = meeting.agendas[meeting.agenda_now + 1]
     not_found('Not found next agenda.') if next_agenda.nil?
 
-    ok({ title: next_agenda.title, duration: next_agenda.duration })
+    timer = ZoomManager.instance.get_timer(params[:id])
+    ok({ title: next_agenda.title, duration: timer.time_limit + next_agenda.duration })
   end
 
   # アジェンダ一覧画像を返す
