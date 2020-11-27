@@ -5,12 +5,10 @@ class MeetingTimer
   def initialize
     @thread = nil
     @methods = []
-    @time = 0
-    @duration = 0
+    @time_limit = 0
   end
 
   def start_meeting
-    @time = Time.now.to_i
     start_agenda
   end
 
@@ -18,11 +16,9 @@ class MeetingTimer
   def start_agenda
     return puts 'アジェンダが未登録です' if @methods.empty?
 
+    @time_limit = Time.now.to_i + @methods.first[:time]
     @thread = Thread.new do
-      while Time.now.to_i < @time + @methods.first[:time]
-        @duration += 1
-        sleep(1)
-      end
+      sleep 1 while Time.now.to_i < @time_limit
       @methods.first[:method].call
       next_agenda
     end
@@ -38,8 +34,6 @@ class MeetingTimer
 
   # 次のアジェンダへ
   def next_agenda
-    @time += @duration
-    @duration = 0
     @methods.shift
     return if @methods.empty?
 
@@ -48,17 +42,7 @@ class MeetingTimer
 
   # アジェンダを延長する
   def delay(time)
-    @thread.kill
-    @time = @time + @duration + time
-    @duration = 0
-    @thread = Thread.new do
-      while Time.now.to_i <= @time
-        @duration += 1
-        sleep(1)
-      end
-      @methods.first[:method].call
-      next_agenda
-    end
+    @time_limit += time
   end
 
   # アジェンダを強制終了させる
@@ -68,8 +52,8 @@ class MeetingTimer
   end
 
   def finish_meeting
-    return if @thread == nil
+    return if @thread.nil?
+
     @thread.kill
-    p 'ミーティングが終了しました。'
   end
 end
