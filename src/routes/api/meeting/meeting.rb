@@ -37,6 +37,8 @@ class MeetingRouter < Base
         timer = ZoomManager.instance.get_timer(@mtg_id)
         timer.next_agenda
 
+        zoom.mute_all
+        zoom.request_unmute_all
         zoom.show_image(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)"))
       end
     end
