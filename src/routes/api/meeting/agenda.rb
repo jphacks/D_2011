@@ -14,7 +14,7 @@ class AgendaRouter < Base
     meeting.update(agenda_now: next_agenda_id)
 
     zoom.changeImage(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)", params[:id]))
-    ok
+    ok({ title: next_agenda.title, duration: next_agenda.duration })
   end
 
   # 次の議題を返す
