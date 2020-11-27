@@ -7,6 +7,8 @@ class MeetingTimer
     @methods = []
     @time = 0
     @duration = 0
+    # 次のアジェンダまでの時間
+    @time_up_to_next_agenda = 0
   end
 
   def start_meeting
@@ -17,7 +19,7 @@ class MeetingTimer
   # アジェンダを開始
   def start_agenda
     return puts 'アジェンダが未登録です' if @methods.empty?
-
+    @time_up_to_next_agenda = @methods.first[:time]
     @thread = Thread.new do
       while Time.now.to_i < @time + @methods.first[:time]
         @duration += 1
@@ -49,7 +51,8 @@ class MeetingTimer
   # アジェンダを延長する
   def delay(time)
     @thread.kill
-    @time = @time + @duration + time
+    @time_up_to_next_agenda = @duration + time
+    @time += @duration + time
     @duration = 0
     @thread = Thread.new do
       while Time.now.to_i <= @time
@@ -69,7 +72,13 @@ class MeetingTimer
 
   def finish_meeting
     return if @thread == nil
+
     @thread.kill
     p 'ミーティングが終了しました。'
+  end
+
+  # 次の議題までの時間を返す
+  def current_duration
+    Time.at(@time_up_to_next_agenda - @duration).strftime('%M:%S')
   end
 end
