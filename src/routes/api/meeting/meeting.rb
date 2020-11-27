@@ -54,7 +54,7 @@ class MeetingRouter < Base
     return not_found('Not found first agenda.') if agenda.nil?
 
     ZoomManager.instance.get_timer(params[:id]).start_meeting
-    zoom.show_image(ImageEdit.topic_write("#{params[:title]}\n(#{params[:duration]}分)"))
+    zoom.show_image(ImageEdit.topic_write("#{agenda.title}\n(#{agenda.duration}分)"))
     ok({ title: agenda.title, duration: agenda.duration })
   end
 
