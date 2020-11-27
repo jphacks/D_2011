@@ -15,7 +15,7 @@ class AgendaRouter < Base
 
     # タイマーの処理（強制終了・次のタイマー開始）
 
-    zoom.changeImage(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)", params[:id]))
+    zoom.show_image(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)"))
     ok({ title: next_agenda.title, duration: next_agenda.duration })
   end
 
