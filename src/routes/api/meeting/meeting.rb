@@ -98,10 +98,13 @@ class MeetingRouter < Base
   get '/api/meeting/template/:title' do
     respond_word_list = RespondWord.pluck(:word)
     yatta = []
-    yatta = respond_word_list.select { |e| e =~ %r{^.*#{params[:title]}.*} }
-    respond_word_list.each do |word|
-      yatta.append(params[:title].include?(word))
-    end
-    ok({ "words": yatta })
+    suggestion_bool = respond_word_list.map{ | word | params[:title].include?(word) }
+    suggestion = suggestion_bool.map.with_index{| tf , index |
+      if tf == true
+        group = RespondContent.where(respond_words_id: index)
+        group
+      end
+    }.compact.reject(&:empty?)
+    ok({ "suggestion": suggestion })
   end
 end
