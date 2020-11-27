@@ -1,98 +1,179 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-  <meta charset="UTF-8">
-  <meta property="og:description" content="https://aika.lit-kansai-mentors.com/api/meeting/<%= @meeting.meeting_id %>/ogp.png">
-  <meta name="twitter:image" content="https://aika.lit-kansai-mentors.com/api/meeting/<%= @meeting.meeting_id %>/ogp.png" />
-  <meta name="og:image" content="https://aika.lit-kansai-mentors.com/api/meeting/<%= @meeting.meeting_id %>/ogp.png" />
-  <title>aika</title>
-  <link rel="icon" href="/favicon.ico" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">
-  <style>
-  html,body{
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    font-family: 'Noto Sans JP', sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  h1,h2,h3,p{
-    text-align: center;
-    margin: 0 auto;
-  }
-  h1{
-    font-size: 60px;
-    margin-top: 60px;
-    margin-bottom: -10px;
-  }
-  h2{
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-  table{
-    width: 50vw;
-    min-width: 500px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  table, th, td {
-    border-collapse: collapse;
-    border: 1px solid #ccc;
-    line-height: 1.5;
-    text-align: left;
-  }
-  table th {
-    width: 150px;
-    padding: 10px;
-    font-weight: bold;
-    vertical-align: top;
-    background: #3f3f3f;
-    color: #ffffff;
-  }
-  table td {
-    width: 350px;
-    padding: 10px;
-    vertical-align: top;
-  }
-  .btn-gradient-radius {
-    display: inline-block;
-    padding: 7px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    color: #FFF;
-    background-image: linear-gradient(45deg, #FFC107 0%, #ff8b5f 100%);
-    transition: .4s;
-  }
+<head>
+    <meta charset="UTF-8">
+    <meta property="og:description" content="https://aika.lit-kansai-mentors.com/api/meeting/<%= @meeting.meeting_id %>/ogp.png">
+    <meta name="twitter:image" content="https://aika.lit-kansai-mentors.com/api/meeting/<%= @meeting.meeting_id %>/ogp.png" />
+    <meta name="og:image" content="https://aika.lit-kansai-mentors.com/api/meeting/<%= @meeting.meeting_id %>/ogp.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="icon" href="/favicon.ico" />
+    <title><%= @meeting.title %> | aika | Zoomを最強のツールへ</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+        }
 
-  .btn-gradient-radius:hover {
-    background-image: linear-gradient(45deg, #FFC107 0%, #f76a35 100%);
-  }
-  </style>
-  </head>
-  <body>
-    <h1><%= @meeting.title %></h1>
-    <h2><%= @start_time %></h2>
-    <p style="margin-top:10px"><a href="zoommtg://zoom.us/join?confno=<%= @meeting.zoom_id %>&pwd=<%= @meeting.zoom_pass %>" class="btn-gradient-radius">会議に参加する</a></p>
-    <div>
-    <h2 style="margin-top:20px">アジェンダ</h2>
-      <table>
-        <tbody>
-        <tr class="head">
-          <th style="width:15%">開始時間</th>
-          <th style="width:15%">所要時間</th>
-          <th style="width:70%">内容</th>
-        </tr>
-          <% @meeting.agendas.each_with_index do |agenda, i| %>
-            <tr>
-              <td><%= @agenda_times[i] %></td>
-              <td><%= agenda.duration / 60 %>分</td>
-              <td class="agenda_title"><%= agenda.title %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </body>
-</html>
+        .content {
+            background: none;
+            width: 100%;
+            margin: 0 auto;
+            max-width: 1280px;
+        }
+
+        .gradation {
+            background: linear-gradient(to bottom right, #1C62FF, #00F5FF);
+        }
+
+        .gradation h1,
+        .gradation h2,
+        .gradation p {
+            color: white;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin: 0;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin: 0;
+            text-align: center;
+        }
+
+        p {
+            margin: 0;
+            word-wrap: break-word;
+        }
+
+        nav {
+            width: 100vw;
+            position: absolute;
+            z-index: 999;
+            background: rgba(0, 69, 255, 0.1);
+        }
+
+        nav .content {
+            padding: 0;
+        }
+
+        nav img {
+            margin-left: 30px;
+            height: 90px;
+        }
+
+        @media screen and (max-width: 600px) {
+            nav img {
+                margin: 10px 0px 8px 30px;
+                height: 50px;
+            }
+        }
+
+        .head {
+            width: 100vw;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .head_contents {
+            background: none;
+            width: 100%;
+            display: flex;
+            padding-top: 70px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap-reverse;
+        }
+
+        .btn-gradient-radius {
+            margin: 30px 0 30px 0;
+            display: inline-block;
+            padding: 7px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #000;
+            background-color: #FFF;
+        }
+
+        table {
+            width: 50vw;
+            min-width: 600px;
+            max-width: 1280px;
+            border-collapse: collapse;
+            text-align: left;
+            color: #FFF;
+            margin-bottom: 100px;
+        }
+
+        @media screen and (max-width: 600px) {
+            table {
+                width: 95vw;
+                min-width: 0px;
+            }
+        }
+
+        tr {
+            border-color: #FFF;
+            border-style: solid;
+            border-width: 0.5px 0;
+        }
+
+        th,
+        td {
+            padding: 10px 0 10px 10px;
+        }
+
+        footer{
+            width: 100vw;
+            position: fixed;
+            bottom: 0;
+            color: #FFF;
+            padding-bottom: 10px;
+        }
+
+        footer p{
+            text-align: center;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="content">
+            <img src="/assets/img/aika_logo.svg">
+        </div>
+    </nav>
+
+    <section class="head gradation">
+        <div class="content head_contents">
+            <h1><%= @meeting.title %></h1>
+            <h2><%= @start_time %></h2>
+            <a href="zoommtg://zoom.us/join?confno=<%= @meeting.zoom_id %>&pwd=<%= @meeting.zoom_pass %>" class="btn-gradient-radius">会議に参加する</a>
+            <table>
+                <tbody>
+                    <tr>
+                        <th style="width: 20%; min-width: 90px;">所要時間</th>
+                        <th style="width: 80%">内容</th>
+                    </tr>
+                    <% @meeting.agendas.each do |agenda| %>
+                      <tr>
+                          <td><%= agenda.duration / 60 %>分</td>
+                          <td><%= agenda.title %></td>
+                      </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <footer>
+        <p>&copy; 2020 Taguchike. All Rights Reserved.</p>
+    </footer>
+</body></html>
