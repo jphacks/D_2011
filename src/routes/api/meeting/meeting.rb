@@ -38,10 +38,14 @@ class MeetingRouter < Base
     zoom = ZoomManager.instance.get(params[:id])
     return not_found("No such meeting: #{params[:id]}") if zoom.nil?
 
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    agenda = meeting.agendas[0]
+    return not_found('Not found first agenda.') if agenda.nil?
+
     # タイマーの処理
 
     zoom.show_image(ImageEdit.topic_write("#{params[:title]}\n(#{params[:duration]}分)"))
-    ok
+    ok({ title: agenda.title, duration: agenda.duration })
   end
 
   # ミーティング終了
