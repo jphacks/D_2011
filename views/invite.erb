@@ -163,7 +163,7 @@
                         <th style="width: 20%; min-width: 90px;">所要時間</th>
                         <th style="width: 80%">内容</th>
                     </tr>
-                    <% @meeting.agendas.each_with_index do |agenda, i| %>
+                    <% @meeting.agendas.each do |agenda| %>
                       <tr>
                           <td><%= agenda.duration / 60 %>分</td>
                           <td><%= agenda.title %></td>
