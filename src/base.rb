@@ -5,11 +5,12 @@
 # 汎用的なコードをまとめたものです
 # 全てのRouterクラスで継承してください
 # encoding: utf-8
+gem 'content-type'
 class Base < Sinatra::Base
   helpers do
     def ok(data = nil)
       status 200
-      json({ ok: true, status: 'success', code: 200, data: data }).force_encoding('UTF-8')
+      json({ ok: true, status: 'success', code: 200, data: data }, :encoder => :to_json, :content_type => :json)
     end
 
     def notfound(error = nil)
