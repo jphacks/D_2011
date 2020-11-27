@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <link rel="icon" href="/favicon.ico" />
     <script src="https://cdn.jsdelivr.net/npm/mobile-detect@1.4.4/mobile-detect.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <title><%= @meeting.title %> | aika | Zoomを最強のツールへ</title>
     <style>
         html,
@@ -143,10 +144,27 @@
             text-align: center;
             margin: 0 auto;
         }
+
+        #phone{
+            display: none;
+        }
+        #pc{
+            display: none;
+        }
     </style>
     <script>
-        var md = new MobileDetect(window.navigator.userAgent);
-        console.log( md.mobile() );
+        $(function() {
+            var md = new MobileDetect(window.navigator.userAgent);
+            if(md.is("ios") || md.is("AndroidOS")){
+                    $("#phone").css({
+                        "display": "block"
+                    });
+            }else{
+                    $("#pc").css({
+                        "display": "block"
+                    });
+            }
+        });
     </script>
 </head>
 
@@ -162,7 +180,8 @@
         <div class="content head_contents">
             <h1><%= @meeting.title %></h1>
             <h2><%= @start_time %></h2>
-            <a href="zoommtg://zoom.us/join?confno=<%= @meeting.zoom_id %>&pwd=<%= @meeting.zoom_pass %>" class="btn-gradient-radius">会議に参加する</a>
+            <a href="zoomus://zoom.us/join?confno=<%= @meeting.zoom_id %>&pwd=<%= @meeting.zoom_pass %>" class="btn-gradient-radius" id="phone">会議に参加する</a>
+            <a href="zoommtg://zoom.us/join?confno=<%= @meeting.zoom_id %>&pwd=<%= @meeting.zoom_pass %>" class="btn-gradient-radius" id="pc">会議に参加する</a>
             <table>
                 <tbody>
                     <tr>
