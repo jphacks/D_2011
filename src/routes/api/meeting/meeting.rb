@@ -97,7 +97,6 @@ class MeetingRouter < Base
   # テンプレート機能（タイトルを受け取って反応するものをJSONで返却）
   get '/api/meeting/template/:title' do
     respond_word_list = RespondWord.pluck(:word)
-    yatta = []
     suggestion_bool = respond_word_list.map{ | word | params[:title].include?(word) }
     suggestion = suggestion_bool.map.with_index{| tf , index |
       if tf == true
