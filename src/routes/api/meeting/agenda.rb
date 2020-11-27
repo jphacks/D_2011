@@ -40,7 +40,7 @@ class AgendaRouter < Base
       break if i == 6
     end
     content_type 'image/png'
-    agenda_write(meeting_title, time_text, content_text)
+    ImageEdit.agenda_write(meeting_title, time_text, content_text)
   end
 
   def adjust_content_text(text)
