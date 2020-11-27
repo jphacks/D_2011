@@ -53,9 +53,10 @@ class MeetingRouter < Base
     agenda = meeting.agendas[0]
     return not_found('Not found first agenda.') if agenda.nil?
 
-    ZoomManager.instance.get_timer(params[:id]).start_meeting
-    zoom.show_image(ImageEdit.topic_write("#{agenda.title}\n(#{agenda.duration}分)"))
-    ok({ title: agenda.title, duration: agenda.duration })
+    timer = ZoomManager.instance.get_timer(params[:id])
+    timer.start_meeting
+    zoom.show_image(ImageEdit.topic_write("#{agenda.title}\n(#{agenda.duration / 60}分)"))
+    ok({ title: agenda.title, duration: timer.time_limit })
   end
 
   # ミーティング終了
@@ -80,7 +81,8 @@ class MeetingRouter < Base
     agenda = meeting.agendas[meeting.agenda_now]
     not_found('Not found current agenda.') if agenda.nil?
 
-    ok({ title: agenda.title, duration: agenda.duration })
+    timer = ZoomManager.instance.get_timer(params[:id])
+    ok({ title: agenda.title, duration: timer.time_limit })
   end
 
   # カメラ再読み込み

@@ -2,6 +2,8 @@
 
 # ミーティングのタイマー管理のクラス
 class MeetingTimer
+  attr_reader :time_limit
+
   def initialize
     @thread = nil
     @methods = []
