@@ -214,15 +214,32 @@ class ZoomClient
     @driver.execute_script 'leaveMeeting()'
   end
 
+  # スクリーンショットを撮影します
+  def screen_shot(path)
+    return if @driver.nil?
+
+    @log.info('[Firefox] Screen shot')
+    @driver.save_screenshot path
+  end
+
   # 終了処理をします
   def close
     return if @driver.nil?
 
     @log.info('[ZoomClient] Closing client...')
 
-    # @watch_leave.kill
+    @watch_leave.status
+
+    @log.info('@watch_leave.kill rescue nil')
+    Thread.kill @watch_leave rescue nil
+
+    @log.info("@driver.execute_script 'leaveMeeting()' rescue nil")
     @driver.execute_script 'leaveMeeting()' rescue nil
+
+    @log.info("@wait.until { @driver.current_url == 'http://example.com/' } rescue nil")
     @wait.until { @driver.current_url == 'http://example.com/' } rescue nil
+
+    @log.info('@driver.close rescue nil')
     @driver.close rescue nil
     @driver.quit rescue nil
     @driver = nil
@@ -244,8 +261,8 @@ class ZoomClient
     show_image_by_path('public/assets/img/aika.jpg')
 
     # @watch_leave = Thread.new do # ミーティング終了フック
-    #   @log.info('[ZoomClient] Detected leaving')
     #   sleep 5 while @driver.current_url != 'http://example.com/'
+    #   @log.info('[ZoomClient] Detected leaving')
     #   close
     # end
 
