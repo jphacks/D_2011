@@ -111,4 +111,17 @@ class MeetingRouter < Base
       ok({ "isJoining": true , "meeting": meeting })
     end
   end
+
+  # テンプレート機能（タイトルを受け取って反応するものをJSONで返却）
+  get '/api/meeting/template/:title' do
+    respond_word_list = RespondWord.pluck(:word)
+    suggestion_bool = respond_word_list.map{ | word | params[:title].include?(word) }
+    suggestion = suggestion_bool.map.with_index{| tf , index |
+      if tf == true
+        agendas = RespondContent.where(respond_words_id: index)
+        {"title": respond_word_list[index], "agendas": agendas}
+      end
+    }.compact.reject(&:empty?)
+    ok({ "suggestion": suggestion })
+  end
 end

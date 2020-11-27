@@ -15,3 +15,11 @@ end
 class Agenda < ActiveRecord::Base
   belongs_to :meeting
 end
+
+class RespondContent < ActiveRecord::Base
+  belongs_to :respond_words
+end
+
+class RespondWord < ActiveRecord::Base
+  has_many :respond_contents
+end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_26_005205) do
+ActiveRecord::Schema.define(version: 2020_11_27_084105) do
 
   create_table "agendas", force: :cascade do |t|
     t.integer "meeting_id"
@@ -33,6 +33,20 @@ ActiveRecord::Schema.define(version: 2020_11_26_005205) do
     t.integer "agenda_now", default: 0, null: false
     t.string "email"
     t.boolean "join", default: false, null: false
+  end
+
+  create_table "respond_contents", force: :cascade do |t|
+    t.integer "respond_words_id"
+    t.string "content"
+    t.integer "duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "respond_words", force: :cascade do |t|
+    t.string "word"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
