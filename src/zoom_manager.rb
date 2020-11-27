@@ -9,6 +9,7 @@ class ZoomManager
 
   def initialize
     @clients = {}
+    @timers = {}
   end
 
   def create_by_url(id, url)
@@ -24,6 +25,7 @@ class ZoomManager
     return nil if id.nil? || id.empty?
 
     @clients[id] = ZoomClient.connect_with_number(meeting_number, pwd) if @clients[id].nil?
+    @timers[id] = MeetingTimer.new
     @clients[id]
   end
 
@@ -33,12 +35,19 @@ class ZoomManager
     @clients[id]
   end
 
+  def get_timer(id)
+    return nil if id.nil? || id.empty?
+
+    @timers[id]
+  end
+
   def destroy(id)
     return false if id.nil? || id.empty?
     return false if @clients[id].nil?
 
     @clients[id].close
     @clients[id] = nil
+    @timers[id].finish_meeting
     true
   end
 end
