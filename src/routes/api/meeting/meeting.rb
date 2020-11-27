@@ -53,6 +53,15 @@ class MeetingRouter < Base
     ok
   end
 
+  # カメラ再読み込み
+  post '/api/meeting/:id/reload' do
+    zoom = ZoomManager.instance.get(params[:id])
+    return not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    zoom.click_video_btn 2 rescue puts $ERROR_INFO
+    ok
+  end
+
   # ミュート & アンミュート通知
   post '/api/meeting/:id/mute_all' do
     zoom = ZoomManager.instance.get(params[:id])
