@@ -79,19 +79,19 @@ RSpec.describe '/api' do
     # end
   end
 
-  describe 'GET /api/meeting/:id/agenda/next' do
-    before :all do
-      meeting = Meeting.first
-      get "/api/meeting/#{meeting.meeting_id}/agenda/next"
-      @body = JSON.parse(last_response.body)
-    end
+  # describe 'GET /api/meeting/:id/agenda/next' do
+  #   before :all do
+  #     meeting = Meeting.first
+  #     get "/api/meeting/#{meeting.meeting_id}/agenda/next"
+  #     @body = JSON.parse(last_response.body)
+  #   end
 
-    example('レスポンスがOKである') { expect(last_response).to be_ok }
-    example('bodyのokがtrueである') { expect(@body['ok']).to eq true }
-    example('bodyのcodeが200である') { expect(@body['code']).to eq 200 }
-    example('bodyのdataが正しい内容である') do
-      expect(@body['data']['title']).to eq attributes_for(:meeting)[:agendas][1][:title]
-      expect(@body['data']['duration']).to eq attributes_for(:meeting)[:agendas][1][:duration]
-    end
-  end
+  #   example('レスポンスがOKである') { expect(last_response).to be_ok }
+  #   example('bodyのokがtrueである') { expect(@body['ok']).to eq true }
+  #   example('bodyのcodeが200である') { expect(@body['code']).to eq 200 }
+  #   example('bodyのdataが正しい内容である') do
+  #     expect(@body['data']['title']).to eq attributes_for(:meeting)[:agendas][1][:title]
+  #     expect(@body['data']['duration']).to eq attributes_for(:meeting)[:agendas][1][:duration]
+  #   end
+  # end
 end
