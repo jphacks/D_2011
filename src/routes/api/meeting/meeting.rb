@@ -60,6 +60,18 @@ class MeetingRouter < Base
     ok
   end
 
+  # ミーティングステータス
+  get '/api/meeting/:id/status' do
+    zoom = ZoomManager.instance.get(params[:id])
+    not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    agenda = meeting.agendas[meeting.agenda_now]
+    not_found('Not found current agenda.') if agenda.nil?
+
+    ok({ title: agenda.title, duration: agenda.duration })
+  end
+
   # カメラ再読み込み
   post '/api/meeting/:id/reload' do
     zoom = ZoomManager.instance.get(params[:id])
