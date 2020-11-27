@@ -86,6 +86,18 @@ class ZoomClient
 
     @log.info('[Zoom] Enable video')
     click_video_btn
+
+    loop do
+      sleep 5
+      pixels = @driver.execute_script 'return document.querySelector("#suspension-my-video").getContext("2d").getImageData(0, 0, 2, 2).data'
+
+      @log.info("[Zoom] pixels sum: #{pixels.values.sum}")
+      break unless pixels.values.sum.zero?
+
+      @log.info('[Zoom] Video Refresh')
+      click_video_btn 2
+    end
+    @log.info('[Zoom] Video is now enabled')
   end
 
   # ブラウザを起動してZoom用のページを開きます
@@ -214,15 +226,32 @@ class ZoomClient
     @driver.execute_script 'leaveMeeting()'
   end
 
+  # スクリーンショットを撮影します
+  def screen_shot(path)
+    return if @driver.nil?
+
+    @log.info('[Firefox] Screen shot')
+    @driver.save_screenshot path
+  end
+
   # 終了処理をします
   def close
     return if @driver.nil?
 
     @log.info('[ZoomClient] Closing client...')
 
-    # @watch_leave.kill
+    # @watch_leave.status
+
+    @log.info('@watch_leave.kill rescue nil')
+    # Thread.kill @watch_leave rescue nil
+
+    @log.info("@driver.execute_script 'leaveMeeting()' rescue nil")
     @driver.execute_script 'leaveMeeting()' rescue nil
+
+    @log.info("@wait.until { @driver.current_url == 'http://example.com/' } rescue nil")
     @wait.until { @driver.current_url == 'http://example.com/' } rescue nil
+
+    @log.info('@driver.close rescue nil')
     @driver.close rescue nil
     @driver.quit rescue nil
     @driver = nil
@@ -244,8 +273,8 @@ class ZoomClient
     show_image_by_path('public/assets/img/aika.jpg')
 
     # @watch_leave = Thread.new do # ミーティング終了フック
-    #   @log.info('[ZoomClient] Detected leaving')
     #   sleep 5 while @driver.current_url != 'http://example.com/'
+    #   @log.info('[ZoomClient] Detected leaving')
     #   close
     # end
 

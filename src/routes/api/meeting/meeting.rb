@@ -38,10 +38,14 @@ class MeetingRouter < Base
     zoom = ZoomManager.instance.get(params[:id])
     return not_found("No such meeting: #{params[:id]}") if zoom.nil?
 
+    meeting = Meeting.find_by(meeting_id: params[:id])
+    agenda = meeting.agendas[0]
+    return not_found('Not found first agenda.') if agenda.nil?
+
     # タイマーの処理
 
     zoom.show_image(ImageEdit.topic_write("#{params[:title]}\n(#{params[:duration]}分)"))
-    ok
+    ok({ title: agenda.title, duration: agenda.duration })
   end
 
   # ミーティング終了
@@ -53,6 +57,24 @@ class MeetingRouter < Base
     zoom.leave_meeting rescue puts $ERROR_INFO
     meeting = Meeting.find_by(meeting_id: params[:id])
     meeting.update(join: false)
+    ok
+  end
+
+  # カメラ再読み込み
+  post '/api/meeting/:id/reload' do
+    zoom = ZoomManager.instance.get(params[:id])
+    return not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    zoom.click_video_btn 2 rescue puts $ERROR_INFO
+    ok
+  end
+
+  # スクリーンショット撮影
+  post '/api/meeting/:id/screenshot/:name' do
+    zoom = ZoomManager.instance.get(params[:id])
+    return not_found("No such meeting: #{params[:id]}") if zoom.nil?
+
+    zoom.screen_shot params[:name] rescue puts $ERROR_INFO
     ok
   end
 
@@ -92,5 +114,18 @@ class MeetingRouter < Base
     else
       ok({ "isJoining": true , "meeting": meeting })
     end
+  end
+
+  # テンプレート機能（タイトルを受け取って反応するものをJSONで返却）
+  get '/api/meeting/template/:title' do
+    respond_word_list = RespondWord.pluck(:word)
+    suggestion_bool = respond_word_list.map{ | word | params[:title].include?(word) }
+    suggestion = suggestion_bool.map.with_index{| tf , index |
+      if tf == true
+        agendas = RespondContent.where(respond_words_id: index)
+        {"title": respond_word_list[index], "agendas": agendas}
+      end
+    }.compact.reject(&:empty?)
+    ok({ "suggestion": suggestion })
   end
 end
