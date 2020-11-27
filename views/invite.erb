@@ -7,12 +7,15 @@
     <meta name="og:image" content="https://aika.lit-kansai-mentors.com/api/meeting/<%= @meeting.meeting_id %>/ogp.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/mobile-detect@1.4.4/mobile-detect.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <title><%= @meeting.title %> | aika | Zoomを最強のツールへ</title>
     <style>
         html,
         body {
+            font-family: 'Noto Sans JP', sans-serif;
             margin: 0;
             padding: 0;
             width: 100vw;
