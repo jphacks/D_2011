@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>aika | Zoomを最強のツールへ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <style>
         html,
         body {
@@ -68,7 +69,6 @@
         h2 {
             font-size: 3em;
             margin: 0;
-            padding-bottom: 80px;
             text-align: center;
         }
 
@@ -84,12 +84,12 @@
 
         nav {
             width: 100vw;
-            position:absolute;
+            position: absolute;
             z-index: 999;
-            background: rgba(0, 69, 255,0.1);
+            background: rgba(0, 69, 255, 0.1);
         }
 
-        nav .content{
+        nav .content {
             padding: 0;
         }
 
@@ -98,9 +98,16 @@
             height: 90px;
         }
 
+        @media screen and (max-width: 600px) {
+            nav img {
+                margin: 10px 0px 8px 30px;
+                height: 50px;
+            }
+        }
+
         .head {
             width: 100vw;
-            height: 90vh;
+            min-height: 90vh;
             display: flex;
         }
 
@@ -108,8 +115,20 @@
             background: none;
             width: 100%;
             display: flex;
+            padding-top: 50px;
             justify-content: space-around;
             align-items: center;
+            flex-wrap: wrap-reverse;
+        }
+
+        .head .pop {
+            min-width: 600px;
+        }
+
+        @media screen and (max-width: 600px) {
+            .head .pop {
+                min-width: 80vw;
+            }
         }
 
         .head .pop h1 {
@@ -134,6 +153,12 @@
             max-width: 600px;
         }
 
+        @media screen and (max-width: 600px) {
+            .head_contents img {
+                width: 80%;
+            }
+        }
+
         .nayami p {
             text-align: center;
             font-size: 1.5em;
@@ -143,11 +168,28 @@
         .topic_box {
             display: flex;
             justify-content: space-around;
+            flex-wrap: wrap;
         }
 
         .topic {
             max-width: 250px;
             text-align: center;
+            padding-top: 80px;
+        }
+
+        @media screen and (max-width: 600px) {
+            .nayami .content h2 {
+                font-size: 2em;
+            }
+
+            .nayami p {
+                padding-top: 30px;
+                font-size: 1em;
+            }
+
+            .nayami .kaigyou {
+                display: block;
+            }
         }
 
         .footer {
@@ -174,11 +216,13 @@
 </head>
 
 <body>
+
     <nav>
         <div class="content">
             <img src="/assets/img/aika_logo.svg">
         </div>
     </nav>
+
     <section class="head gradation naname">
         <div class="content head_contents">
             <div class="pop">
@@ -191,6 +235,7 @@
             <img src="/assets/img/head.png">
         </div>
     </section>
+
     <section class="nayami naname_before">
         <div class="content">
             <h2>ミーティングでこんなお悩みはありませんか?</h2>
@@ -262,4 +307,5 @@
             <p>&copy; 2020 Taguchike. All Rights Reserved.</p>
         </div>
     </section>
+
 </body></html>
