@@ -24,22 +24,21 @@ class MeetingRouter < Base
     zoom = ZoomManager.instance.create_by_meeting_number(params[:id], meeting.zoom_id, meeting.zoom_pass)
     return internal_error 'Failed to connect to Zoom' if zoom.nil?
 
-    meeting = Meeting.find_by(meeting_id: params[:id])
     @mtg_id = params[:id]
     meeting.agendas.each do |a|
-      ZoomManager.instance.get_timer(params[:id]).enqueue_agenda(a.duration) do
-        meeting = Meeting.find_by(meeting_id: @mtg_id)
+      timer = ZoomManager.instance.get_timer(params[:id])
+      timer.enqueue_agenda(a.duration) do
+        # meeting = Meeting.find_by(meeting_id: @mtg_id)
         next_agenda_id = meeting.agenda_now + 1
         next_agenda = meeting.agendas[next_agenda_id]
         next_agenda_id = -1 if next_agenda.nil?
         meeting.update(agenda_now: next_agenda_id)
 
-        timer = ZoomManager.instance.get_timer(@mtg_id)
         timer.next_agenda
 
         zoom.mute_all
         zoom.request_unmute_all
-        zoom.show_image(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)"))
+        zoom.show_image(ImageEdit.topic_write("#{next_agenda.title}\n(#{next_agenda.duration / 60}分)")) unless next_agenda.nil?
       end
     end
 
